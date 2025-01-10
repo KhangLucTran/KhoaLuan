@@ -40,8 +40,8 @@ const InputField = ({
       InputProps={{
         sx: {
           borderRadius: 2,
-          width: 300,
-          height: 45,
+          width: 280,
+          height: 40,
           color: theme.palette.text.primary,
         },
         startAdornment: (focused || value) && icon && (
@@ -65,7 +65,8 @@ const InputField = ({
       }}
       InputLabelProps={{
         sx: {
-          fontWeight: "bold",
+          fontSize: "0.85rem",
+          color: theme.palette.text.secondary,
         },
       }}
       id={id}

@@ -63,6 +63,7 @@ const AuthForm = ({ fields, onSubmit, buttonText }) => {
         variant="contained"
         text={buttonText}
         onClick={handleSubmit}
+        color="theme.palette.primary"
       />
     </Box>
   );

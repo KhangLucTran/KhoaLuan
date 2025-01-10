@@ -9,7 +9,7 @@ const SubmitButton = ({ variant, icon, text, onClick }) => (
     startIcon={icon}
     sx={{
       borderRadius: 2,
-      width: 300,
+      width: 280,
       color: "text",
       border: "1px solid",
       borderColor: "text.secondary",
