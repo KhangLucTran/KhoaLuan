@@ -1,11 +1,30 @@
 import Button from "@mui/material/Button";
+import PropTypes from "prop-types";
 
-const SubmitButton = ({ text }) => {
-  return (
-    <Button variant="contained" color="primary" type="submit" fullWidth>
-      {text}
-    </Button>
-  );
+const SubmitButton = ({ variant, icon, text, onClick }) => (
+  <Button
+    variant={variant}
+    color="text"
+    onClick={onClick}
+    startIcon={icon}
+    sx={{
+      borderRadius: 2,
+      width: 280,
+      color: "text",
+      border: "1px solid",
+      borderColor: "text.secondary",
+      textTransform: "none",
+    }}
+  >
+    {text}
+  </Button>
+);
+
+SubmitButton.propTypes = {
+  variant: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  icon: PropTypes.element,
 };
 
 export default SubmitButton;
