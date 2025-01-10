@@ -39,8 +39,8 @@ const InputField = ({
     <TextField
       InputProps={{
         sx: {
-          borderRadius: 3,
-          width: 250,
+          borderRadius: 2,
+          width: 300,
           height: 45,
           color: theme.palette.text.primary,
         },
@@ -62,6 +62,11 @@ const InputField = ({
             </IconButton>
           </InputAdornment>
         ),
+      }}
+      InputLabelProps={{
+        sx: {
+          fontWeight: "bold",
+        },
       }}
       id={id}
       label={label}

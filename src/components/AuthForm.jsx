@@ -41,7 +41,6 @@ const AuthForm = ({ fields, onSubmit, buttonText }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         gap: 2,
       }}
     >
@@ -60,7 +59,11 @@ const AuthForm = ({ fields, onSubmit, buttonText }) => {
           isPasswordField={field.type === "password"}
         />
       ))}
-      <SubmitButton text={buttonText} onClick={handleSubmit} />
+      <SubmitButton
+        variant="contained"
+        text={buttonText}
+        onClick={handleSubmit}
+      />
     </Box>
   );
 };
