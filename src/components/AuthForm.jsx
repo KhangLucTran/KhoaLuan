@@ -1,47 +1,73 @@
-import { useState } from "react";
-import { validateForm } from "../utils/validation";
+import { useCallback, useState } from "react";
+import { validateField } from "../utils/validation";
+import PropTypes from "prop-types";
+import Box from "@mui/material/Box";
 import InputField from "./InputField";
 import SubmitButton from "./SubmitButton";
-import Box from "@mui/material/Box";
-import PropTypes from "prop-types";
 
-const AuthForm = ({ fields, onSubmit, buttonText }) => {
+const AuthForm = ({
+  fields,
+  onSubmit,
+  buttonText,
+  className,
+  sx,
+  layout = "column",
+}) => {
   const [formValues, setFormValues] = useState(
     fields.reduce((acc, field) => ({ ...acc, [field.name]: "" }), {})
   );
   const [formErrors, setFormErrors] = useState({});
 
-  const handleInputChange = (name, value) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "", // Reset lỗi khi người dùng thay đổi
-    }));
-  };
+  // Dùng useCallBack cho handleInputChange: tránh tạo lại hàm mỗi lần render
+  const handleInputChange = useCallback(
+    (name, value) => {
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+      const error = validateField(name, value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error,
+      }));
+    },
+    [setFormValues, setFormErrors]
+  );
 
-    const errors = validateForm(formValues);
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
+  // Dùng useCallBack cho handleSubmit: tránh tạo lại hàm mỗi lần render
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    onSubmit(formValues);
-  };
+      const errors = {};
+      fields.forEach((field) => {
+        const error = validateField(field.name, formValues[field.name]);
+        if (error) {
+          errors[field.name] = error;
+        }
+      });
+
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+      }
+
+      onSubmit(formValues);
+    },
+    [fields, formValues, onSubmit]
+  );
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
+      className={className}
       sx={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: layout,
         gap: 2,
+        ...sx,
       }}
     >
       {fields.map((field) => (
@@ -59,6 +85,7 @@ const AuthForm = ({ fields, onSubmit, buttonText }) => {
           isPasswordField={field.type === "password"}
         />
       ))}
+
       <SubmitButton
         variant="contained"
         text={buttonText}
@@ -81,6 +108,15 @@ AuthForm.propTypes = {
   ).isRequired,
   onSubmit: PropTypes.func.isRequired,
   buttonText: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  sx: PropTypes.object,
+  layout: PropTypes.oneOf(["row", "column"]),
+};
+
+AuthForm.defaultProps = {
+  className: "",
+  sx: {},
+  layout: "column",
 };
 
 export default AuthForm;
