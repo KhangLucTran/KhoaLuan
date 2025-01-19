@@ -1,0 +1,69 @@
+/* Login Container */
+.login-container{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+/* Login Image */
+.login-page-image {
+    width: 50%;
+    height: 90vh;
+    background-image: url("../assets/bg6.jpg");
+    background-size: cover;
+    border: 1px solid #ccc;
+    border-radius:20px ;
+  }
+/* Login Form */
+.login-page-form{
+    padding: 10;
+    height: 100vh;
+    height: auto;
+}
+.login-page-form h1{
+    font-weight: bold;
+    font-size: 46px;    
+}
+.login-page-form h3{
+    font-size: 24px;
+    color: #1877F2;
+    margin-bottom: 3rem;
+}
+.login-page-form-social{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+}
+/* Đường line */
+.login-page-form-divider {
+width: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+}
+
+.login-page-form-divider hr {
+  width: 40%;
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 0 10px;
+}
+
+.login-page-form-divider span {
+  font-size: 14px;
+  color: #666;
+}
+/* Mode Select */
+.login-page-mode-select{
+    margin-right: 0;
+}
+
+/* Login Form Infor */
+.login-page-form-infor{
+    text-align: center;
+    width: 300px;
+}

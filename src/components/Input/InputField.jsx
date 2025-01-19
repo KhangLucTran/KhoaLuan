@@ -1,14 +1,16 @@
 import { useTheme } from "@emotion/react";
+import React, { useState } from "react";
+
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
 
 const InputField = ({
   id,
+  width,
   label,
   type,
   value,
@@ -39,9 +41,9 @@ const InputField = ({
     <TextField
       InputProps={{
         sx: {
-          borderRadius: 2,
-          width: 280,
-          height: 40,
+          borderRadius: 3,
+          width: width,
+          height: 50,
           color: theme.palette.text.primary,
         },
         startAdornment: (focused || value) && icon && (
@@ -85,6 +87,7 @@ const InputField = ({
 
 InputField.propTypes = {
   id: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   value: PropTypes.string,
