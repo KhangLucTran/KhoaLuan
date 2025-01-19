@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/AuthPages/LoginPage";
 import HomePage from "./pages/HomePages/HomePage";
 import RegisterPage from "./pages/AuthPages/RegisterPage";
+import PageNotFound from "./pages/PageNotFound";
 
 const router = createBrowserRouter([
   {
@@ -9,16 +10,16 @@ const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path: "/login",
+    path: "/levents/login",
     element: <LoginPage />,
   },
   {
-    path: "/register",
+    path: "/levents/register",
     element: <RegisterPage />,
   },
   {
     path: "*",
-    element: <h1>404 - Page</h1>,
+    element: <PageNotFound />,
   },
 ]);
 

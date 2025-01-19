@@ -1,0 +1,32 @@
+/* Tooltip cơ bản */
+.tooltip {
+    position: relative; /* Đảm bảo tooltip được căn chỉnh với phần tử cha */
+    cursor: pointer;
+  }
+  
+  /* Phần tử nội dung tooltip */
+  .tooltip::after {
+    content: attr(data-tooltip); /* Lấy nội dung từ thuộc tính `data-tooltip` */
+    position: absolute;
+    bottom: 120%; /* Hiển thị tooltip phía trên phần tử */
+    left: 50%; /* Căn giữa theo chiều ngang */
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0; /* Ẩn tooltip ban đầu */
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none; /* Đảm bảo tooltip không cản trở sự kiện chuột */
+  }
+  
+  /* Hiển thị tooltip khi hover */
+  .tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+  

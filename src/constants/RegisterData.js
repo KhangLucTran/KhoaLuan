@@ -1,5 +1,7 @@
 import EmailIcon from "@mui/icons-material/Email";
 import PasswordIcon from "@mui/icons-material/Password";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+
 import background1 from "../assets/bg1.png";
 import background3 from "../assets/bg3.jpg";
 import background4 from "../assets/bg4.jpg";
@@ -8,8 +10,8 @@ import background6 from "../assets/bg6.jpg";
 import background7 from "../assets/bg7.jpg";
 import background8 from "../assets/bg8.jpg";
 
-// Dữ liệu của LoginForm
-const loginFields = [
+// Dữ liệu của RegisterForm
+const registerFields = [
   {
     name: "email",
     width: "280px",
@@ -27,10 +29,18 @@ const loginFields = [
     icon: PasswordIcon,
     isPasswordField: true,
   },
+  {
+    name: "username",
+    width: "280px",
+    label: "Tên tài khoản",
+    type: "text",
+    autoComplete: "current-username",
+    icon: AssignmentIndIcon,
+  },
 ];
 
 // Hình ảnh của itemData Login
-const itemLoginData = [
+const itemRegisterData = [
   {
     img: background1,
     title: "Breakfast",
@@ -90,4 +100,4 @@ const itemLoginData = [
     cols: 2,
   },
 ];
-export { loginFields, itemLoginData };
+export { registerFields, itemRegisterData };
