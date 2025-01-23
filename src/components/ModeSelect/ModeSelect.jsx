@@ -18,28 +18,36 @@ function ModeSelect() {
   };
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-      <InputLabel id="label-select-dark-light-mode">Mode</InputLabel>
+    <FormControl sx={{ mt: 2, ml: 2, minWidth: 120 }} size="small">
+      <InputLabel id="label-select-dark-light-mode">Chế độ</InputLabel>
       <Select
         labelId="label-select-dark-light-mode"
         id="select-dark-light-mode"
         value={mode}
         label="Mode"
         onChange={handleChange}
+        sx={{ borderRadius: 3 }}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              borderRadius: 3, // Tùy chỉnh cho menu thả xuống
+            },
+          },
+        }}
       >
         <MenuItem value="light">
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <LightModeIcon fontSize="small" /> Light
+            <LightModeIcon fontSize="small" /> Sáng
           </Box>
         </MenuItem>
         <MenuItem value="dark">
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Brightness4Icon fontSize="small" /> Dark
+            <Brightness4Icon fontSize="small" /> Tối
           </Box>
         </MenuItem>
         <MenuItem value="system">
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <SettingsBrightnessIcon fontSize="small" /> System
+            <SettingsBrightnessIcon fontSize="small" /> Hệ thống
           </Box>
         </MenuItem>
       </Select>

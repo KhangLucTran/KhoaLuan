@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import "../styles/404Page.css";
+import "../styles/Tooltip.css";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 
 const PageNotFound = () => {
   return (
@@ -11,8 +13,12 @@ const PageNotFound = () => {
           Có vẻ như chúng tôi không thể tìm thấy trang bạn yêu cầu. Đừng lo,
           chúng tôi có thể giúp bạn quay lại!
         </p>
-        <Link to="/" className="page-not-found-button">
-          Quay lại trang chủ
+        <Link
+          to="/"
+          className="page-not-found-button tooltip"
+          data-tooltip="Nhấn để quay về trang chủ"
+        >
+          <ArrowLeftIcon fontSize="large" />
         </Link>
       </div>
     </div>

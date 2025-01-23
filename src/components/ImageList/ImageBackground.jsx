@@ -1,34 +1,42 @@
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import { itemLoginData } from "../../constants/LoginData";
+import { itemRegisterData } from "../../constants/RegisterData";
 
 const ImageBackground = () => {
-  function srcset(image, size, rows = 1, cols = 1) {
-    return {
-      src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
-      srcSet: `${image}?w=${size * cols}&h=${
-        size * rows
-      }&fit=crop&auto=format&dpr=2 2x`,
-    };
-  }
-
   return (
     <ImageList
-      sx={{ width: 650, height: "auto" }}
-      variant="quilted"
-      cols={4}
-      rowHeight={121}
+      sx={{
+        width: 600,
+        height: "95vh",
+        margin: "0 auto", // Căn giữa toàn bộ danh sách ảnh
+        display: "grid",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      variant="woven"
+      cols={3}
+      gap={8}
     >
-      {itemLoginData.map((item) => (
+      {itemRegisterData.map((item) => (
         <ImageListItem
           key={item.img}
-          cols={item.cols || 1}
-          rows={item.rows || 1}
+          sx={{
+            position: "relative",
+            overflow: "hidden",
+            borderRadius: "8px", // Làm tròn góc
+          }}
         >
           <img
-            {...srcset(item.img, 121, item.rows, item.cols)}
+            srcSet={`${item.img}?w=161&fit=crop&auto=format&dpr=2 2x`}
+            src={`${item.img}?w=161&fit=crop&auto=format`}
             alt={item.title}
             loading="lazy"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover", // Đảm bảo ảnh bao phủ toàn bộ khung
+              objectPosition: "center", // Căn giữa hình ảnh
+            }}
           />
         </ImageListItem>
       ))}

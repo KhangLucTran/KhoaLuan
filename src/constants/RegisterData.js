@@ -1,14 +1,20 @@
 import EmailIcon from "@mui/icons-material/Email";
 import PasswordIcon from "@mui/icons-material/Password";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 
-import background1 from "../assets/bg1.png";
+import background15 from "../assets/bg15.jpg";
 import background3 from "../assets/bg3.jpg";
 import background4 from "../assets/bg4.jpg";
 import background5 from "../assets/bg5.jpg";
 import background6 from "../assets/bg6.jpg";
 import background7 from "../assets/bg7.jpg";
 import background8 from "../assets/bg8.jpg";
+import background9 from "../assets/bg9.jpg";
+import background10 from "../assets/bg10.jpg";
+import background11 from "../assets/bg11.jpg";
+import background12 from "../assets/bg12.jpg";
+import background13 from "../assets/bg13.jpg";
 
 // Dữ liệu của RegisterForm
 const registerFields = [
@@ -37,65 +43,73 @@ const registerFields = [
     autoComplete: "current-username",
     icon: AssignmentIndIcon,
   },
+  {
+    name: "numberphone",
+    width: "280px",
+    label: "SĐT",
+    type: "numberphone",
+    autoComplete: "current-numberphone",
+    icon: ContactPhoneIcon,
+  },
 ];
 
 // Hình ảnh của itemData Login
 const itemRegisterData = [
   {
-    img: background1,
-    title: "Breakfast",
+    img: background10,
+    title: "Levents",
     rows: 2,
     cols: 2,
   },
   {
     img: background3,
-    title: "Burger",
+    title: "Levents",
   },
   {
     img: background4,
-    title: "Camera",
+    title: "Levents",
   },
   {
     img: background5,
-    title: "Coffee",
+    title: "Levents",
     cols: 2,
   },
   {
     img: background6,
-    title: "Hats",
+    title: "Levents",
     cols: 2,
   },
   {
     img: background7,
-    title: "Honey",
+    title: "Levents",
     author: "@arwinneil",
     rows: 2,
     cols: 2,
   },
   {
     img: background8,
-    title: "Basketball",
+    title: "Levents",
   },
   {
-    img: "https://images.unsplash.com/photo-1518756131217-31eb79b20e8f",
+    img: background9,
     title: "Fern",
   },
   {
-    img: "https://images.unsplash.com/photo-1597645587822-e99fa5d45d25",
+    img: background13,
     title: "Mushrooms",
     rows: 2,
     cols: 2,
   },
   {
-    img: "https://images.unsplash.com/photo-1567306301408-9b74779a11af",
+    img: background11,
     title: "Tomato basil",
   },
   {
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1",
+    img: background12,
     title: "Sea star",
   },
   {
-    img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6",
+    img: background15,
     title: "Bike",
     cols: 2,
   },

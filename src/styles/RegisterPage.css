@@ -1,16 +1,38 @@
-/* Login Container */
-.login-container{
+/* register Container */
+.register-container{
     height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    background-size: contain;
-    z-index: -1;
 }
-/* Login Image */
-.login-page-image {
+
+/* register mode and comeback */
+.register-not-found-button {
+  padding: 10px;
+  color:black;
+  border: 1px solid #333;
+  border-radius: 30%; /* Đảm bảo nút hình tròn */
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  width: 40px; /* Đặt chiều rộng cố định cho nút */
+  height: 40px; /* Đặt chiều cao cố định cho nút */
+  background-color: white; /* Thêm màu nền (nếu cần) */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Tạo hiệu ứng nổi */
+  cursor: pointer; /* Hiệu ứng con trỏ chuột */
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.register-not-found-button:hover {
+  color:white;
+  border-color:white;
+  background-color: #1877F2; /* Đổi màu nền khi hover */
+  transform: scale(1.1); /* Tăng kích thước khi hover */
+}
+/* register Image */
+.register-page-image {
     width: 50%;
     height: 90vh;
     background-size: cover;
@@ -70,29 +92,31 @@
   background-color: white;
   transform: scale(1.3);
 }
-/* Login Form */
-.login-page-form{
+/* register Form */
+.register-page-form{
     padding: 10;
     height: 100vh;
     height: auto;
 }
-.login-page-form h1{
+.register-page-form h1{
     font-weight: bold;
     font-size: 46px;
     text-align: center;    
 }
-.login-page-form h3{
+.register-page-form h3{
     font-size: 24px;
     color: #1877F2;
     margin-bottom: 3rem;
 }
-.login-page-form-social{
+.register-page-form-social{
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 1rem;
+    
 }
 /* Đường line */
-.login-page-form-divider {
+.register-page-form-divider {
 width: 280px;
   display: flex;
   justify-content: center;
@@ -100,25 +124,25 @@ width: 280px;
   margin: 20px 0;
 }
 
-.login-page-form-divider hr {
+.register-page-form-divider hr {
   width: 40%;
   border: none;
   border-top: 1px solid #ccc;
   margin: 0 10px;
 }
 
-.login-page-form-divider span {
+.register-page-form-divider span {
   font-size: 14px;
   color: #666;
 }
-/* Login Form Infor */
-.login-page-form-infor{
+/* register Form Infor */
+.register-page-form-infor{
     text-align: center;
     width: 300px;
 }
 
-/* Login Form Forgot Password */
-.login-page-form-forgot-password {
+/* register Form Forgot Password */
+.register-page-form-forgot-password {
   font-size: 14px;
   color: #1877F2;
   cursor: pointer;
@@ -126,16 +150,16 @@ width: 280px;
   text-align: center  ; 
 }
 
-.login-page-form-register{
+.register-page-form-register{
   text-align: center;
   font-size: 14px;
 }
-.login-page-form-register a{
+.register-page-form-register a{
   font-weight: bold;
   color:black;
   text-decoration:none;
 }
-.login-page-form-register a:hover{
+.register-page-form-register a:hover{
   text-decoration: underline;
   color:#1877F2;
 }
