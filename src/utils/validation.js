@@ -26,10 +26,20 @@ export const validateUsername = (username) => {
   return null;
 };
 
+// 4. Check Valiate Numberphone
+export const validateNumberphone = (numberphone) => {
+  if (!numberphone) return "Số điện thoại không được để trống!";
+  const phoneRegex = /^0[0-9]{8,10}$/;
+  if (!phoneRegex.test(numberphone))
+    return "Số điện thoại phải bắt đầu bằng 0 và có từ 9 đến 11 chữ số!";
+  return null;
+};
+
 // 4. Kiểm tra hợp lệ từng trường
 export const validateField = (name, value) => {
   if (name === "email") return validateEmail(value);
   if (name === "password") return validatePassword(value);
   if (name === "username") return validateUsername(value);
+  if (name === "numberphone") return validateNumberphone(value);
   return null; // Không có lỗi cho các trường khác
 };

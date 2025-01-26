@@ -38,7 +38,7 @@ const loginFields = [
 // Hình ảnh của itemData Login
 const itemLoginData = [
   {
-    img: background10,
+    img: background12,
     title: "Levents",
     rows: 2,
     cols: 2,
@@ -87,7 +87,7 @@ const itemLoginData = [
     title: "Tomato basil",
   },
   {
-    img: background12,
+    img: background10,
     title: "Sea star",
   },
   {

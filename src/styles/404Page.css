@@ -49,17 +49,22 @@
   /* Nút quay lại */
   .page-not-found-button {
     display: inline-block;
+    align-items: center;
+    justify-content: center;
     padding: 10px 15px;
     font-size: 16px;
     font-weight: 600;
-    color: #fff;
-    background-color: #1877F2;
+    color:black;
+    border: 1px solid #333;
     text-decoration: none;
     border-radius: 20px;
     transition: background-color 0.3s ease;
   }
   
   .page-not-found-button:hover {
-    background-color: #555;
+    color:white;
+    border-color:white;
+    background-color: #1877F2; /* Đổi màu nền khi hover */
+    transform: scale(1.1); /* Tăng kích thước khi hover */
   }
   

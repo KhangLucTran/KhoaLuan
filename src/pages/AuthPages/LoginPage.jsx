@@ -9,8 +9,12 @@ import ChevronRightTwoToneIcon from "@mui/icons-material/ChevronRightTwoTone";
 
 import { itemLoginData } from "../../constants/LoginData";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../features/auth/authSlice";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const { isLoading, error } = useSelector((state) => state.auth);
   // Xử lí Background
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -28,7 +32,7 @@ const LoginPage = () => {
 
   // Xử lí nút "Đăng nhập" của Form Login
   const handleLoginSubmit = (values) => {
-    console.log("Login with object:", values);
+    dispatch(loginUser(values));
   };
 
   return (
@@ -91,6 +95,8 @@ const LoginPage = () => {
           </div>
           {/* Login Form */}
           <LoginForm onSubmit={handleLoginSubmit} />
+          {isLoading && <p>Đang đăng nhập...</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
           {/* Forgot Password? */}
           <p
             className="login-page-form-forgot-password tooltip"
