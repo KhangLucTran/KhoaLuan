@@ -1,0 +1,60 @@
+/* Tùy chỉnh Paper của Dialog */
+.detailed-dialog-paper {
+  background-color: rgba(245, 245, 245, 0.9);
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  max-width: 820px;
+  width: 100%;
+}
+
+/* Container chia 2 cột: hình ảnh và nội dung */
+.detailed-dialog-container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 20px;
+}
+
+/* Cột hình ảnh */
+.detailed-dialog-image {
+  flex: 1;
+  background-image: url("../assets/forgot_password.gif"); /* Cập nhật đường dẫn ảnh nếu cần */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+/* Cột nội dung */
+.detailed-dialog-content {
+  flex: 1;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Tiêu đề Dialog */
+.detailed-dialog-title {
+  font-size: 2.5rem;
+  color: #1877F2;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Nội dung chi tiết */
+.detailed-dialog-text {
+  font-size: 1.2rem;
+  color: #000;
+  margin-bottom: 1.5rem;
+}
+
+/* Các nút hành động */
+.detailed-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}

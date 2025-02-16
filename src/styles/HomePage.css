@@ -1,0 +1,56 @@
+.home-page-container{
+    width: 100%;
+    height: 100vh;
+
+    position: relative; /* Để định vị các phần tử con */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Đẩy nội dung xuống dưới */
+    align-items: center;
+    padding-bottom: 5rem; /* Khoảng cách giữa icon và mép dưới */
+}
+.home-page-icons{
+    display: flex;  
+    justify-content: center;
+    align-items: center;
+    gap: 10rem;
+    position: absolute;
+    bottom: 4rem; /* Điều chỉnh vị trí so với đáy */
+    z-index: 2; /* Đảm bảo icon hiển thị phía trên chấm tròn */
+}
+
+.home-page-icon.home, 
+.home-page-icon.profile{
+    border-radius: 50%;
+    background-color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 8px;
+}
+.home-page-icon.search{
+    border-radius: 50%;
+    background-color: white;
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 10px;
+}
+.dot-indicator-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    position: absolute;
+    bottom: 2rem; /* Điều chỉnh vị trí chấm tròn */
+    z-index: 1; /* Đảm bảo chấm tròn nằm phía dưới icon */
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: gray;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: white;
+}

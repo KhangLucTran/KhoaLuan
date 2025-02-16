@@ -1,0 +1,105 @@
+/* Định dạng chung */
+.profile-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: url("../assets/bg12.jpg");
+}
+
+
+.sidebar-logo{
+  color:#1877F2;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.profile-content {
+  margin-top: 5rem;
+  width: 80%;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-content:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Sidebar (Drawer) */
+.MuiDrawer-paper {
+  width: 250px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+}
+
+.MuiListItemButton-root {
+  padding: 12px 16px;
+  transition: background 0.3s ease;
+}
+
+.MuiListItemButton-root:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.MuiListItemIcon-root {
+  color: #333;
+}
+
+.MuiListItemText-primary {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Button mở sidebar */
+.menu-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  z-index: 1100; /* Đảm bảo cao hơn header */
+}
+
+.menu-button:hover {
+  background: #1877F2;
+  color: white;
+}
+
+/* Footer */
+.footer {
+  margin-top: 40px;
+  padding: 16px;
+  text-align: center;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  color: #333;
+  font-size: 14px;
+}
+/* Màu chữ và icon mặc định là đen */
+.MuiListItemIcon-root {
+  color: #000 !important;
+}
+
+.MuiListItemText-primary {
+  color: #000 !important;
+  font-weight: 500;
+}
+
+/* Khi hover đổi màu thành xanh */
+.MuiListItemButton-root:hover {
+  background-color: rgba(24, 119, 242, 0.1) !important;
+  border-radius: 8px;
+}
+
+.MuiListItemButton-root:hover .MuiListItemIcon-root,
+.MuiListItemButton-root:hover .MuiListItemText-primary {
+  color: #1877F2 !important;
+}

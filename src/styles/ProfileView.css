@@ -1,0 +1,239 @@
+/* --- Phần Tiêu đề & Ngày thành viên --- */
+.profile-view-container-title {
+  margin-bottom: 15px;
+}
+
+.profile-view-container-title h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1877F2;
+  margin: 0;
+  transition: transform 0.3s ease;
+}
+
+.profile-view-container-title p {
+  font-size: 16px;
+  color: #000;
+  margin-top: 5px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.profile-view-day-begin {
+  width: 280px;
+  height: 35px;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background: radial-gradient(circle, #1877F2, #6ec6ff);
+  color: #f5f7fa;
+}
+
+/* --- Giới hạn chiều cao container chính --- */
+.profile-view-container {
+  display: flex;
+  max-height: 80vh;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* --- Nội dung chính --- */
+.profile-view-container-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- Phần Avatar & Thông tin cơ bản --- */
+.profile-view-info-avatar{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4rem;
+}
+.profile-view-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-view-info-title {
+  text-align: center;
+}
+
+.profile-view-info-title-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1877F2;
+}
+
+.profile-view-info-title-email {
+  font-size: 14px;
+  font-style: italic;
+  font-weight: bold;
+  color: #000;
+}
+
+.profile-view-info-title-email span {
+  font-size: 12px;
+  color: #1877F2;
+}
+
+/* --- Phần Nội dung chính - Read-only (Inline Editing) --- */
+.profile-readonly-info {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px dashed; 
+  gap: 10px;
+  width: 100%;
+  max-height: 65vh; /* Tránh nội dung tràn ra */
+  overflow-y: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.profile-readonly-info h4{
+  font-style: italic;
+}
+.profile-readonly-info:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-view-form {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-view-form:hover {
+  transform: translateY(-3px);
+  border-radius: 15px;
+  border: 1px dashed #ddd;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Responsive (Mobile) --- */
+@media (max-width: 768px) {
+  .profile-view-container-main {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+}
+
+
+/* Giấy note */
+.profile-note {
+  background-color: #fff9c4;
+  color: #333;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  font-size: 14px;
+  font-weight: bold;
+  position: relative;
+  transform: rotate(-5deg);
+  transition: transform 0.3s ease-in-out;
+  border-left: 5px solid #ff9800;
+}
+
+.profile-note h4 {
+  margin: 0 0 5px;
+  font-size: 16px;
+  color: #d47f00;
+}
+
+.profile-note p {
+  margin: 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.profile-note:hover {
+  transform: rotate(0deg);
+}
+
+/* Định dạng khi hiển thị trên mobile */
+@media (max-width: 768px) {
+  .profile-note {
+    width: 90%;
+    text-align: center;
+  }
+}
+
+/* CSS cho vai trò Admin với vương miện */
+.profile-view-info-avatar-title p{
+  color: #000;
+  font-weight: bold;
+}
+
+.role-standard {
+  color: #1877F2;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(24, 119, 242, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #1877F2;
+}
+
+.role-admin {
+  display: flex;
+  color: #fff;
+  background: linear-gradient(135deg, #ff5252, #ff1744);
+  padding: 6px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(211, 47, 47, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+
+.role-standard:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(24, 119, 242, 0.3);
+}
+
+.role-admin:hover{
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(211, 47, 47, 0.4); /* Màu đỏ đậm hơn */
+}
+
+.account-status, .account-provider {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.status-label, .provider-label {
+  font-weight: bold;
+  color: #000;
+}
+
+.status-value {
+  margin-left: 6px;
+  font-weight: bold;
+}
+
+.verified {
+  color: #28a745;
+}
+
+.unverified {
+  color: #dc3545;
+}
+
+.provider-value {
+  color: #1877F2;
+  font-weight: bold;
+}

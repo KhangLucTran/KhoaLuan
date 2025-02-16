@@ -1,0 +1,109 @@
+/* -------------------------------
+   Header Container
+--------------------------------*/
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: #333;
+    font-family: "Poppins", sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 5rem;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Khi cuộn xuống (thêm lớp "scrolled" vào header-container) */
+  .header-container.scrolled {
+    background-color: #fff;
+    color: #1877F2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* -------------------------------
+     Logo
+  --------------------------------*/
+  .header-logo {
+    margin-left: 4rem;
+  }
+  
+  .header-logo a {
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: inherit;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+  }
+  
+  .header-logo a:hover {
+    color: #333;
+  }
+  
+  /* -------------------------------
+     Navigation Menu
+  --------------------------------*/
+  .header-nav ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header-nav ul li a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 5px;
+    transition: color 0.3s ease;
+  }
+  
+  .header-nav ul li a:hover {
+    color: #333;
+    border-bottom: 1px solid #333;
+  }
+  
+  /* -------------------------------
+     Header Icon & User Info
+  --------------------------------*/
+  .header-nav-icon {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-right: 4rem;
+  }
+  
+  .header-nav-icon svg {
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .header-nav-icon svg:hover {
+    color: #333;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    font-weight: bold;
+    margin-right: 5rem;
+  }
+  
+  .user-info svg {
+    font-size: 1.5rem;
+  }
+  
+  .user-info p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
