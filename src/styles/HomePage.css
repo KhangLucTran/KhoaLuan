@@ -10,7 +10,7 @@
     padding-bottom: 5rem; /* Khoảng cách giữa icon và mép dưới */
 }
 .home-page-icons{
-    display: flex;
+    display: flex;  
     justify-content: center;
     align-items: center;
     gap: 10rem;

@@ -8,13 +8,16 @@ import { itemLoginData } from "../../constants/LoginData";
 import { useState } from "react";
 
 import "../../styles/HomePage.css";
-import Header from "../../components/header/Header";
 import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
-import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/Footer";
+import DetailedDialog from "../../components/Toast/Dialog";
+import useProtectedDialog from "../../hooks/protectedDialogHook";
 
 const HomePage = () => {
-  // Navigate
-  const navigate = useNavigate();
+  // Dùng useProtectedDialog để quản lí trang thái của Dialog
+  const { open, setOpen, handleProtectedAction, navigate } =
+    useProtectedDialog();
 
   // Xử lí Background
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -66,6 +69,7 @@ const HomePage = () => {
             <PersonOutlineOutlinedIcon
               className="home-page-icon profile"
               fontSize="small"
+              onClick={() => handleProtectedAction("/levents/profile/view")}
             />
           </CustomTooltip>
         </div>
@@ -80,6 +84,13 @@ const HomePage = () => {
           ))}
         </div>
       </div>
+      <Footer />
+      {/* Dialog */}
+      <DetailedDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onLogin={() => navigate("/levents/login")}
+      />
     </>
   );
 };

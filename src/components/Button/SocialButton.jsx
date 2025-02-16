@@ -2,7 +2,9 @@ import SubmitButton from "./SubmitButton";
 import GoogleIcon from "../../assets/logo_google_icon.svg";
 import FacebookIcon from "../../assets/logo_facebook_icon1.svg";
 
-import "../../styles/Tooltip.css";
+import CustomTooltip from "../CustomTooltip/CustomTooltip";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const sx = {
   borderRadius: 3,
@@ -15,38 +17,56 @@ const sx = {
 };
 
 const SocialButtons = () => {
+  const [loading, setLoading] = useState(false);
+  const { isLoading } = useSelector((state) => state.auth);
+  // Xử lí đăng nhập bằng Google
+  const handleGoogleLogin = () => {
+    setLoading(true);
+    window.location.href = "http://localhost:5000/api/auth/google";
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
       {/* Google Button */}
-      <SubmitButton
-        className="tooltip"
-        data-tooltip="Đăng nhập với Google"
-        variant="outlined"
-        icon={
-          <img
-            src={GoogleIcon}
-            alt="Google Icon"
-            style={{ width: 30, height: 30, alignItems: "center" }}
+      <CustomTooltip title="Tiếp tục bằng Google">
+        <span>
+          <SubmitButton
+            variant="outlined"
+            icon={
+              loading ? (
+                <span>🔄</span>
+              ) : (
+                <img
+                  src={GoogleIcon}
+                  alt="Google Icon"
+                  style={{ width: 30, height: 30, alignItems: "center" }}
+                />
+              )
+            }
+            onClick={handleGoogleLogin}
+            sx={sx}
+            disabled={isLoading}
           />
-        }
-        onClick={() => console.log("Login with Google")}
-        sx={sx}
-      />
+        </span>
+      </CustomTooltip>
       {/* Facebook Button */}
-      <SubmitButton
-        className="tooltip"
-        data-tooltip="Đăng nhập với Facebook"
-        variant="outlined"
-        icon={
-          <img
-            src={FacebookIcon}
-            alt="Facebook Icon"
-            style={{ width: 20, height: 20, alignItems: "center" }}
+      <CustomTooltip title="Tiếp tục bằng Facebook">
+        <span>
+          <SubmitButton
+            variant="outlined"
+            icon={
+              <img
+                src={FacebookIcon}
+                alt="Facebook Icon"
+                style={{ width: 30, height: 30, alignItems: "center" }}
+              />
+            }
+            onClick={() => console.log("Login with Facebook")}
+            sx={sx}
+            disabled={isLoading}
           />
-        }
-        onClick={() => console.log("Login with Facebook")}
-        sx={sx}
-      />
+        </span>
+      </CustomTooltip>
     </div>
   );
 };

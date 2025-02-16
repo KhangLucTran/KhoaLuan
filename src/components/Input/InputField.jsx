@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 const InputField = ({
   id,
   width,
+  height = "50px",
   label,
   type,
   value,
@@ -34,22 +35,29 @@ const InputField = ({
   };
 
   const handleTogglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev); // Đảo ngược trạng thái showPassword
+    setShowPassword((prev) => !prev);
   };
 
   return (
     <TextField
       InputProps={{
         sx: {
+          fontSize: "1rem",
+          fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+          lineHeight: 1.5,
           borderRadius: 3,
           width: width,
-          height: 50,
+          height: height,
           color: theme.palette.text.primary,
         },
         startAdornment: (focused || value) && icon && (
           <InputAdornment position="start">
             {React.cloneElement(icon, {
-              style: { color: theme.palette.primary.main },
+              style: {
+                color: error
+                  ? theme.palette.error.main
+                  : theme.palette.primary.main,
+              },
             })}
           </InputAdornment>
         ),
@@ -67,7 +75,7 @@ const InputField = ({
       }}
       InputLabelProps={{
         sx: {
-          fontSize: "0.85rem",
+          fontSize: "0.8rem",
           color: theme.palette.text.secondary,
         },
       }}
@@ -77,7 +85,7 @@ const InputField = ({
       value={value}
       onChange={onChange}
       autoComplete={autoComplete}
-      error={error}
+      error={!!error}
       helperText={helperText}
       onFocus={handleFocus}
       onBlur={handleBlur}
@@ -88,19 +96,22 @@ const InputField = ({
 InputField.propTypes = {
   id: PropTypes.string.isRequired,
   width: PropTypes.string.isRequired,
+  height: PropTypes.string,
   label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  autoComplete: PropTypes.string.isRequired,
+  autoComplete: PropTypes.string,
   icon: PropTypes.element,
-  helperText: PropTypes.string.isRequired,
-  error: PropTypes.string.isRequired,
-  isPasswordField: PropTypes.bool, // Prop để kiểm tra input có phải là password field không
+  helperText: PropTypes.string,
+  error: PropTypes.bool,
+  isPasswordField: PropTypes.bool,
 };
 
 InputField.defaultProps = {
   isPasswordField: false,
+  error: false,
+  helperText: "",
 };
 
 export default InputField;

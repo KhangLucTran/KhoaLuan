@@ -139,3 +139,8 @@ width: 280px;
   text-decoration: underline;
   color:#1877F2;
 }
+
+.login-page-form-forgot-password a{
+  color:#1877F2;
+  text-decoration: none;
+}

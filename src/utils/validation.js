@@ -41,5 +41,5 @@ export const validateField = (name, value) => {
   if (name === "password") return validatePassword(value);
   if (name === "username") return validateUsername(value);
   if (name === "numberphone") return validateNumberphone(value);
-  return null; // Không có lỗi cho các trường khác
+  return "Trường này không hợp lệ!";
 };

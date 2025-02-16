@@ -1,4 +1,6 @@
-/* Tổng thể Header */
+/* -------------------------------
+   Header Container
+--------------------------------*/
 .header-container {
     display: flex;
     justify-content: space-between;
@@ -13,107 +15,95 @@
     right: 0;
     z-index: 1000;
     height: 5rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Thay đổi khi cuộn */
-.header.scrolled {
-    background-color: white;
-    color: black;
-    border-bottom: 2px solid #EEEEEE;
-}
-
-/* Logo */
-.header-logo {
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Khi cuộn xuống (thêm lớp "scrolled" vào header-container) */
+  .header-container.scrolled {
+    background-color: #fff;
+    color: #1877F2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* -------------------------------
+     Logo
+  --------------------------------*/
+  .header-logo {
     margin-left: 4rem;
-}
-
-.header-logo a {
+  }
+  
+  .header-logo a {
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
     color: inherit;
     letter-spacing: 1px;
     transition: color 0.3s ease;
-}
-
-.header-logo a:hover {
-    color: black;
-}
-
-/* Menu điều hướng */
-.header-nav ul {
+  }
+  
+  .header-logo a:hover {
+    color: #333;
+  }
+  
+  /* -------------------------------
+     Navigation Menu
+  --------------------------------*/
+  .header-nav ul {
     display: flex;
     gap: 20px;
     list-style: none;
     margin: 0;
     padding: 0;
-}
-
-.header-nav ul li a {
+  }
+  
+  .header-nav ul li a {
     text-decoration: none;
     color: inherit;
     font-size: 1rem;
     font-weight: 500;
     padding: 5px;
     transition: color 0.3s ease;
-}
-
-.header-nav ul li a:hover {
-    color: black;
-    border-bottom: 1px solid black;
-}
-
-/* Icon điều hướng */
-.header-nav-icon {
+  }
+  
+  .header-nav ul li a:hover {
+    color: #333;
+    border-bottom: 1px solid #333;
+  }
+  
+  /* -------------------------------
+     Header Icon & User Info
+  --------------------------------*/
+  .header-nav-icon {
     display: flex;
     align-items: center;
     gap: 2rem;
     margin-right: 4rem;
-}
-
-.header-nav-icon svg {
+  }
+  
+  .header-nav-icon svg {
     cursor: pointer;
     transition: color 0.3s ease;
-}
-
-.header-nav-icon svg:hover {
-    color: black;
-}
-
-/* Dropdown menu */
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 200px;
-}
-
-.dropdown-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.dropdown-menu ul li {
-    padding: 10px 16px;
-    font-size: 0.9rem;
-    cursor: pointer;
+  }
+  
+  .header-nav-icon svg:hover {
     color: #333;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dropdown-menu ul li:last-child {
-    border-bottom: none;
-}
-
-.dropdown-menu ul li:hover {
-    background-color: #f0f0f0;
-    color: black;
-}   
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    font-weight: bold;
+    margin-right: 5rem;
+  }
+  
+  .user-info svg {
+    font-size: 1.5rem;
+  }
+  
+  .user-info p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
