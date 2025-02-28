@@ -47,7 +47,11 @@ const menuItems = [
       },
     ],
   },
-  { text: "Đơn mua", icon: <ShoppingCartOutlinedIcon />, link: "orders" },
+  {
+    text: "Đơn mua",
+    icon: <ShoppingCartOutlinedIcon />,
+    link: "/levents/invoice",
+  },
   { text: "Kho Voucher", icon: <LocalOfferOutlinedIcon />, link: "vouchers" },
   { text: "Xu", icon: <MonetizationOnOutlinedIcon />, link: "coins" },
 ];
