@@ -4,14 +4,14 @@ import { useSelector } from "react-redux";
 import { registerFields } from "../../constants/RegisterData";
 
 const RegisterForm = ({ onSubmit }) => {
-  const isLoading = useSelector((state) => state.auth);
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
   return (
     <AuthForm
       className="register-form"
       fields={registerFields}
       onSubmit={onSubmit}
-      buttonText={isLoading ? "Đăng ký" : "Đang Đăng ký..."}
+      buttonText={isLoading ? "Đang đăng ký..." : "Đăng ký"}
       layout="column"
       isSubmitting={isLoading}
     />

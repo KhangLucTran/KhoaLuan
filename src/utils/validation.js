@@ -1,5 +1,7 @@
 // Check Validation
 
+import dayjs from "dayjs";
+
 // 1. Check Validate Email.
 export const validateEmail = (email) => {
   if (!email) return "Email không được để trống!";
@@ -34,12 +36,26 @@ export const validateNumberphone = (numberphone) => {
     return "Số điện thoại phải bắt đầu bằng 0 và có từ 9 đến 11 chữ số!";
   return null;
 };
+// 5. Hàm kiểm tra Tuổi
+export const validateDate = (dateStr) => {
+  if (!dateStr) return "Ngày sinh không được để trống!";
 
-// 4. Kiểm tra hợp lệ từng trường
+  // Giả sử dateStr có định dạng "YYYY-MM-DD"
+  const birthDate = dayjs(dateStr, "YYYY-MM-DD");
+  if (!birthDate.isValid()) return "Ngày sinh không hợp lệ!";
+
+  const age = dayjs().diff(birthDate, "year");
+  if (age < 16) return "Bạn phải đủ 16 tuổi để sử dụng dịch vụ";
+
+  return null; // Không có lỗi
+};
+
+// 6. Kiểm tra hợp lệ từng trường
 export const validateField = (name, value) => {
   if (name === "email") return validateEmail(value);
   if (name === "password") return validatePassword(value);
   if (name === "username") return validateUsername(value);
   if (name === "numberphone") return validateNumberphone(value);
+  if (name === "dob") return validateDate(value);
   return "Trường này không hợp lệ!";
 };

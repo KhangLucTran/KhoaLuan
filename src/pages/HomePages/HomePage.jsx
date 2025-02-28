@@ -63,7 +63,11 @@ const HomePage = () => {
             </div>
           </CustomTooltip>
           <CustomTooltip title="Tìm kiếm">
-            <SearchIcon className="home-page-icon search" fontSize="small" />
+            <SearchIcon
+              className="home-page-icon search"
+              fontSize="small"
+              onClick={() => navigate("/levents/products")}
+            />
           </CustomTooltip>
           <CustomTooltip title="Tài khoản cá nhân">
             <PersonOutlineOutlinedIcon

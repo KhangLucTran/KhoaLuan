@@ -93,9 +93,10 @@ const LoginPage = () => {
       // Dùng AccessToken để call API: me (Lấy thông tin user đang đăng nhập)
       dispatch(fetchUserInfo());
       // Chuyển hướng về trang chủ
-      navigate("/", { replace: true });
+      const redirectUrl = location.state?.from || "/";
+      navigate(redirectUrl, { replace: true });
     }
-  }, [location.search, dispatch, navigate]);
+  }, [location.search, dispatch, navigate, location.state]);
 
   // Giao diện Trang Login
   return (

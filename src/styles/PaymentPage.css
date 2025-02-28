@@ -1,0 +1,149 @@
+/* Tổng thể thanh toán */
+.payment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 5rem auto;
+  padding: 40px 20px;
+}
+
+.payment-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Cột sản phẩm */
+.product-section {
+  flex: 1;
+  padding: 30px;
+}
+
+.product-section h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 15px;
+}
+
+.product-image {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.final-amount {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 22px;
+  text-align: right;
+  color: #1877F2;
+  padding-top: 15px;
+}
+
+/* Cột thanh toán */
+.payment-section {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.payment-section h4 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.user-info {
+  padding: 20px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+}
+
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.payment-label {
+  width: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.payment-label span {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.payment-icon {
+  width: 60px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.payment-button {
+  width: 100%;
+  padding: 12px;
+  background: #1877F2;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.payment-button:hover {
+  background: #165eab;
+}
+
+@media (max-width: 768px) {
+  .payment-card {
+      flex-direction: column;
+  }
+  .product-section {
+      border-right: none;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 20px;
+  }
+}
