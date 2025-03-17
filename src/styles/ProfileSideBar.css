@@ -1,40 +1,46 @@
 /* Định dạng chung */
 .profile-container {
-  min-height: 100vh;
+  margin-left: 250px; /* Đảm bảo nội dung không bị che */
+  width: calc(100% - 250px);
+  padding: 2rem;
+  min-height: calc(100vh - 90px); /* Giữ footer luôn ở dưới */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: url("../assets/bg12.jpg");
+  background: #F8F9FA; 
 }
 
 
-.sidebar-logo{
+
+.sidebar-logo-profile-h2{
+  text-align: center;
   color:#1877F2;
   font-size: 24px;
-  text-align: center;
+  margin-top: 3rem;
   margin-bottom: 5rem;
 }
 
+/* Profile content */
 .profile-content {
-  margin-top: 5rem;
-  width: 80%;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 24px;
+  width: 100%;
+  padding: 1.5rem;
   transition: all 0.3s ease-in-out;
 }
-
-.profile-content:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+/* Sidebar */
+.sidebar-container {
+  width: 250px; /* Giảm chiều rộng sidebar */
+  height: 100%;
+  position: fixed;
+  left: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem; /* Giảm padding để gọn hơn */
+  overflow-y: auto;
+  border-right: 1px solid #e0e0e0; /* Thêm viền để phân tách */
 }
 
-/* Sidebar (Drawer) */
-.MuiDrawer-paper {
-  width: 250px;
-  background: white;
-  border-right: 1px solid #e0e0e0;
+.profile-content {  
+  padding: 2rem;
 }
 
 .MuiListItemButton-root {
@@ -54,25 +60,6 @@
   font-weight: 500;
   color: #333;
 }
-
-/* Button mở sidebar */
-.menu-button {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-  z-index: 1100; /* Đảm bảo cao hơn header */
-}
-
-.menu-button:hover {
-  background: #1877F2;
-  color: white;
-}
-
 /* Footer */
 .footer {
   margin-top: 40px;
@@ -102,4 +89,16 @@
 .MuiListItemButton-root:hover .MuiListItemIcon-root,
 .MuiListItemButton-root:hover .MuiListItemText-primary {
   color: #1877F2 !important;
+}
+
+.footer {
+  position: relative; /* Không dùng fixed để tránh che nội dung */
+  width: 100%;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  color: #333;
+  font-size: 14px;
+  padding: 16px;
+  text-align: center;
+  margin-top: auto; /* Đẩy footer xuống cuối khi nội dung ít */
 }

@@ -30,3 +30,19 @@ export const updateInfo = async (credentials) => {
     );
   }
 };
+// Gọi API chỉnh sửa thông tin người dùng đang đăng nhập
+export const updateAvatar = async (formData) => {
+  try {
+    const response = await api.put("/api/profile/update-avatar", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("🔥 Avatar cập nhật thành công:", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Không thể cập nhật avatar"
+    );
+  }
+};

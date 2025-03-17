@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Container,
@@ -15,6 +15,7 @@ import atmVNPAY from "../../assets/atmVNPAY.png";
 import visaVNPAY from "../../assets/visaVNPAY.png";
 import paymentApi from "../../features/payment/paymentApi";
 import { useCart } from "./cartContext";
+import { getSocket } from "../../utils/socket";
 
 const PaymentPage = () => {
   const { state } = useLocation();
@@ -38,6 +39,21 @@ const PaymentPage = () => {
     userId: user?.data?._id,
     selectedCartItems,
   };
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (socket) {
+      socket.on("payment_status", (data) => {
+        console.log("Thông báo từ server:", data);
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off("payment_status");
+      }
+    };
+  }, []);
+
   console.log("Payload:", payload);
   if (!state) {
     return (

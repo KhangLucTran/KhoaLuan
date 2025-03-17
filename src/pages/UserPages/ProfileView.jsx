@@ -1,12 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { fetchUserInfo } from "../../features/user/userSlice";
+import { updateAvatar } from "../../features/user/userApi";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import "../../styles/ProfileView.css";
 import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
 import UserForm from "../../components/Form/UserForm";
+import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
 
 const ProfileView = () => {
   // Use  Dispatchh
@@ -45,12 +47,25 @@ const ProfileView = () => {
     }
   }, [user]);
 
-  // Xử lí khi bấm thay đổi Avatar
-  const handleAvatarChange = (event) => {
+  const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const avatarUrl = URL.createObjectURL(file);
-      setAvatar(avatarUrl);
+
+    if (!file) {
+      console.error("❌ No file selected");
+      return alert("Vui lòng chọn ảnh trước khi cập nhật!");
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await updateAvatar(formData);
+      setAvatar(response.avatar);
+      showSuccessToast("Cập nhật avatar thành công!");
+      console.log("✅ Avatar URL:", response.avatar);
+    } catch (error) {
+      console.error("❌ Lỗi khi cập nhật avatar:", error);
+      showErrorToast("Có lỗi xảy ra khi cập nhật ảnh đại diện!");
     }
   };
 

@@ -1,14 +1,11 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllProductsApi } from "../../features/product/productApi";
-import StarIcon from "@mui/icons-material/StarBorder";
-import Footer from "../../components/Footer/Footer";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import SearchIcon from "@mui/icons-material/Search";
-import PropTypes from "prop-types";
-import "../../styles/ProductPage.css";
-import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
-import Header from "../../components/Header/Header";
+import {
+  addFavoriteUserApi,
+  checkStatusFavoriteUserApi,
+  deleteFavoriteUserApi,
+} from "../../features/favorite/favoriteApi";
 import {
   Card,
   CardMedia,
@@ -19,30 +16,82 @@ import {
   Box,
   IconButton,
   InputAdornment,
-  Pagination, // 🎯 Thêm Pagination từ MUI
+  Pagination,
 } from "@mui/material";
+import {
+  FavoriteBorder,
+  Favorite,
+  Search,
+  StarBorder,
+} from "@mui/icons-material";
+import PropTypes from "prop-types";
+import Footer from "../../components/Footer/Footer";
 import ProductFilter from "../../components/Product/ProductFilter";
+import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
+import Header from "../../components/Header/Header";
+import "../../styles/ProductPage.css";
 
 // 🎯 Component Card Product
 const ProductCard = ({ item }) => {
   const navigate = useNavigate();
-  const handleCardClick = () => {
-    navigate(`/levents/product-detail/${item._id}`);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Kiểm tra sản phẩm có trong danh sách yêu thích không
+  useEffect(() => {
+    if (!item?._id) return;
+    const controller = new AbortController();
+    checkStatusFavoriteUserApi(item._id, { signal: controller.signal })
+      .then((response) => setIsFavorite(response?.isFavorite || false))
+      .catch((error) => {
+        if (error.name !== "AbortError")
+          console.error("Lỗi kiểm tra yêu thích:", error.message);
+      });
+
+    return () => controller.abort();
+  }, [item?._id]);
+
+  const handleFavoriteClick = async (event) => {
+    event.stopPropagation();
+    if (isLoading) return;
+    setIsLoading(true);
+    setIsFavorite((prev) => !prev);
+
+    try {
+      if (!isFavorite) {
+        await addFavoriteUserApi(item._id);
+      } else {
+        await deleteFavoriteUserApi(item._id);
+      }
+    } catch (error) {
+      console.error("Lỗi xử lý yêu thích:", error.message);
+      setIsFavorite((prev) => !prev);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <CustomTooltip title={item.title}>
       <Card
         className="product-card"
-        onClick={handleCardClick}
+        onClick={() => navigate(`/levents/product-detail/${item._id}`)}
         sx={{
           width: 335,
           boxShadow: "none",
           background: "#fff",
+          position: "relative",
         }}
       >
-        <IconButton sx={{ position: "absolute", top: 8, right: 8 }}>
-          <FavoriteBorderIcon sx={{ color: "#333" }} />
+        <IconButton
+          sx={{ position: "absolute", top: 8, right: 8 }}
+          onClick={handleFavoriteClick}
+        >
+          {isFavorite ? (
+            <Favorite sx={{ color: "black" }} />
+          ) : (
+            <FavoriteBorder sx={{ color: "#333" }} />
+          )}
         </IconButton>
         <CardMedia
           component="img"
@@ -60,8 +109,9 @@ const ProductCard = ({ item }) => {
               ? `${item.price.toLocaleString()} VND`
               : "Giá chưa cập nhật"}
           </Typography>
+          <Typography>Đã bán: {item.sold}</Typography>
           <Box display="flex" alignItems="center">
-            <StarIcon color="inherit" />
+            <StarBorder color="inherit" />
             <Typography variant="body2">
               {item.rating !== undefined
                 ? `${item.rating} / 5`
@@ -74,91 +124,70 @@ const ProductCard = ({ item }) => {
   );
 };
 
+// 🎯 Component chính
 const Product = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [minRating, setMinRating] = useState(0);
   const [sortOrder, setSortOrder] = useState("");
   const [category, setCategory] = useState("");
-
-  // 🎯 State cho phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // 🎯 Fetch danh sách sản phẩm
-  const fetchProducts = useCallback(async () => {
-    try {
-      const response = await getAllProductsApi();
-      setProducts(Array.isArray(response) ? response : response.data || []);
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách sản phẩm:", error.message);
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    getAllProductsApi()
+      .then((response) =>
+        setProducts(Array.isArray(response) ? response : response.data || [])
+      )
+      .catch((error) => console.error("Lỗi khi lấy sản phẩm:", error.message));
   }, []);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  useEffect(() => {
-    let filtered = products.filter(
-      (product) =>
-        (product.title || "")
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) &&
-        (product.price || 0) <= maxPrice &&
-        (product.rating || 0) >= minRating &&
-        (!category || product.category === category)
-    );
-
-    if (sortOrder === "asc") {
-      filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
-    } else if (sortOrder === "desc") {
-      filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
-    }
-
-    setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset về trang đầu khi lọc lại dữ liệu
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter(
+        (product) =>
+          (product.title || "")
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) &&
+          (product.price || 0) <= maxPrice &&
+          (product.rating || 0) >= minRating &&
+          (!category || product.category === category)
+      )
+      .sort((a, b) => {
+        if (sortOrder === "asc") return (a.price || 0) - (b.price || 0);
+        if (sortOrder === "desc") return (b.price || 0) - (a.price || 0);
+        return 0;
+      });
   }, [searchQuery, products, maxPrice, minRating, sortOrder, category]);
 
-  // 🎯 Lấy danh sách sản phẩm của trang hiện tại
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProducts, currentPage]);
 
   return (
     <>
-      {/* Header */}
       <Header hideNav={true} />
       <div className="product-container">
         <div className="product-header">
           <h2>TÌM KIẾM</h2>
-          <div className="product-header-search">
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Tìm kiếm sản phẩm..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SearchIcon sx={{ color: "#333", cursor: "pointer" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Tìm kiếm sản phẩm..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Search sx={{ color: "#333", cursor: "pointer" }} />
+                </InputAdornment>
+              ),
+            }}
+          />
         </div>
 
-        {/* Bố cục chính */}
         <div className="product-items">
           <div className="product-items-sidebar">
             <ProductFilter
@@ -173,35 +202,27 @@ const Product = () => {
             />
           </div>
 
-          {/* 🎯 Khu vực hiển thị sản phẩm có phân trang */}
           <div style={{ flex: 2 }}>
             <h4>KẾT QUẢ: {filteredProducts.length} Sản phẩm</h4>
-            {loading ? (
-              <Typography>Đang tải sản phẩm...</Typography>
-            ) : (
-              <>
-                <Grid container rowSpacing={3} columnSpacing={2}>
-                  {currentItems.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} key={item._id}>
-                      <ProductCard item={item} />
-                    </Grid>
-                  ))}
+            <Grid container rowSpacing={3} columnSpacing={2}>
+              {currentItems.map((item) => (
+                <Grid item xs={12} sm={6} md={4} key={item._id}>
+                  <ProductCard item={item} />
                 </Grid>
+              ))}
+            </Grid>
 
-                {/* 🎯 Phân trang */}
-                {filteredProducts.length > itemsPerPage && (
-                  <Box display="flex" justifyContent="center" mt={4}>
-                    <Pagination
-                      count={Math.ceil(filteredProducts.length / itemsPerPage)}
-                      page={currentPage}
-                      onChange={(event, value) => setCurrentPage(value)}
-                      color="primary"
-                      size="large"
-                      shape="rounded"
-                    />
-                  </Box>
-                )}
-              </>
+            {filteredProducts.length > itemsPerPage && (
+              <Box display="flex" justifyContent="center" mt={4}>
+                <Pagination
+                  count={Math.ceil(filteredProducts.length / itemsPerPage)}
+                  page={currentPage}
+                  onChange={(event, value) => setCurrentPage(value)}
+                  color="primary"
+                  size="large"
+                  shape="rounded"
+                />
+              </Box>
             )}
           </div>
         </div>
@@ -219,6 +240,7 @@ ProductCard.propTypes = {
     _id: PropTypes.string.isRequired, // ID của sản phẩm (bắt buộc)
     title: PropTypes.string.isRequired, // Tiêu đề sản phẩm (bắt buộc)
     price: PropTypes.number.isRequired, // Giá sản phẩm (bắt buộc)
+    sold: PropTypes.number.isRequired,
     rating: PropTypes.number, // Đánh giá (không bắt buộc)
     images: PropTypes.arrayOf(PropTypes.string), // Mảng ảnh sản phẩm
   }).isRequired,

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
@@ -12,6 +12,7 @@ import "../../styles/CheckoutPage.css";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import { useSelector } from "react-redux";
+import addressApi from "../../features/address/addressApi";
 
 // Hàm tính toán chi phí
 const calculateTotalPrice = (items) => {
@@ -32,6 +33,22 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState("");
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
+  const [defaultAddress, setDefaultAddress] = useState("");
+
+  // Lấy địa chỉ mặc định của user đang đăng nhập
+  useEffect(() => {
+    const fetchDefaultAddress = async () => {
+      try {
+        const data = await addressApi.getDefaultAddress();
+        if (data.length > 0) {
+          setDefaultAddress(data[0]);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy địa chỉ mặc định:", error);
+      }
+    };
+    fetchDefaultAddress();
+  }, []);
 
   // Sử dụng useMemo để tối ưu hóa tính toán
   const totalPrice = useMemo(
@@ -51,7 +68,9 @@ const Checkout = () => {
     () => totalPrice + additionalFee + shippingFee - voucherDiscount,
     [totalPrice, additionalFee, shippingFee, voucherDiscount]
   );
-
+  const formattedAddress = defaultAddress
+    ? `${defaultAddress.detail}, ${defaultAddress.ward}, ${defaultAddress.district}, ${defaultAddress.province}`
+    : "Chưa có địa chỉ mặc định";
   // Xử lý thanh toán
   const handleCheckout = () => {
     if (paymentMethod === "vnpay") {
@@ -111,7 +130,7 @@ const Checkout = () => {
             </Typography>
             <Typography>Họ tên: {user.data.profileId?.username}</Typography>
             <Typography>SĐT: {user.data.profileId?.numberphone}</Typography>
-            <Typography>Địa chỉ: {user.data.profileId?.address}</Typography>
+            <Typography>Địa chỉ: {formattedAddress}</Typography>
           </div>
 
           <Typography>

@@ -32,6 +32,9 @@ import CartPage from "./pages/OrderPages/CartPage"; // Giả sử file Cart.jsx 
 import CartProvider from "./pages/OrderPages/cartContext"; // CartContext đã được cấu hình
 import Checkout from "./pages/OrderPages/CheckoutPage";
 import InvoicePage from "./pages/OrderPages/InvoicePage";
+import FavoritePage from "./pages/UserPages/FavoritePage";
+import NotificationPage from "./pages/UserPages/NotificationPage";
+import AddressPage from "./pages/UserPages/AddressPage";
 
 // ✅ Định nghĩa router đúng cách với cấu trúc lồng nhau
 const router = createBrowserRouter([
@@ -51,6 +54,8 @@ const router = createBrowserRouter([
       { path: "checkout", element: <Checkout /> },
       { path: "payment", element: <PaymentPage /> },
       { path: "invoice", element: <InvoicePage /> },
+      { path: "favorite", element: <FavoritePage /> },
+      { path: "notification", element: <NotificationPage /> },
       {
         path: "cart",
         element: <CartPage />,
@@ -60,7 +65,7 @@ const router = createBrowserRouter([
         element: <Profile />, // Sidebar và nội dung động bên trong
         children: [
           { path: "view", element: <ProfileView /> },
-          { path: "address", element: <div>Quản lý địa chỉ</div> },
+          { path: "address", element: <AddressPage /> },
           { path: "change-password", element: <PasswordResetStepper /> },
         ],
       },

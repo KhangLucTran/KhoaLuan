@@ -26,3 +26,19 @@ export const getProductByIdApi = async (credentials) => {
     );
   }
 };
+
+// Gọi API lấy sản phẩm theo category
+export const getProductsByCategoryApi = async (categoryProduct) => {
+  try {
+    const response = await api.get(
+      `${API_URL}/getall-product-category?category=${categoryProduct}`
+    );
+    console.log("API response: ", response.data);
+    return response.data; // Trả về dữ liệu từ API
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Lấy danh sách phẩm cùng loại không thành công"
+    );
+  }
+};

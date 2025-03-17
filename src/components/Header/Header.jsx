@@ -7,8 +7,8 @@ import {
 import CustomTooltip from "../CustomTooltip/CustomTooltip";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import { Badge, IconButton, Menu, MenuItem } from "@mui/material";
+// import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import { Badge, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { fetchUserInfo, logoutUser } from "../../features/user/userSlice";
 import DetailedDialog from "../../components/Toast/Dialog";
@@ -21,6 +21,8 @@ import { logout } from "../../features/auth/authSlice";
 import { getAuthTokens, saveAuthTokens } from "../../utils/token";
 import { getTotalQuantityApi } from "../../features/cart/cartApi";
 import { useCart } from "../../pages/OrderPages/cartContext";
+import { getFavoriteUserApi } from "../../features/favorite/favoriteApi";
+import NotificationDropdown from "../Toast/NotificationDropdown";
 
 const Header = ({ hideNav }) => {
   const dispatch = useDispatch();
@@ -28,6 +30,7 @@ const Header = ({ hideNav }) => {
   const user = useSelector((state) => state.user.user);
   const token = getAuthTokens().accessToken;
   const [total, setTotal] = useState(0);
+  const [totalFavorite, setTotalFavorite] = useState(0);
   const { open, setOpen, handleProtectedAction } = useProtectedDialog();
   const isFetched = useRef(false);
   const prevCartItems = useRef([]);
@@ -38,6 +41,7 @@ const Header = ({ hideNav }) => {
     if (token && !isFetched.current) {
       dispatch(fetchUserInfo());
       fetchCartQuantity();
+      fecthQuantityFavroite();
       isFetched.current = true; // Đánh dấu đã gọi API
     }
   }, [token, dispatch]);
@@ -75,23 +79,24 @@ const Header = ({ hideNav }) => {
     }
   };
 
-  // State cho thông báo
-  const [anchorEl, setAnchorEl] = useState(null);
-  const openNotif = Boolean(anchorEl);
+  const fecthQuantityFavroite = async () => {
+    try {
+      const response = await getFavoriteUserApi();
 
-  const handleNotificationClick = (event) => {
-    setAnchorEl(event.currentTarget);
+      if (response && Array.isArray(response.data)) {
+        setTotalFavorite(response.data.length);
+        console.log("Số lượng sản phẩm yêu thích:", response.data.length);
+      } else {
+        console.warn("Dữ liệu không hợp lệ từ API yêu thích:", response);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng yêu thích:", error.message);
+    }
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const notifications = [
-    { id: 1, message: "Đơn hàng của bạn đã được xác nhận!" },
-    { id: 2, message: "Sản phẩm yêu thích của bạn đang giảm giá!" },
-    { id: 3, message: "Bạn có tin nhắn mới từ Admin." },
-  ];
+  // const handleNotificationClick = () => {
+  //   navigate("/levents/notification");
+  // };
 
   const authContext = useMemo(
     () => ({
@@ -105,6 +110,7 @@ const Header = ({ hideNav }) => {
         dispatch(logout());
         dispatch(logoutUser());
         setTotal(0);
+        setTotalFavorite(0);
         navigate("/");
       },
     }),
@@ -164,47 +170,57 @@ const Header = ({ hideNav }) => {
 
           <div className="header-nav-icon">
             <CustomTooltip title="Thông báo">
-              <IconButton color="inherit" onClick={handleNotificationClick}>
-                <Badge badgeContent={notifications.length} color="error">
-                  <NotificationsOutlinedIcon fontSize="medium" />
+              <Badge
+                badgeContent={0}
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: "#000", // Màu nền badge
+                    color: "#fff", // Màu chữ trong badge
+                  },
+                }}
+              >
+                <NotificationDropdown />
+              </Badge>
+            </CustomTooltip>
+
+            <CustomTooltip title="Giỏ hàng">
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={total}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#000", // Màu nền badge
+                      color: "#fff", // Màu chữ trong badge
+                    },
+                  }}
+                >
+                  <ShoppingCartOutlinedIcon
+                    fontSize="medium"
+                    onClick={() => handleProtectedAction("/levents/cart")}
+                    style={{ cursor: "pointer" }}
+                  />
                 </Badge>
               </IconButton>
             </CustomTooltip>
-            <Menu
-              anchorEl={anchorEl}
-              open={openNotif}
-              onClose={handleClose}
-              PaperProps={{ style: { width: "250px", maxHeight: "300px" } }}
-            >
-              {notifications.length > 0 ? (
-                notifications.map((notif) => (
-                  <MenuItem key={notif.id} onClick={handleClose}>
-                    {notif.message}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem onClick={handleClose}>Không có thông báo</MenuItem>
-              )}
-            </Menu>
-
-            <CustomTooltip title="Giỏ hàng">
-              <Badge color="info" badgeContent={total}>
-                <ShoppingCartOutlinedIcon
-                  fontSize="medium"
-                  onClick={() => handleProtectedAction("/levents/cart")}
-                  style={{ cursor: "pointer" }}
-                />
-              </Badge>
-            </CustomTooltip>
 
             <CustomTooltip title="Sản phẩm yêu thích">
-              <Badge color="info" badgeContent={0}>
-                <FavoriteBorderOutlinedIcon
-                  fontSize="medium"
-                  onClick={() => handleProtectedAction("/levents/wishlist")}
-                  style={{ cursor: "pointer" }}
-                />
-              </Badge>
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={totalFavorite}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#000", // Màu nền badge
+                      color: "#fff", // Màu chữ trong badge
+                    },
+                  }}
+                >
+                  <FavoriteBorderOutlinedIcon
+                    fontSize="medium"
+                    onClick={() => handleProtectedAction("/levents/favorite")}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Badge>
+              </IconButton>
             </CustomTooltip>
 
             <Account

@@ -14,6 +14,17 @@ export const getInvoiceByUserIdApi = async () => {
   }
 };
 
+// Gọi API lấy invoice theo Id
+export const getInvoiceByIdApi = async (invoiceId) => {
+  try {
+    const response = await api.get(`${API_URL}/get-invoice/${invoiceId}`);
+    return response.data; // Trả về dữ liệu từ API
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Lấy danh sách hóa đơn không thành công"
+    );
+  }
+};
 // Gọi API update trạng thái của hóa đơn
 export const updateStatusInvoiceApi = async (invoiceId, payload) => {
   try {

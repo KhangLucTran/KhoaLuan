@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import "../../styles/ProfileSideBar.css";
 import {
-  Drawer,
-  Button,
   List,
   ListItem,
   ListItemButton,
@@ -21,7 +19,6 @@ import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import PropTypes from "prop-types";
@@ -32,10 +29,10 @@ const menuItems = [
   {
     text: "Thông báo",
     icon: <NotificationsNoneOutlinedIcon />,
-    link: "notifications",
+    link: "/levents/notification",
   },
   {
-    text: "Tài khoản của tôi",
+    text: "Tài khoản",
     icon: <PersonOutlineOutlinedIcon />,
     subItems: [
       { text: "Hồ sơ", icon: <PermContactCalendarIcon />, link: "view" },
@@ -66,8 +63,8 @@ const Sidebar = ({ toggleDrawer }) => {
   return (
     <List>
       {/* Logo Levents */}
-      <div className="sidebar-logo">
-        <h3>Levents</h3>
+      <div className="sidebar-logo-profile">
+        <h2 className="sidebar-logo-profile-h2">Levents</h2>
       </div>
 
       {menuItems.map((item, index) => (
@@ -121,30 +118,17 @@ const Sidebar = ({ toggleDrawer }) => {
 };
 
 const Profile = () => {
-  const [open, setOpen] = useState(false);
-
-  const toggleDrawer = (newOpen) => {
-    setOpen(newOpen);
-  };
-
   return (
     <>
-      <Button
-        className="menu-button"
-        onClick={() => toggleDrawer(true)}
-        sx={{ position: "absolute", top: 20, left: 10 }}
-      >
-        <MenuIcon />
-      </Button>
-      <Drawer anchor="left" open={open} onClose={() => toggleDrawer(false)}>
-        <Sidebar toggleDrawer={toggleDrawer} />
-      </Drawer>
+      <div className="sidebar-container">
+        <Sidebar />
+      </div>
       <div className="profile-container">
         <div className="profile-content">
           <Outlet />
         </div>
       </div>
-      <Footer className="footer" />
+      <Footer />
     </>
   );
 };
