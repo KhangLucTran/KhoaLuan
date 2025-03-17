@@ -5,6 +5,8 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import { useNavigate } from "react-router-dom";
 import { getAuthTokens } from "../../utils/token";
 import "../../styles/NotificationDropdown.css";
+import { useSelector } from "react-redux";
+import { getProductByIdApi } from "../../features/product/productApi";
 
 const getTimeAgo = (createdAt) => {
   const now = new Date();
@@ -30,6 +32,30 @@ const NotificationDropdown = () => {
   const [timeAgoList, setTimeAgoList] = useState([]);
   const navigate = useNavigate();
   const accessToken = getAuthTokens().accessToken;
+  const user = useSelector((state) => state.user.user);
+
+  const [avatarUrls, setAvatarUrls] = useState({});
+
+  useEffect(() => {
+    const fetchAvatars = async () => {
+      const avatarPromises = notifications.map(async (notif) => {
+        const avatarUrl = await getNotificationAvatar(notif);
+        return { id: notif._id, avatarUrl };
+      });
+
+      const avatars = await Promise.all(avatarPromises);
+      setAvatarUrls((prev) => ({
+        ...prev,
+        ...Object.fromEntries(
+          avatars.map(({ id, avatarUrl }) => [id, avatarUrl])
+        ),
+      }));
+    };
+
+    if (notifications.length > 0) {
+      fetchAvatars();
+    }
+  }, [notifications]);
 
   useEffect(() => {
     fetchNotifications();
@@ -42,8 +68,6 @@ const NotificationDropdown = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       setNotifications(res.data);
-
-      // Tạo danh sách timeAgo ban đầu
       setTimeAgoList(res.data.map((notif) => getTimeAgo(notif.createdAt)));
     } catch (error) {
       console.error("Lỗi khi lấy thông báo:", error);
@@ -59,7 +83,6 @@ const NotificationDropdown = () => {
     return () => clearInterval(interval);
   }, [notifications]);
 
-  // Đánh dấu là "Đã đọc"
   const handleNotificationClick = async (notif) => {
     try {
       await axios.patch(
@@ -74,9 +97,8 @@ const NotificationDropdown = () => {
       setNotifications((prev) =>
         prev.map((n) => (n._id === notif._id ? { ...n, isRead: true } : n))
       );
-
       setTimeout(() => {
-        fetchNotifications(); // Đảm bảo trạng thái mới được cập nhật
+        fetchNotifications();
       }, 500);
 
       navigate(notif.link || "/levents/notification");
@@ -84,6 +106,23 @@ const NotificationDropdown = () => {
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái:", error);
     }
+  };
+
+  const getNotificationAvatar = async (notif) => {
+    if (notif.type === "user") {
+      return user.data.profileId?.avatar || "/default-avatar.png";
+    }
+    if (notif.type === "invoice" && notif.invoiceId?.lineItems?.length) {
+      const productId = notif.invoiceId?.lineItems?.[0].productId;
+      try {
+        const result = await getProductByIdApi(productId);
+        return result.images?.[0] || "/default-avatar.png";
+      } catch (error) {
+        console.error("Lỗi khi lấy ảnh sản phẩm:", error);
+        return "/default-avatar.png";
+      }
+    }
+    return "/default-avatar.png";
   };
 
   return (
@@ -123,7 +162,9 @@ const NotificationDropdown = () => {
                 onClick={() => handleNotificationClick(notif)}
               >
                 <Avatar
-                  src={notif.avatar || "/default-avatar.png"}
+                  variant="square"
+                  sx={{ width: 60, height: 60, borderRadius: 2 }}
+                  src={avatarUrls[notif._id] || "/default-avatar.png"}
                   className="notification-avatar"
                 />
                 <div className="notification-content">
