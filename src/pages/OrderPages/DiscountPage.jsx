@@ -3,10 +3,8 @@ import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Chip,
   LinearProgress,
-  Box,
   Collapse,
   Checkbox,
 } from "@mui/material";
@@ -55,14 +53,14 @@ const DiscountPage = ({ onSelectDiscount }) => {
   return (
     <div className="discount-page">
       <h3 className="page-title">DANH SÁCH MÃ GIẢM GIÁ</h3>
-      <Grid container spacing={3}>
+      <div className="discount-container">
         {discounts.map((discount) => {
           const usedPercentage =
             (discount.usedCount / discount.usageLimit) * 100;
           const isSelected = selectedDiscount?._id === discount._id;
 
           return (
-            <Grid item xs={12} sm={6} md={4} key={discount._id}>
+            <div className="discount-item" key={discount._id}>
               <Card
                 className={`discount-card ${isSelected ? "selected" : ""}`}
                 onClick={() => handleToggle(discount._id)}
@@ -87,10 +85,10 @@ const DiscountPage = ({ onSelectDiscount }) => {
                   </div>
                   <Checkbox
                     checked={isSelected}
-                    onClick={(event) => event.stopPropagation()} // Ngăn chặn sự kiện click lan ra thẻ Card
+                    onClick={(event) => event.stopPropagation()}
                     onChange={(event) => {
                       handleSelect(discount);
-                      event.stopPropagation(); // Ngăn chặn sự kiện lan truyền
+                      event.stopPropagation();
                     }}
                     className="discount-checkbox"
                     color="primary"
@@ -117,24 +115,24 @@ const DiscountPage = ({ onSelectDiscount }) => {
                     </Typography>
 
                     {/* Tiến trình sử dụng */}
-                    <Box display="flex" alignItems="center" mt={1}>
+                    <div className="discount-progress-container">
                       <Typography
                         variant="body2"
                         style={{ marginRight: 8, color: "#000000" }}
                       >
                         Đã dùng:
                       </Typography>
-                      <Box width="100%" mr={1}>
+                      <div className="discount-progress-wrapper">
                         <LinearProgress
                           variant="determinate"
                           value={usedPercentage}
                           className="discount-progress"
                         />
-                      </Box>
+                      </div>
                       <Typography variant="body2" style={{ color: "#000000" }}>
                         {Math.round(usedPercentage)}%
                       </Typography>
-                    </Box>
+                    </div>
 
                     {/* Hạn sử dụng */}
                     <Typography className="discount-expiration">
@@ -162,10 +160,10 @@ const DiscountPage = ({ onSelectDiscount }) => {
                   </CardContent>
                 </Collapse>
               </Card>
-            </Grid>
+            </div>
           );
         })}
-      </Grid>
+      </div>
     </div>
   );
 };

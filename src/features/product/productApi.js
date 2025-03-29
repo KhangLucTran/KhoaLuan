@@ -9,8 +9,7 @@ export const getAllProductsApi = async () => {
     return response.data; // Trả về dữ liệu từ API
   } catch (error) {
     throw new Error(
-      error.response?.data?.message ||
-        "Lấy danh sách sản phẩmphẩm không thành công"
+      error.response?.data?.message || "Lấy danh sách sản phẩm không thành công"
     );
   }
 };
@@ -22,7 +21,42 @@ export const getProductByIdApi = async (credentials) => {
     return response.data; // Trả về dữ liệu từ API
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Đăng nhập không thành công"
+      error.response?.data?.message || "Lấy sản phẩm không thành công"
+    );
+  }
+};
+
+// Gọi API xóa sản phẩm theo ID
+export const deleteProductByIdApi = async (productId) => {
+  try {
+    const response = await api.delete(`${API_URL}/delete-product/${productId}`);
+    return response.data; // Trả về dữ liệu từ API
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Xóa  sản phẩm theo ID không thành công"
+    );
+  }
+};
+// Gọi API thêm sản phẩm mới
+export const addProductApi = async (productData, images) => {
+  try {
+    const formData = new FormData();
+    for (const key in productData) {
+      formData.append(key, productData[key]);
+    }
+    images.forEach((image) => {
+      formData.append("images", image);
+    });
+
+    const response = await api.post(`${API_URL}/add-product`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi API:", error.response?.data || error.message);
+    throw new Error(
+      error.response?.data?.message || "Thêm sản phẩm không thành công"
     );
   }
 };

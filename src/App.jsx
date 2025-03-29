@@ -36,6 +36,7 @@ import FavoritePage from "./pages/UserPages/FavoritePage";
 import NotificationPage from "./pages/UserPages/NotificationPage";
 import AddressPage from "./pages/UserPages/AddressPage";
 import DiscountPage from "./pages/OrderPages/DiscountPage";
+import AdminPage from "./pages/HomePages/AdminPage";
 
 // ✅ Định nghĩa router đúng cách với cấu trúc lồng nhau
 const router = createBrowserRouter([
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
       { path: "invoice", element: <InvoicePage /> },
       { path: "favorite", element: <FavoritePage /> },
       { path: "notification", element: <NotificationPage /> },
+      { path: "admin", element: <AdminPage /> },
       {
         path: "cart",
         element: <CartPage />,

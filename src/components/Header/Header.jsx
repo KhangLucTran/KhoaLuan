@@ -23,6 +23,8 @@ import { getTotalQuantityApi } from "../../features/cart/cartApi";
 import { useCart } from "../../pages/OrderPages/cartContext";
 import { getFavoriteUserApi } from "../../features/favorite/favoriteApi";
 import NotificationDropdown from "../Toast/NotificationDropdown";
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import ChatBox from "../Chat/ChatBox";
 
 const Header = ({ hideNav }) => {
   const dispatch = useDispatch();
@@ -35,6 +37,7 @@ const Header = ({ hideNav }) => {
   const isFetched = useRef(false);
   const prevCartItems = useRef([]);
   const { cartItems, lineItems, totalQuantity, fetchCartData } = useCart();
+  const [showChat, setShowChat] = useState(false);
 
   // ✅ Gọi API lấy số lượng khi đăng nhập
   useEffect(() => {
@@ -183,6 +186,23 @@ const Header = ({ hideNav }) => {
               </Badge>
             </CustomTooltip>
 
+            <CustomTooltip title="Tin nhắn">
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={1}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#000",
+                      color: "#fff",
+                    },
+                  }}
+                  onClick={() => setShowChat(true)}
+                >
+                  <ChatOutlinedIcon />
+                </Badge>
+              </IconButton>
+            </CustomTooltip>
+
             <CustomTooltip title="Giỏ hàng">
               <IconButton color="inherit">
                 <Badge
@@ -240,6 +260,8 @@ const Header = ({ hideNav }) => {
             />
           </div>
         </header>
+        {/* Khung chat */}
+        {showChat && <ChatBox onClose={() => setShowChat(false)} />}
 
         <DetailedDialog
           open={open}

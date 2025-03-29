@@ -6,6 +6,12 @@
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   }
   
+  .discount-container{
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    gap: 12px;
+  }
   .page-title {
     text-align: center;
     font-size: 24px;

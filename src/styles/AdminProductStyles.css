@@ -1,0 +1,153 @@
+/* Định dạng container tổng của trang quản lý sản phẩm */
+.admin-product-page-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.admin-product-sidebar {
+  width: 250px;
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+}
+
+.admin-product-sidebar h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-product-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-product-sidebar ul li {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.admin-product-sidebar ul li:hover {
+  background-color: #495057;
+}
+
+/* Phần nội dung chính */
+.admin-product-page-content {
+  flex: 1;
+  padding: 40px;
+  max-width: 1200px;
+  margin: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề trang */
+.admin-product-page-content h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #222;
+}
+
+/* Ô tìm kiếm sản phẩm */
+.admin-product-page-search {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.admin-product-page-search input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Bảng sản phẩm */
+.admin-product-table-container {
+  overflow-x: auto;
+}
+
+.admin-product-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-product-table th, 
+.admin-product-table td {
+  text-align: center;
+  padding: 14px 18px; /* Tăng padding để bảng trông thoáng hơn */
+  vertical-align: middle; /* Căn giữa theo chiều dọc */
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* Ngăn chữ bị xuống dòng */
+}
+
+.admin-product-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.admin-product-table tr:hover {
+  background-color: #f1f1f1;
+}
+.admin-product-table td:last-child{
+  text-align: center;
+  width: 150px; /* Giới hạn chiều rộng cho cột này */
+}
+/* Hình ảnh sản phẩm */
+.admin-product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  margin: auto; /* Căn giữa hình ảnh */
+}
+
+/* Hành động */
+.admin-product-page-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Căn chỉnh hành động */
+.admin-product-page-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* Tăng khoảng cách giữa các nút */
+}
+.admin-product-page-actions button {
+  transition: background-color 0.3s, transform 0.2s;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.admin-product-page-actions button:hover {
+  transform: scale(1.1);
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Nút phân trang */
+.admin-product-page-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}

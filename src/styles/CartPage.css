@@ -3,6 +3,7 @@
   display: flex;
   justify-content: space-evenly;
   gap:2rem;
+  margin-bottom: 3rem;
 }
 .card-list-title{
 margin-top: 6rem;

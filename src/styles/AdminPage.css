@@ -1,0 +1,161 @@
+.admin-page {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background-color: #f8f9fc;
+  font-family: "SF Pro Display", sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  background: #ffffff;
+  padding: 1.5rem;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+  border-radius: 20px 0 0 20px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #1877f2;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.2rem;
+  cursor: pointer;
+  font-size: 16px;
+  color: gray;
+  transition: all 0.3s ease-in-out;
+  border-radius: 12px;
+  position: relative;
+}
+
+.sidebar ul li:hover {
+  background-color: rgba(24, 119, 242, 0.1);
+  color: #1877f2;
+  transform: translateX(3px);
+}
+
+.sidebar ul li.active {
+  color: #1877f2;
+}
+
+.sidebar ul li.active::before {
+  content: "";
+  position: absolute;
+  left: -8%;
+  top: 10%;
+  height: 80%;
+  width: 4px;
+  background-color: #1877f2;
+  border-radius: 2px;
+}
+
+/* Admin Info */
+.admin-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.admin-info-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border-left: 2px solid #1877f2;
+}
+
+.admin-info-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-right: 2rem;
+}
+
+.admin-info-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.admin-info-gmail {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.admin-info-username {
+  font-size: 14px;
+  font-weight: 400;
+  color: #555;
+  margin: 0;
+}
+
+/* Main Content */
+.admin-content {
+  flex: 1;
+  padding: 2rem;
+  width:100vh;
+  background: #ffffff;
+}
+
+.admin-content h2 {
+  font-size: 1.8rem;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.content-box {
+  padding: 2rem;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Loading Screen */
+.loading-screen {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1877f2;
+  text-align: center;
+  margin-top: 20%;
+}
+
+.admin-signout {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  left: 4rem;
+  transform: translateX(-50%);
+  justify-content: center;
+  color: white;
+  border-radius: 12px;
+}
+
+.admin-signout:hover {
+  border:2px solid #d9363e;
+  border-radius: 40%;
+}
