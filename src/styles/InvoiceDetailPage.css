@@ -1,0 +1,329 @@
+.invoice-detail-container {
+  margin: 120px auto;
+  padding: 20px 0;
+  background-color: #fff;
+  max-width: 1200px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.invoice-detail-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #1877F2; /* màu xanh chủ đạo */
+}
+.invoice-card-title{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+.invoice-title-status{
+  text-transform: uppercase;
+  padding: 0 1rem;
+  color: #1877F2
+}
+.invoice-card {
+  margin-bottom: 20px;
+  background: #ffffff;
+  transition: box-shadow 0.3s ease;
+}
+.invoice-info{
+  margin-top: 1rem;
+}
+.invoice-info > div {
+  margin-bottom: 1rem;
+  font-size: 16px;
+}
+/* Invoice Action Section */
+.invoice-action-section {
+  background-color: #fffaf3;
+  padding: 16px 24px;
+  margin-top: 16px;
+  border: 1px solid #f5e5d5;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.action-buttons{
+  display: flex;
+  flex-direction: column;
+}
+.thanks-text {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+/* Invoice Border */
+.invoice-border-decor {
+  height: 8px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #f55 0 10px,
+    #fff 10px 20px,
+    #57a 20px 30px,
+    #fff 30px 40px
+  );
+  background-size: 40px 100%;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Invoice Info */
+.invoice-tracking-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  background: #fff;
+  padding: 24px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  font-size: 14px;
+}
+.delivery-timeline{
+  width: 50%;
+}
+.recipient-info {
+  flex: 1;
+  max-width: 300px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.invoice-info-username {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.invoice-tracking-timeline {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.tracking-step {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.tracking-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #1877f2;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-size: 14px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.tracking-content {
+  flex: 1;
+}
+
+.tracking-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.tracking-time {
+  font-size: 13px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.tracking-line {
+  position: absolute;
+  left: 11px; /* canh giữa icon */
+  top: 28px;
+  width: 2px;
+  height: calc(100% - 28px);
+  background-color: #ccc;
+}
+
+/* LineItem Product */
+/* LineItems */
+.line-items-invoice-detail {
+  margin: 3rem 0;
+  padding-top: 12px;
+  border-top: 1px solid #ccc;
+}
+.line-item-invoice-detail:hover{
+  background-color: 	#f9f9f9;
+}
+/*LineItem */
+.line-item-invoice-detail{
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+.product-image-invoice-detail{
+  object-fit: cover;
+  width: 120px;
+  height:120px;
+  border-radius: 8px;
+}
+.line-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.line-item:last-child {
+  border-bottom: none;
+}
+.line-items-invoice-detail-header{
+  display: flex;
+  align-items: center;
+  gap:0.5rem;
+}
+/* Product Name Invoice Detail */
+.product-name-invoice-detail{
+  position: relative;
+  width: 100%;
+  padding-bottom: 24px;
+}
+.product-name {
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 6px;
+  color: #1877F2;
+}
+
+.details {
+  font-size: 13px;
+  color: #555;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.details-footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 14px;
+  color: #333;
+}
+/* Total Section */
+.total-section {
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: right;
+  color: #1877F2;
+}
+.status-timeline {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  background: #fff;
+  margin: 3rem 0;
+}
+
+.timeline-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  position: relative;
+}
+/* Vẽ đường line giữa các bước bằng ::after */
+.timeline-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 25px; /* giữa icon */
+  width: 100%;
+  height: 3px;
+  background-color: #4CAF50;
+  z-index: 0;
+  transform: translateX(50%); /* đẩy line sang phải để nối đến bước kế tiếp */
+}
+
+/* Icon nằm trên đường line */
+.timeline-icon {
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  border: 3px solid #4CAF50;
+  color: #4CAF50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  z-index: 1; /* đảm bảo nằm trên line */
+}
+
+.timeline-content {
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+.status-title {
+  font-weight: bold;
+  color: #4CAF50;
+  font-size: 14px;
+}
+
+.status-time {
+  font-size: 12px;
+  color: #888;
+}
+/* Invoice Detail Payment */
+.detail-payment {
+  display: table;
+  width: 100%;
+  font-size: 13px;
+  color: #333;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  border-radius: 4px;
+  margin: 2rem 0; 
+  overflow: hidden;
+}
+
+.payment {
+  display: table-row;
+}
+.payment h4{
+  width: 70%;
+}
+.payment span{
+  width: 30%;
+}
+.payment h4,
+.payment span {
+  display: table-cell;
+  padding: 12px 16px;
+  text-align: right;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.payment h4 {
+  font-weight: 400;
+  color: #666;
+  width: 50%;
+  white-space: nowrap;  
+  border-right: 1px solid #eee;
+}

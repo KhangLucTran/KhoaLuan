@@ -1,0 +1,127 @@
+.comment-form {
+  margin: 20px auto;
+  padding: 24px;
+  max-width: 600px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.comment-form:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.1);
+}
+
+.comment-form h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #1877f2;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.comment-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.comment-form textarea {
+  width: 100%;
+  height: 120px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 15px;
+  resize: vertical;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.comment-form textarea:focus {
+  border-color: #1877f2;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Nút gửi bình luận */
+.comment-form button {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.comment-form button:hover {
+  background-color: #145dc2;
+  transform: translateY(-1.5px);
+}
+
+.comment-form button:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Ngôi sao đánh giá */
+.rating-stars {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 10px 0 20px;
+}
+
+.star {
+  font-size: 28px;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.star.filled {
+  color: #fbb034; /* màu cam vàng đẹp hơn đen */
+  background: linear-gradient(45deg, #fbb034, #ffdd00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.star:hover,
+.star.filled:hover {
+  transform: scale(1.25);
+}
+
+
+/* Form nổi bật */
+.comment-form {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.3s ease;
+  z-index: 1001;
+}
+
+/* Animation cho form */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,85 @@
+.admin-invoice-container {
+    padding: 20px;
+    min-height: 100vh;
+  }
+  
+  .MuiTabs-root {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-bar {
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  
+  .MuiTableContainer-root {
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .MuiTableHead-root {
+    background: #1877f2;
+  }
+  
+  .MuiTableHead-root .MuiTableCell-root {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .MuiTableCell-root {
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .MuiTableRow-root:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+  
+  .status-cell {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .status-pending {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .status-paid {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .status-shipped {
+    background-color: #03a9f4;
+    color: white;
+  }
+  
+  .status-completed {
+    background-color: #8bc34a;
+    color: white;
+  }
+  
+  .status-cancelled {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .action-buttons button {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .action-buttons button:hover {
+    transform: scale(1.05);
+  }

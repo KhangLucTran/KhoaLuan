@@ -1,6 +1,6 @@
 // src/components/Cart.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../OrderPages/cartContext";
 import LineItem from "../OrderPages/LineItem";
 import "../../styles/CartPage.css";
@@ -13,9 +13,15 @@ const Cart = () => {
     useCart();
   const [selectedItems, setSelectedItems] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+
   const handleSelectItem = (id, isSelected) => {
     setSelectedItems((prev) => ({ ...prev, [id]: isSelected }));
   };
+
+  useEffect(() => {
+    fetchCartData();
+  }, [location.pathname]);
 
   const handleQuantityChange = (id, newQuantity) => {
     const updatedItems = lineItems.map((item) =>

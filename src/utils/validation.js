@@ -4,15 +4,16 @@ import dayjs from "dayjs";
 
 // 1. Check Validate Email.
 export const validateEmail = (email) => {
-  if (!email) return "Email không được để trống!";
+  if (!email) return "Bạn chưa nhập email. Vui lòng nhập để tiếp tục!";
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Định dạng email cơ bản
-  if (!emailRegex.test(email)) return "Email không hợp lệ!";
+  if (!emailRegex.test(email))
+    return "Định dạng email không đúng. Bạn vui lòng kiểm tra lại!";
   return null; // Không có lỗi
 };
 
 // 2. Check Validate Password
 export const validatePassword = (password) => {
-  if (!password) return "Mật khẩu không được để trống!";
+  if (!password) return "Bạn chưa nhập mật khẩu. Vui lòng nhập để tiếp tục!";
   if (password.length < 6) return "Mật khẩu phải có ít nhất 6 ký tự!";
   if (!/[A-Z]/.test(password))
     return "Mật khẩu phải có ít nhất 1 chữ cái in hoa!";

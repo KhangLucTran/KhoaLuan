@@ -33,12 +33,14 @@ import "../../styles/ProductPage.css";
 import { addKeyWordsApi } from "../../features/search/searchHistoryApi";
 import { getAuthTokens } from "../../utils/token";
 import { getRecommendationsApi } from "../../features/recommendations/recommendationsApi";
+import axios from "axios";
 
 // 🎯 Component Card Product
 const ProductCard = ({ item }) => {
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
 
   // Kiểm tra sản phẩm có trong danh sách yêu thích không
   useEffect(() => {
@@ -53,6 +55,22 @@ const ProductCard = ({ item }) => {
 
     return () => controller.abort();
   }, [item?._id]);
+
+  // Lấy số lượng đánh giá sản phẩm
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/comment/${item._id}`
+        );
+        const commentsData = response.data.data;
+        setCommentCount(commentsData.length || 0);
+      } catch (error) {
+        console.error("Lỗi khi lấy số lượng đánh giá:", error.message);
+      }
+    };
+    fetchRating();
+  }, [item._id]);
 
   const handleFavoriteClick = async (event) => {
     event.stopPropagation();
@@ -115,9 +133,9 @@ const ProductCard = ({ item }) => {
           <Typography>Đã bán: {item.sold}</Typography>
           <Box display="flex" alignItems="center">
             <StarBorder color="inherit" />
-            <Typography variant="body2">
-              {item.rating !== undefined
-                ? `${item.rating} / 5`
+            <Typography variant="body2" sx={{ ml: 0.5 }}>
+              {commentCount > 0
+                ? `(${commentCount}) đánh giá`
                 : "Chưa có đánh giá"}
             </Typography>
           </Box>

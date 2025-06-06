@@ -11,7 +11,7 @@ const sx = {
   width: 20,
   color: "text",
   border: "1px solid",
-  borderColor: "text.secondary",
+  borderColor: "#000",
   textTransform: "none",
   position: "relative",
 };

@@ -7,7 +7,6 @@ import {
 import CustomTooltip from "../CustomTooltip/CustomTooltip";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-// import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import { Badge, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { fetchUserInfo, logoutUser } from "../../features/user/userSlice";
@@ -38,7 +37,6 @@ const Header = ({ hideNav }) => {
   const prevCartItems = useRef([]);
   const { cartItems, lineItems, totalQuantity, fetchCartData } = useCart();
   const [showChat, setShowChat] = useState(false);
-
   // ✅ Gọi API lấy số lượng khi đăng nhập
   useEffect(() => {
     if (token && !isFetched.current) {
@@ -97,10 +95,6 @@ const Header = ({ hideNav }) => {
     }
   };
 
-  // const handleNotificationClick = () => {
-  //   navigate("/levents/notification");
-  // };
-
   const authContext = useMemo(
     () => ({
       signIn: async (tokens) => {
@@ -119,7 +113,6 @@ const Header = ({ hideNav }) => {
     }),
     [dispatch, navigate, fetchCartData]
   );
-
   const session = user
     ? {
         user: {
@@ -172,36 +165,38 @@ const Header = ({ hideNav }) => {
           )}
 
           <div className="header-nav-icon">
-            <CustomTooltip title="Thông báo">
-              <Badge
-                badgeContent={0}
-                sx={{
-                  "& .MuiBadge-badge": {
-                    backgroundColor: "#000", // Màu nền badge
-                    color: "#fff", // Màu chữ trong badge
-                  },
-                }}
-              >
-                <NotificationDropdown />
-              </Badge>
-            </CustomTooltip>
-
-            <CustomTooltip title="Tin nhắn">
-              <IconButton color="inherit">
-                <Badge
-                  badgeContent={1}
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      backgroundColor: "#000",
-                      color: "#fff",
-                    },
-                  }}
-                  onClick={() => setShowChat(true)}
-                >
-                  <ChatOutlinedIcon />
-                </Badge>
-              </IconButton>
-            </CustomTooltip>
+            {token && (
+              <>
+                <CustomTooltip title="Thông báo">
+                  <Badge
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        backgroundColor: "#000",
+                        color: "#fff",
+                      },
+                    }}
+                  >
+                    <NotificationDropdown />
+                  </Badge>
+                </CustomTooltip>
+                <CustomTooltip title="Tin nhắn">
+                  <IconButton color="inherit">
+                    <Badge
+                      badgeContent={0}
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          backgroundColor: "#000",
+                          color: "#fff",
+                        },
+                      }}
+                      onClick={() => setShowChat(true)}
+                    >
+                      <ChatOutlinedIcon />
+                    </Badge>
+                  </IconButton>
+                </CustomTooltip>
+              </>
+            )}
 
             <CustomTooltip title="Giỏ hàng">
               <IconButton color="inherit">
@@ -209,8 +204,8 @@ const Header = ({ hideNav }) => {
                   badgeContent={total}
                   sx={{
                     "& .MuiBadge-badge": {
-                      backgroundColor: "#000", // Màu nền badge
-                      color: "#fff", // Màu chữ trong badge
+                      backgroundColor: "#000",
+                      color: "#fff",
                     },
                   }}
                 >

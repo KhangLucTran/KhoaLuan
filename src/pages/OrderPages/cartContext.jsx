@@ -31,7 +31,7 @@ export const CartProvider = ({ children }) => {
 
   // ✅ Hàm lấy dữ liệu giỏ hàng (chỉ gọi khi cần)
   const fetchCartData = useCallback(async () => {
-    if (!token || loading || isFetched) return;
+    if (!token || loading) return;
     setLoading(true);
     try {
       const cartData = await getUserCartApi();

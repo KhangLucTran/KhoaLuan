@@ -7,7 +7,7 @@ import ChevronRightTwoToneIcon from "@mui/icons-material/ChevronRightTwoTone";
 import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
 
 import { itemLoginData } from "../../constants/LoginData";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/auth/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,23 +26,11 @@ const LoginPage = () => {
   // Location
   const location = useLocation();
 
-  // useRef
-  const intervalRef = useRef(null);
-
   // Xử lí khi bấm "Đăng nhập"
   // Nếu đang trong quá trình xử lí, disable các button
   const { isLoading } = useSelector((state) => state.auth);
 
-  // Xử lý Background tự động thay đổi sao 5s
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % itemLoginData.length
-      );
-    }, 5000);
-    return () => clearInterval(intervalRef.current);
-  }, []);
 
   // Button "Ảnh tiếp theo"
   const handleNextImage = () => {
@@ -74,15 +62,16 @@ const LoginPage = () => {
           redirectUrl = "/levents/admin";
         }
         // Thông báo đăng nhập thành công
-        showSuccessToast("Đăng nhập thành công!");
+        showSuccessToast("Chào mừng bạn! Đăng nhập thành công.");
         // Đợi 3 giây rồi chuyển trang
         setTimeout(() => {
           navigate(redirectUrl);
         }, 3000);
+      } else {
+        showErrorToast(response.message);
       }
     } catch (error) {
       // Xử lý lỗi khi dispatch hoặc lỗi từ API
-      showErrorToast(` ${error} 🚨`);
       console.error("🚨 Lỗi:", error);
     }
   };
@@ -90,8 +79,8 @@ const LoginPage = () => {
   // Dùng useEffect để lấy token và refreshToken đăng nhập bằng Google và Facebook
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const accessToken = params.get("accessToken");
-    const refreshToken = params.get("refreshToken");
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
 
     if (accessToken && refreshToken) {
       // Lưu AccessToken và RefreshToken

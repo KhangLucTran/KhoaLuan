@@ -6,6 +6,7 @@ const API_URL = "/api/cart"; // Không cần localhost, vì baseURL đã có tro
 export const getUserCartApi = async () => {
   try {
     const response = await api.get(`${API_URL}/user-cart`);
+    console.log("Giỏ hàng:", response.data);
     return response.data; // Trả về dữ liệu từ API
   } catch (error) {
     throw new Error(

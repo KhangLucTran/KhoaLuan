@@ -8,43 +8,52 @@ import {
   LinearProgress,
   Button,
   Box,
+  MenuItem,
 } from "@mui/material";
 import { Delete, CloudUpload } from "@mui/icons-material";
 import {
   addProductApi,
   getProductByIdApi,
-} from "../../features/product/productApi";
-import "../../styles/AddProductPage.css";
-import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
+  updateProductByIdApi,
+} from "../../../features/product/productApi";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../../components/Toast/Toast";
 
-const AddEditProductPage = ({ onCancel, selectedProduct }) => {
+import "./ProductDetailManagement.css";
+
+const ProductDetailManagement = ({ onCancel, selectedProduct }) => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [gender, setGender] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [deletedImages, setDeletedImages] = useState([]);
   const [description, setDescription] = useState("");
 
-  // Nếu có sản phẩm được chọn, fill dữ liệu vào form
+  // Fetch dữ liệu sản phẩm khi selectedProduct thay đổi
   useEffect(() => {
     if (selectedProduct) {
       const fetchProduct = async () => {
         try {
           const response = await getProductByIdApi(selectedProduct._id);
-          setProductName(response.title || "");
-          setCategory(response.category || "");
-          setGender(response.gender || "");
-          setStock(response.stock || "");
-          setPrice(response.price || "");
-          setDescription(response.description || "");
-          setUploadedFiles(
-            response.imageDetails?.map((img) => ({
-              url: img.url,
-              name: img.fileName,
-              size: img.size, // Không có kích thước do là ảnh từ URL
-            })) || []
-          );
+          if (response) {
+            setProductName(response.title || "");
+            setCategory(response.category || "");
+            setGender(response.gender || "");
+            setStock(response.stock || "");
+            setPrice(response.price || "");
+            setDescription(response.description || "");
+            setUploadedFiles(
+              response.imageDetails?.map((img) => ({
+                url: img.url,
+                name: img.fileName,
+                size: img.size, // Không có kích thước do là ảnh từ URL
+              })) || []
+            );
+          }
         } catch (error) {
           console.error("Lỗi khi tải sản phẩm:", error);
         }
@@ -54,44 +63,52 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
     }
   }, [selectedProduct]);
 
-  // Xử lý chọn file ảnh
+  // Tạo hàm tái sử dụng cho việc thay đổi file
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const newFiles = files.map((file) => ({
-      file,
-      url: URL.createObjectURL(file), // ✅ Tạo URL tạm thời để hiển thị ảnh
-      progress: 100, // Mặc định 100%
-      name: file.name,
-      size: (file.size / 1024).toFixed(2) + " KB", // Đổi byte sang KB
-    }));
-    setUploadedFiles((prev) => [...prev, ...newFiles]);
+    setUploadedFiles((prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        progress: 100,
+        name: file.name,
+        size: (file.size / 1024).toFixed(2) + " KB",
+      })),
+    ]);
   };
 
-  // Xử lý kéo - thả file
   const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    const newFiles = files.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-      progress: 100,
-      name: file.name,
-      size: (file.size / 1024).toFixed(2) + " KB",
-    }));
-    setUploadedFiles((prev) => [...prev, ...newFiles]);
+    setUploadedFiles((prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        progress: 100,
+        name: file.name,
+        size: (file.size / 1024).toFixed(2) + " KB",
+      })),
+    ]);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  // Xóa file đã chọn
+  // Xử lý xóa file
   const handleRemoveFile = (index) => {
     setUploadedFiles((prev) => {
       const updatedFiles = [...prev];
       const removedFile = updatedFiles[index];
 
-      // Giải phóng URL tạm thời
+      // Nếu là ảnh từ Cloudinary, thêm vào danh sách xóa
+      if (!removedFile.url.startsWith("blob:")) {
+        setDeletedImages((prevDeleted) => [...prevDeleted, removedFile.url]);
+      }
+
+      // Giải phóng URL tạm thời nếu là ảnh mới
       if (removedFile.url.startsWith("blob:")) {
         URL.revokeObjectURL(removedFile.url);
       }
@@ -101,7 +118,7 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
     });
   };
 
-  // Xử lý submit form
+  // Submit form
   const handleSubmit = async () => {
     const productData = {
       title: productName,
@@ -110,24 +127,55 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
       stock,
       price,
       description,
+      images: uploadedFiles
+        .map((file) => file.url)
+        .filter((url) => !url.startsWith("blob:")), // Chỉ lấy ảnh từ Cloudinary
+      deletedImages,
     };
-    const images = uploadedFiles.map((file) => file.file).filter(Boolean);
-    if (selectedProduct) {
-      alert("Cập nhật sản phẩm: " + JSON.stringify(productData, null, 2));
-    } else {
-      const response = await addProductApi(productData, images);
-      if (response) {
-        setProductName("");
-        setCategory("");
-        setGender("");
-        setStock("");
-        setPrice("");
-        setDescription("");
-        setUploadedFiles([]);
-        showSuccessToast("Sản phẩm được thêm thành công!");
-      } else {
-        showErrorToast("Thêm sản phẩm không thành công!");
+
+    const newImages = uploadedFiles.map((file) => file.file).filter(Boolean);
+    // Kiểm tra sự thay đổi giữa productData và selectedProduct
+    const hasChanges =
+      selectedProduct &&
+      (productData.title !== selectedProduct.title ||
+        productData.category !== selectedProduct.category ||
+        productData.gender !== selectedProduct.gender ||
+        productData.stock !== selectedProduct.stock ||
+        productData.price !== selectedProduct.price ||
+        productData.description !== selectedProduct.description ||
+        JSON.stringify(productData.images) !==
+          JSON.stringify(selectedProduct.imageDetails?.map((img) => img.url)) ||
+        newImages.length > 0 || // Nếu có ảnh mới
+        deletedImages.length > 0); // Nếu có ảnh bị xóa
+    try {
+      let response;
+      if (selectedProduct && hasChanges) {
+        // Gọi API update nếu có sự thay đổi và sản phẩm đã tồn tại
+        response = await updateProductByIdApi(
+          selectedProduct._id,
+          productData,
+          newImages
+        );
+        console.log("Response:", response);
+      } else if (!selectedProduct) {
+        // Gọi API thêm mới nếu chưa có sản phẩm
+        response = await addProductApi(productData, newImages);
       }
+
+      if (response) {
+        showSuccessToast(
+          selectedProduct
+            ? "Cập nhật sản phẩm thành công!"
+            : "Sản phẩm được thêm thành công!"
+        );
+        setTimeout(() => {
+          onCancel();
+        }, 3000);
+      } else {
+        showErrorToast("Có lỗi xảy ra khi xử lý yêu cầu!");
+      }
+    } catch (error) {
+      showErrorToast("Có lỗi xảy ra: " + error.message);
     }
   };
 
@@ -137,7 +185,6 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
         {selectedProduct ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm"}
       </Typography>
       <Grid container spacing={3}>
-        {/* Cột trái: Dropzone & Danh sách file */}
         <Grid item xs={12} md={6}>
           <Box
             className="dropzone"
@@ -176,7 +223,6 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
             />
           </Box>
 
-          {/* Danh sách file đã upload */}
           {uploadedFiles.map((fileObj, index) => (
             <Box
               key={index}
@@ -210,7 +256,7 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
                 </Typography>
                 <LinearProgress
                   variant="determinate"
-                  value={fileObj.progress}
+                  value={fileObj.progress || 0}
                   sx={{ height: 6, borderRadius: 5, mt: 1 }}
                 />
               </Box>
@@ -230,7 +276,6 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
           ))}
         </Grid>
 
-        {/* Cột phải: Form thông tin sản phẩm */}
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <TextField
@@ -241,25 +286,39 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
               onChange={(e) => setProductName(e.target.value)}
             />
             <TextField
+              select
               label="Danh mục"
               variant="outlined"
               size="small"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-            />
+            >
+              <MenuItem value="Shirt">Áo Sơ Mi</MenuItem>
+              <MenuItem value="T-Shirt">Áo Thun</MenuItem>
+              <MenuItem value="Pants">Quần dài</MenuItem>
+              <MenuItem value="Short">Quần ngắn</MenuItem>
+              <MenuItem value="Hat">Mũ</MenuItem>
+              <MenuItem value="Jacket">Áo khoác</MenuItem>
+              <MenuItem value="Accessories">Phụ kiện</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Giới tính"
+              variant="outlined"
+              size="small"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+            >
+              <MenuItem value="Other">Khác</MenuItem>
+              <MenuItem value="Female">Nữ</MenuItem>
+              <MenuItem value="Male">Nam</MenuItem>
+            </TextField>
             <TextField
               label="Số lượng trong kho"
               variant="outlined"
               size="small"
               value={stock}
               onChange={(e) => setStock(e.target.value)}
-            />
-            <TextField
-              label="Giới tính"
-              variant="outlined"
-              size="small"
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
             />
             <TextField
               label="Giá"
@@ -277,8 +336,6 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-
-            {/* Nút Submit Form */}
             <Box sx={{ textAlign: "right", mt: 2 }}>
               <Button variant="contained" onClick={handleSubmit}>
                 {selectedProduct ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
@@ -294,10 +351,9 @@ const AddEditProductPage = ({ onCancel, selectedProduct }) => {
   );
 };
 
-// Định nghĩa propTypes
-AddEditProductPage.propTypes = {
+ProductDetailManagement.propTypes = {
   onCancel: PropTypes.func.isRequired,
   selectedProduct: PropTypes.object,
 };
 
-export default AddEditProductPage;
+export default ProductDetailManagement;

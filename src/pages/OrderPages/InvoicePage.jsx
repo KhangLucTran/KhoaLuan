@@ -8,16 +8,22 @@ import {
 import { getProductByIdApi } from "../../features/product/productApi";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Button } from "@mui/material";
+import CommentForm from "../../components/Form/CommentForm";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import { useNavigate } from "react-router-dom";
+import { getSocket } from "../../utils/socket";
+
+const formatMoney = (amount) => {
+  return amount.toLocaleString("vi-VN") + "₫";
+};
 
 // Component hiển thị mỗi line item với ảnh sản phẩm
 const LineItemComponent = ({ item }) => {
   const [productImage, setProductImage] = useState(null);
-
   useEffect(() => {
     async function fetchProductImage() {
       try {
-        // Gọi API lấy sản phẩm theo ID
         const data = await getProductByIdApi(item.productId);
         if (data && data.images && data.images.length > 0) {
           setProductImage(data.images[0]);
@@ -30,36 +36,25 @@ const LineItemComponent = ({ item }) => {
   }, [item]);
 
   return (
-    <div className="line-item">
+    <div className="invoice-line-item">
       {productImage && (
         <img
           src={productImage}
           alt={item.productName}
-          className="line-item-image"
+          className="invoice-line-item-image"
+          loading="lazy"
         />
       )}
-      <div className="line-item-details">
-        <p>
-          <strong>Sản phẩm:</strong> {item.productName}
-        </p>
-        <p>
-          <strong>Số lượng:</strong> {item.quantity}
-        </p>
-        <p>
-          <strong>Giá:</strong> {item.price.toLocaleString()} VND
-        </p>
-        <p>
-          <strong>Tổng tiền:</strong> {item.total.toLocaleString()} VND
-        </p>
-        <p>
-          <strong>Kích cỡ:</strong> {item.size}
-        </p>
-        <p>
-          <strong>Màu sắc:</strong> {item.color}
-        </p>
-        <p>
-          <strong>Giới tính:</strong> {item.gender}
-        </p>
+      <div className="invoice-line-item-details">
+        <div className="product-name-invoice-detail">
+          {item.productName}
+          <div className="details">
+            <span>Số lượng: {item.quantity}</span>
+            <span>Kích cỡ: {item.size}</span>
+            <span>Màu: {item.color}</span>
+          </div>
+          <h5 className="details-footer">Giá: {formatMoney(item.price)}</h5>
+        </div>
       </div>
     </div>
   );
@@ -86,6 +81,9 @@ const InvoiceComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Pending");
+  const [activeComment, setActiveComment] = useState(false);
+  const [isCommentFormVisible, setIsCommentFormVisible] = useState(false);
+  const navigate = useNavigate();
 
   // Mapping status tiếng Anh -> Tiếng Việt
   const statusMap = {
@@ -96,6 +94,23 @@ const InvoiceComponent = () => {
     Cancelled: "Đã hủy",
     All: "Tất cả",
   };
+
+  // Cập nhật Invoice Data theo Real-Time
+  useEffect(() => {
+    const socket = getSocket();
+    socket.on("invoiceStatusUpdated", (updatedInvoice) => {
+      setInvoices((prev) =>
+        prev.map((inv) =>
+          inv._id === updatedInvoice._id ? updatedInvoice : inv
+        )
+      );
+      console.log("📦 Trạng thái hóa đơn đã được cập nhật realtime");
+    });
+
+    return () => {
+      socket.off("invoiceStatusUpdated");
+    };
+  }, []);
 
   useEffect(() => {
     getInvoiceByUserIdApi()
@@ -123,6 +138,7 @@ const InvoiceComponent = () => {
     "Cancelled",
     "All",
   ];
+
   const filteredInvoices =
     activeTab === "All"
       ? invoices
@@ -130,31 +146,48 @@ const InvoiceComponent = () => {
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+    setActiveComment(null);
   };
 
   // Hàm cập nhật trạng thái hóa đơn khi bấm nút "Hủy hóa đơn"
   const handleCancelInvoice = async (invoiceId) => {
     try {
-      // Gọi API update status, truyền vào invoiceId và trạng thái mới "Cancelled"
-      const updatedData = updateStatusInvoiceApi(invoiceId, {
+      const updatedData = await updateStatusInvoiceApi(invoiceId, {
         status: "Cancelled",
       });
-      // Update lại state invoices sau khi update thành công
       setInvoices((prevInvoices) =>
         prevInvoices.map((inv) =>
-          inv._id === invoiceId ? { ...inv, status: "Cancelled" } : inv
+          inv._id === invoiceId ? updatedData.invoice : inv
         )
       );
       console.log("Invoice updated:", updatedData);
     } catch (error) {
       console.error("Error updating invoice status:", error);
+      alert("Cập nhật trạng thái hóa đơn thất bại, vui lòng thử lại.");
     }
   };
 
+  const handleCommentSubmit = () => {
+    // Sau khi submit, ẩn CommentForm
+    setActiveComment(null);
+  };
+
+  const statusColors = {
+    pending: "#f39c12", // cam
+    paid: "#16a085", // xanh ngọc
+    shipped: "#2980b9", // xanh dương
+    completed: "#27ae60", // xanh lá
+    cancelled: "#c0392b", // đỏ
+  };
+
+  function getStatusColor(status) {
+    if (!status) return "#555"; // màu mặc định
+    return statusColors[status.toLowerCase()] || "#555";
+  }
   return (
     <>
       <Header hideNav={true} />
-      <div className="invoice-tabs-container">
+      <div className="invoice-page-tabs-container">
         <Box
           sx={{
             borderBottom: 1,
@@ -177,61 +210,115 @@ const InvoiceComponent = () => {
             ))}
           </Tabs>
         </Box>
-        <div className="invoice-list">
+        <div className="invoice-page-list">
           {filteredInvoices.length === 0 ? (
-            <p className="no-invoice-message">
+            <p className="invoice-no-invoice-message">
               Không có hóa đơn nào trong trạng thái {statusMap[activeTab]}.
             </p>
           ) : (
             filteredInvoices.map((invoice) => (
-              <div key={invoice._id} className="invoice-card-card-container">
-                <div className="invoice-card">
-                  <h3>Hóa đơn #{invoice.vnp_TxnRef || "N/A"}</h3>
-                  <p>
-                    <strong>Trạng thái:</strong> {statusMap[invoice.status]}
-                  </p>
-                  <p>
-                    <strong>Ngày lập:</strong>{" "}
-                    {new Date(invoice.issuedAt).toLocaleString()}
-                  </p>
-                  <p>
-                    <strong>Phương thức thanh toán:</strong>{" "}
-                    {invoice.paymentMethod}
-                  </p>
-                  {invoice.status === "Paid" && (
-                    <p>
-                      <strong>Ngân hàng:</strong> {invoice.vnp_BankCode}
-                    </p>
-                  )}
-                  <p className="cart-total">
-                    <strong>Tổng cộng:</strong>{" "}
-                    {invoice.totalAmount.toLocaleString()} VND
-                  </p>
+              <div
+                key={invoice._id}
+                className={`invoice-page-card status-${invoice.status}`}
+              >
+                <div className="invoice-page-wrapper">
+                  <div
+                    className="invoice-page-ribbon"
+                    style={{
+                      backgroundColor: getStatusColor(invoice.status),
+                    }}
+                  >
+                    {statusMap[invoice.status] || "Không xác định"}
+                  </div>
                   {/* Chi tiết Line Items */}
-                  <div className="line-items-section">
-                    <h4>Chi tiết sản phẩm:</h4>
+                  <div
+                    className="invoice-line-items-section"
+                    onClick={() =>
+                      navigate(`/levents/invoice/detail/${invoice._id}`)
+                    }
+                  >
+                    <div className="line-items-invoice-detail-header">
+                      <StorefrontIcon fontSize="small" />
+                      <h3> Levents</h3>
+                    </div>
+                    <div className="invoice-title">
+                      <strong>
+                        MÃ ĐƠN HÀNG: {invoice.vnp_TxnRef || "N/A"}
+                      </strong>
+                      |
+                      <span className="invoice-title-status-main">
+                        {statusMap[invoice.status]}
+                      </span>
+                    </div>
                     {invoice.lineItems.map((item) => (
-                      <LineItemComponent key={item._id} item={item} />
+                      <div
+                        key={item._id}
+                        className="invoice-line-item-container"
+                      >
+                        <LineItemComponent key={item._id} item={item} />
+                        {invoice.status === "Completed" &&
+                          (item.hasRated ? (
+                            <div className="invoice-hasRated">
+                              Đã Đánh giá sản phẩm
+                            </div>
+                          ) : (
+                            <div
+                              className="invoice-rate-product-section"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <Button
+                                variant="contained"
+                                size="small"
+                                sx={{
+                                  position: "absolute",
+                                  bottom: 0,
+                                  right: 0,
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setIsCommentFormVisible(true);
+                                  setActiveComment(
+                                    activeComment === item._id ? null : item._id
+                                  );
+                                }}
+                              >
+                                Đánh giá sản phẩm
+                              </Button>
+                              {activeComment === item._id &&
+                                isCommentFormVisible && (
+                                  <div
+                                    className="comment-delay"
+                                    onClick={() =>
+                                      setIsCommentFormVisible(false)
+                                    }
+                                  >
+                                    <CommentForm
+                                      productId={item.productId}
+                                      onCommentSubmit={handleCommentSubmit}
+                                      invoiceId={invoice._id}
+                                    />
+                                  </div>
+                                )}
+                            </div>
+                          ))}
+                      </div>
                     ))}
                   </div>
+                  <p className="invoice-cart-total">
+                    <strong>Tổng cộng:</strong>
+                    {formatMoney(invoice.totalAmount)} VND
+                  </p>
                 </div>
-                {/* Hiển thị nút nếu hóa đơn đã hoàn thành */}
-                {invoice.status === "Completed" && (
-                  <div className="invoice-actions">
-                    <button className="action-button repurchase">
-                      Mua lại
-                    </button>
-                    <button className="action-button rate-product">
-                      Đánh giá sản phẩm
-                    </button>
-                  </div>
-                )}
-                {/* Nếu hóa đơn đang chờ xử lý, hiển thị nút hủy */}
                 {invoice.status === "Pending" && (
-                  <div className="invoice-actions">
+                  <div className="invoice-invoice-actions">
                     <button
-                      className="action-button cancel"
-                      onClick={() => handleCancelInvoice(invoice._id)}
+                      className="invoice-action-button cancel"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCancelInvoice(invoice._id);
+                      }}
                     >
                       Hủy hóa đơn
                     </button>

@@ -9,7 +9,6 @@
   width: 250px;
   background-color: #343a40;
   color: white;
-  padding: 20px;
 }
 
 .admin-product-sidebar h3 {
@@ -27,42 +26,43 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-.admin-product-sidebar ul li:hover {
-  background-color: #495057;
-}
-
 /* Phần nội dung chính */
 .admin-product-page-content {
   flex: 1;
   padding: 40px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: auto;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Tiêu đề trang */
-.admin-product-page-content h2 {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  color: #222;
+.admin-product-header-button{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
-
 /* Ô tìm kiếm sản phẩm */
-.admin-product-page-search {
-  margin-bottom: 25px;
-  text-align: center;
+.product-filter-select {
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid #d0d0d0;
+  font-size: 15px;
+  background-color: #fff;
+  color: #333;
+  margin-right: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  outline: none;
 }
 
-.admin-product-page-search input {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+.product-filter-select:hover {
+  border-color: #1877f2;
+  background-color: #f8faff;
+}
+
+.product-filter-select:focus {
+  border-color: #1877f2;
+  box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
 }
 
 /* Bảng sản phẩm */
@@ -74,7 +74,7 @@
   width: 100%;
   border-collapse: collapse;
   background-color: white;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
 }
 
@@ -88,15 +88,11 @@
 }
 
 .admin-product-table th {
-  background-color: #f8f9fa;
   font-weight: bold;
   text-transform: uppercase;
   text-align: center;
 }
 
-.admin-product-table tr:hover {
-  background-color: #f1f1f1;
-}
 .admin-product-table td:last-child{
   text-align: center;
   width: 150px; /* Giới hạn chiều rộng cho cột này */
@@ -134,6 +130,10 @@
 .admin-product-page-actions button:hover {
   transform: scale(1.1);
 }
+.category-btn{
+  background-color: #24CCD4;
+  color: white;
+}
 
 .edit-btn {
   background-color: #007bff;
@@ -150,4 +150,79 @@
   display: flex;
   justify-content: center;
   margin-top: 30px;
+}
+
+/* Phong cách chung cho sản phẩm bán chạy */
+.top-seller {
+  font-weight: bold;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-seller:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Hạng 1 - Nổi bật nhất */
+.top-rank-1 {
+  background: linear-gradient(135deg, #1877F2, #0F5BA7);
+  color: white;
+  position: relative;
+}
+
+.top-rank-1 .rank-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: gold;
+}
+
+
+/* Hạng 2 - Nhẹ hơn nhưng vẫn nổi bật */
+.top-rank-2 {
+  background: linear-gradient(135deg, #A0C4FF, #82B0FF);
+  color: #03396c;
+}
+
+.top-rank-2 .rank-number {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #cd7f32;
+}
+
+/* Hạng 3 - Màu trung gian */
+.top-rank-3 {
+  background: linear-gradient(135deg, #D0E8FF, #B3DAFF);
+  color: #012A4A;
+}
+
+.top-rank-3 .rank-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #CD7F32; /* Đồng */
+}
+/* Điều chỉnh hình ảnh trong bảng */
+.admin-product-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.admin-product-image:hover {
+  transform: scale(1.1);
+}
+
+.search-container {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-input {
+  padding: 8px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
 }

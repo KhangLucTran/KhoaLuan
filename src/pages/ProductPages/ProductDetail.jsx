@@ -4,9 +4,9 @@ import {
   Typography,
   Button,
   Card,
-  IconButton,
   CardMedia,
   CardContent,
+  Dialog,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -18,6 +18,7 @@ import "../../styles/ProductDetail.css";
 
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Comment from "./CommentPage";
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
@@ -33,7 +34,7 @@ import {
   checkStatusFavoriteUserApi,
   deleteFavoriteUserApi,
 } from "../../features/favorite/favoriteApi";
-import { Favorite, FavoriteBorder, StarBorder } from "@mui/icons-material";
+import { StarBorder } from "@mui/icons-material";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -49,6 +50,8 @@ const ProductDetail = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
 
   // Lấy danh sách sản phẩm khác cùng loại
   useEffect(() => {
@@ -175,11 +178,91 @@ const ProductDetail = () => {
   if (!product) {
     return <Typography>Đang tải sản phẩm...</Typography>;
   }
-
+  if (!product || !product.title) {
+    return <Typography>Sản phẩm không tồn tại hoặc đã bị xóa.</Typography>;
+  }
   // hàm xử lí tăng số lượng.
   const increaseQuantity = () => setQuantity(quantity + 1);
   // hàm xử lí giảm số lượng.
   const decreaseQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
+  const SizeTable = () => {
+    return (
+      <div className="size-table-container">
+        <div className="size-table-title">Bảng tham khảo Size</div>
+        <table className="size-table">
+          <thead>
+            <tr>
+              <th>Chiều cao</th>
+              <th>Cân nặng</th>
+              <th>Size gợi ý</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>&lt; 160 cm</td>
+              <td>&lt; 50 kg</td>
+              <td>XS</td>
+            </tr>
+            <tr>
+              <td>&lt; 160 cm</td>
+              <td>50 – 60 kg</td>
+              <td>S</td>
+            </tr>
+            <tr>
+              <td>&lt; 160 cm</td>
+              <td>&gt; 60 kg</td>
+              <td>M</td>
+            </tr>
+            <tr>
+              <td>160 – 169 cm</td>
+              <td>&lt; 55 kg</td>
+              <td>S</td>
+            </tr>
+            <tr>
+              <td>160 – 169 cm</td>
+              <td>55 – 65 kg</td>
+              <td>M</td>
+            </tr>
+            <tr>
+              <td>160 – 169 cm</td>
+              <td>&gt; 65 kg</td>
+              <td>L</td>
+            </tr>
+            <tr>
+              <td>170 – 179 cm</td>
+              <td>&lt; 60 kg</td>
+              <td>M</td>
+            </tr>
+            <tr>
+              <td>170 – 179 cm</td>
+              <td>60 – 75 kg</td>
+              <td>L</td>
+            </tr>
+            <tr>
+              <td>170 – 179 cm</td>
+              <td>&gt; 75 kg</td>
+              <td>XL</td>
+            </tr>
+            <tr>
+              <td>&ge; 180 cm</td>
+              <td>&lt; 70 kg</td>
+              <td>L</td>
+            </tr>
+            <tr>
+              <td>&ge; 180 cm</td>
+              <td>70 – 85 kg</td>
+              <td>XL</td>
+            </tr>
+            <tr>
+              <td>&ge; 180 cm</td>
+              <td>&gt; 85 kg</td>
+              <td>XXL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -190,12 +273,30 @@ const ProductDetail = () => {
             <CustomTooltip title={product.title}>
               <div className="product-grid">
                 {product.images.map((img, index) => (
-                  <img key={index} src={img} alt={`Ảnh ${index + 1}`} />
+                  <img
+                    key={index}
+                    src={img}
+                    alt={`Ảnh ${index + 1}`}
+                    loading="lazy"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      objectFit: "cover",
+                    }}
+                    onClick={() => {
+                      setSelectedImage(img);
+                      setOpenImageDialog(true);
+                    }}
+                  />
                 ))}
               </div>
+
               <div className="product-description">
                 <p>{product.description}</p>
               </div>
+              <SizeTable />
+              {/* Danh sách bình luận của sản phẩm */}
+              <Comment productId={product._id} />
             </CustomTooltip>
           </div>
 
@@ -265,15 +366,22 @@ const ProductDetail = () => {
                     onClick={() => setSize(s)}
                     className="size-button"
                     sx={{
-                      backgroundColor: size === s ? "#000" : "transparent",
-                      color: size === s ? "#fff" : "#000",
+                      backgroundColor:
+                        size === s
+                          ? "#000 !important"
+                          : "transparent !important",
+                      color: size === s ? "#fff !important" : "#000 !important",
                       padding: "8px 16px", // Điều chỉnh padding nếu cần
-                      border: "1px solid #000", // Viền trong
-                      outline: size === s ? "2px solid #333" : "none", // Viền ngoài có khoảng cách
+                      border: "1px solid #000 !important", // Viền trong
+                      outline:
+                        size === s ? "2px solid #333 !important" : "none", // Viền ngoài có khoảng cách
                       outlineOffset: "3px", // Tạo khoảng cách giữa outline và border
                       "&:hover": {
-                        backgroundColor: size === s ? "#333" : "transparent",
-                        outline: "1px solid #333",
+                        backgroundColor:
+                          size === s
+                            ? "#333 !important"
+                            : "transparent !important",
+                        outline: "1px solid #333 !important",
                       },
                     }}
                   >
@@ -321,12 +429,12 @@ const ProductDetail = () => {
               <Box className="product-actions">
                 <Button
                   sx={{
-                    borderRadius: 3,
+                    borderRadius: 2,
                     padding: 1,
-                    backgroundColor: "#000",
-                    color: "#fff",
+                    backgroundColor: "#000 !important",
+                    color: "#fff !important",
                     "&:hover": {
-                      backgroundColor: "#333",
+                      backgroundColor: "#333 !important",
                     },
                   }}
                   className="product-actions-button"
@@ -353,69 +461,60 @@ const ProductDetail = () => {
           <div className="related-products-grid">
             {relatedProducts && relatedProducts.length > 0 ? (
               relatedProducts.map((item) => (
-                <Card
-                  key={item._id}
-                  className="product-card"
-                  onClick={() =>
-                    navigate(`/levents/product-detail/${item._id}`)
-                  }
-                  sx={{
-                    width: 335,
-                    boxShadow: "none",
-                    background: "#fff",
-                    position: "relative",
-                    cursor: "pointer",
-                  }}
-                >
-                  {/* Nút Yêu thích */}
-                  <IconButton
-                    sx={{ position: "absolute", top: 8, right: 8 }}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Ngăn chặn sự kiện lan ra Card
-                      handleFavoriteClick();
+                <CustomTooltip key={item} title={item.title}>
+                  <Card
+                    key={item._id}
+                    className="product-card"
+                    onClick={() =>
+                      navigate(`/levents/product-detail/${item._id}`)
+                    }
+                    sx={{
+                      width: 335,
+                      boxShadow: "none",
+                      background: "#fff",
+                      position: "relative",
+                      cursor: "pointer",
                     }}
                   >
-                    {isFavorite ? (
-                      <Favorite sx={{ color: "black" }} />
-                    ) : (
-                      <FavoriteBorder sx={{ color: "#333" }} />
-                    )}
-                  </IconButton>
+                    {/* Hình ảnh sản phẩm */}
+                    <CardMedia
+                      component="img"
+                      height="400"
+                      image={
+                        item.images?.[1] ||
+                        item.images?.[0] ||
+                        "/placeholder-image.jpg"
+                      }
+                      alt={item.title || "Sản phẩm không có tiêu đề"}
+                      sx={{ objectFit: "cover" }}
+                    />
 
-                  {/* Hình ảnh sản phẩm */}
-                  <CardMedia
-                    component="img"
-                    height="400"
-                    image={
-                      item.images?.[1] ||
-                      item.images?.[0] ||
-                      "/placeholder-image.jpg"
-                    }
-                    alt={item.title || "Sản phẩm không có tiêu đề"}
-                    sx={{ objectFit: "cover" }}
-                  />
-
-                  {/* Nội dung sản phẩm */}
-                  <CardContent className="product-card-title">
-                    <Typography variant="h6" gutterBottom fontWeight="bold">
-                      {item.title || "Sản phẩm chưa có tên"}
-                    </Typography>
-                    <Typography variant="body1" color="black" fontWeight="bold">
-                      {item.price
-                        ? `${item.price.toLocaleString()} VND`
-                        : "Giá chưa cập nhật"}
-                    </Typography>
-                    <Typography>Đã bán: {item.sold ?? 0}</Typography>
-                    <Box display="flex" alignItems="center">
-                      <StarBorder color="inherit" />
-                      <Typography variant="body2">
-                        {item.rating !== undefined
-                          ? `${item.rating} / 5`
-                          : "Chưa có đánh giá"}
+                    {/* Nội dung sản phẩm */}
+                    <CardContent className="product-card-title">
+                      <Typography variant="h6" gutterBottom fontWeight="bold">
+                        {item.title || "Sản phẩm chưa có tên"}
                       </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
+                      <Typography
+                        variant="body1"
+                        color="black"
+                        fontWeight="bold"
+                      >
+                        {item.price
+                          ? `${item.price.toLocaleString()} VND`
+                          : "Giá chưa cập nhật"}
+                      </Typography>
+                      <Typography>Đã bán: {item.sold ?? 0}</Typography>
+                      <Box display="flex" alignItems="center">
+                        <StarBorder color="inherit" />
+                        <Typography variant="body2">
+                          {item.rating !== undefined
+                            ? `${item.rating} / 5`
+                            : "Chưa có đánh giá"}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </CustomTooltip>
               ))
             ) : (
               <p>Không có sản phẩm nào</p>
@@ -430,6 +529,19 @@ const ProductDetail = () => {
         open={showShareNotification}
         onClose={handleCloseShareNotification} // Đóng ShareNotification
       />
+
+      {/* Dialog hiện ảnh khi click */}
+      <Dialog
+        open={openImageDialog}
+        onClose={() => setOpenImageDialog(false)}
+        maxWidth=""
+      >
+        <img
+          src={selectedImage}
+          alt="Ảnh chi tiết"
+          style={{ width: "100%", height: "auto", objectFit: "contain" }}
+        />
+      </Dialog>
 
       {/*Thông báo khi chưa đăng nhập  */}
       <DetailedDialog

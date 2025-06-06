@@ -43,7 +43,7 @@ const LineItem = ({
   };
 
   return (
-    <div className={`line-item ${isSelected ? "selected" : ""}`}>
+    <div className={`line-item-cart ${isSelected ? "selected" : ""}`}>
       <div className="line-item-checkbox">
         <input
           type="checkbox"
@@ -80,7 +80,7 @@ const LineItem = ({
         <p>Price: {formatPrice(price)} VND</p>
         <p>Total: {formatPrice(total)} VND</p>
       </div>
-      <button className="delete-btn" onClick={handleDelete}>
+      <button className="cart-delete-btn" onClick={handleDelete}>
         🗑️
       </button>
     </div>

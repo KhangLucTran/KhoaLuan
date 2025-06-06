@@ -1,15 +1,16 @@
 /* General line item styling */
-.line-item {
+.line-item-cart {
   display: flex;
   align-items: center;
   justify-content: space-between; /* Cân chỉnh các phần tử */
   margin-bottom: 20px;
-  padding: 15px;
+  padding: 20px;
   transition: background-color 0.3s ease;
 }
 
-.line-item.selected {
+.line-item-cart.selected {
   background-color: #f0f7ff;
+  border-radius: 10px; 
 }
 
 /* Checkbox container styling */
@@ -85,7 +86,7 @@
 }
 
 /* Delete button styling */
-.delete-btn {
+.cart-delete-btn {
   background-color: #ccc; /* Màu cam nhẹ nhàng cho nút xóa */
   color: #000;
   border: none;
@@ -101,7 +102,7 @@
 }
 
 /* Hover state - tăng độ sáng khi hover */
-.delete-btn:hover {
+.cart-delete-btn:hover {
   background-color: #000; /* Màu cam đậm khi hover */
   transform: scale(1.1); /* Phóng to nhẹ khi hover */
 }

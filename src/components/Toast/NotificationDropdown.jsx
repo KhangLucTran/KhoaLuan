@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Badge, IconButton, Typography, Avatar } from "@mui/material";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useNavigate } from "react-router-dom";
-import { getAuthTokens } from "../../utils/token";
 import "../../styles/NotificationDropdown.css";
 import { useSelector } from "react-redux";
 import { getProductByIdApi } from "../../features/product/productApi";
+import { markNotificationAsReadApi } from "../../features/notification/notificationApi";
+import { useNotification } from "./notificationContext";
+import { getInvoiceByIdApi } from "../../features/invoice/invoiceApi";
 
 const getTimeAgo = (createdAt) => {
   const now = new Date();
@@ -22,117 +23,97 @@ const getTimeAgo = (createdAt) => {
     return `${Math.floor(diffInSeconds / 86400)} ngày trước`;
   if (diffInSeconds < 31536000)
     return `${Math.floor(diffInSeconds / 2592000)} tháng trước`;
-
   return `${Math.floor(diffInSeconds / 31536000)} năm trước`;
 };
 
 const NotificationDropdown = () => {
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, unreadCount, setNotifications } = useNotification();
   const [open, setOpen] = useState(false);
-  const [timeAgoList, setTimeAgoList] = useState([]);
-  const navigate = useNavigate();
-  const accessToken = getAuthTokens().accessToken;
-  const user = useSelector((state) => state.user.user);
-
   const [avatarUrls, setAvatarUrls] = useState({});
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     const fetchAvatars = async () => {
-      const avatarPromises = notifications.map(async (notif) => {
-        const avatarUrl = await getNotificationAvatar(notif);
-        return { id: notif._id, avatarUrl };
-      });
+      const avatarData = await Promise.all(
+        notifications.map(async (notif) => {
+          let avatarUrl = "/default-avatar.png";
 
-      const avatars = await Promise.all(avatarPromises);
-      setAvatarUrls((prev) => ({
-        ...prev,
-        ...Object.fromEntries(
-          avatars.map(({ id, avatarUrl }) => [id, avatarUrl])
-        ),
-      }));
+          if (notif.type === "user" && notif.user) {
+            avatarUrl = user?.data?.profileId?.avatar || avatarUrl;
+            console.log("avatar User:", avatarUrl);
+          } else if (notif.type === "product" && notif.refId) {
+            try {
+              const result = await getProductByIdApi(notif.refId);
+              avatarUrl = result?.images?.[0] || avatarUrl;
+              console.log("avatar Product:", avatarUrl);
+            } catch (error) {
+              console.error("Lỗi khi lấy ảnh sản phẩm:", error);
+            }
+          } else if (notif.type === "order" && notif.invoiceId) {
+            const result = await getInvoiceByIdApi(notif.invoiceId);
+            console.log("🔎 Invoice result:", result);
+            if (
+              Array.isArray(result?.invoice?.lineItems) &&
+              result?.invoice?.lineItems.length > 0
+            ) {
+              const productId = result?.invoice?.lineItems[0].productId;
+              console.log("Product ID:", productId);
+              const data = await getProductByIdApi(productId);
+              avatarUrl = data?.images?.[0] || avatarUrl;
+              console.log("avatar Invoice:", avatarUrl);
+            } else {
+              console.warn(
+                "⚠️ lineItems không hợp lệ hoặc không tồn tại trong invoice",
+                result
+              );
+            }
+          }
+
+          return { id: notif._id, avatarUrl };
+        })
+      );
+
+      setAvatarUrls(
+        Object.fromEntries(
+          avatarData.map(({ id, avatarUrl }) => [id, avatarUrl])
+        )
+      );
     };
 
     if (notifications.length > 0) {
       fetchAvatars();
     }
-  }, [notifications]);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/notification", {
-        withCredentials: true,
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      setNotifications(res.data);
-      setTimeAgoList(res.data.map((notif) => getTimeAgo(notif.createdAt)));
-    } catch (error) {
-      console.error("Lỗi khi lấy thông báo:", error);
-    }
-  };
-
-  useEffect(() => {
-    const updateTimeAgo = () => {
-      setTimeAgoList(notifications.map((notif) => getTimeAgo(notif.createdAt)));
-    };
-
-    const interval = setInterval(updateTimeAgo, 60000);
-    return () => clearInterval(interval);
-  }, [notifications]);
+  }, [notifications, user]);
 
   const handleNotificationClick = async (notif) => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/notification/${notif._id}/read`,
-        {},
-        {
-          withCredentials: true,
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-
+      await markNotificationAsReadApi(notif._id);
       setNotifications((prev) =>
         prev.map((n) => (n._id === notif._id ? { ...n, isRead: true } : n))
       );
-      setTimeout(() => {
-        fetchNotifications();
-      }, 500);
 
-      navigate(notif.link || "/levents/notification");
+      if (notif.type === "order" && notif.invoiceId) {
+        navigate(`/levents/invoice/detail/${notif.invoiceId}`);
+      } else if (notif.type === "user" && notif.relatedUserId === null) {
+        navigate(`/levents/profile/view`);
+      } else if (notif.type === "product" && notif.productId) {
+        navigate(`/levents/product-detail/${notif.productId}`);
+      } else {
+        navigate(notif.link);
+      }
+
       setOpen(false);
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái:", error);
     }
   };
 
-  const getNotificationAvatar = async (notif) => {
-    if (notif.type === "user") {
-      return user.data.profileId?.avatar || "/default-avatar.png";
-    }
-    if (notif.type === "invoice" && notif.invoiceId?.lineItems?.length) {
-      const productId = notif.invoiceId?.lineItems?.[0].productId;
-      try {
-        const result = await getProductByIdApi(productId);
-        return result.images?.[0] || "/default-avatar.png";
-      } catch (error) {
-        console.error("Lỗi khi lấy ảnh sản phẩm:", error);
-        return "/default-avatar.png";
-      }
-    }
-    return "/default-avatar.png";
-  };
-
   return (
     <div>
       <IconButton color="inherit" onClick={() => setOpen(!open)}>
-        <Badge
-          badgeContent={notifications.filter((n) => !n.isRead).length}
-          color="info"
-        >
-          <NotificationsOutlinedIcon fontSize="medium" />
+        <Badge badgeContent={unreadCount} color="info">
+          <NotificationsIcon fontSize="medium" />
         </Badge>
       </IconButton>
 
@@ -155,7 +136,7 @@ const NotificationDropdown = () => {
               Không có thông báo nào
             </Typography>
           ) : (
-            notifications.slice(0, 5).map((notif, index) => (
+            notifications.slice(0, 7).map((notif) => (
               <div
                 key={notif._id}
                 className={`notification-item ${notif.isRead ? "read" : "unread"}`}
@@ -166,14 +147,16 @@ const NotificationDropdown = () => {
                   sx={{ width: 60, height: 60, borderRadius: 2 }}
                   src={avatarUrls[notif._id] || "/default-avatar.png"}
                   className="notification-avatar"
+                  loading="lazy"
                 />
                 <div className="notification-content">
-                  <Typography className="notification-message">
-                    {notif.message}
-                  </Typography>
-                  <Typography className="notification-time">
-                    {timeAgoList[index]}
-                  </Typography>
+                  <h4 className="notification-message">{notif.title}</h4>
+                  <p className="notification-description">
+                    {notif.message || "Bạn có một thông báo mới!"}
+                  </p>
+                  <p className="notification-time">
+                    {getTimeAgo(notif.createdAt)}
+                  </p>
                 </div>
               </div>
             ))

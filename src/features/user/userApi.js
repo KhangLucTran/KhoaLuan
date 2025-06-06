@@ -85,3 +85,17 @@ export const deleteUserApi = async (userId) => {
     );
   }
 };
+
+// Gọi API lấy dữ liệu người dùng theo userId
+export const getUserByIdApi = async (userId) => {
+  try {
+    // Gửi dữ liệu updateData dưới dạng body của request PUT
+    const response = await api.post(`${API_URL}/get-users/${userId}`);
+    console.log("🔥 Láy người dùng thành công:", response.data);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Không thể lấy  người dùng"
+    );
+  }
+};

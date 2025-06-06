@@ -57,5 +57,3 @@ export const deleteFavoriteUserApi = async (productId) => {
     );
   }
 };
-
-

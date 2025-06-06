@@ -20,6 +20,7 @@ export const connectSocket = () => {
 
     socket = io("http://localhost:5000", {
       transports: ["websocket"],
+      query: { userId },
       auth: { token: accessToken }, // Gửi token lên server khi kết nối
     });
 

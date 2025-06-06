@@ -1,0 +1,448 @@
+/* Nút mở/đóng chatbot */
+.chatbot-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #1877f2;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(24, 119, 242, 0.5);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbot-toggle-btn:hover {
+  background-color: #145ecf;
+  transform: scale(1.12);
+}
+
+/* Container chính */
+.chatbot-container {
+  position: fixed;
+  bottom: 85px;
+  right: 20px;
+  width: 360px;
+  max-width: 600px;;
+  max-height: 520px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  z-index: 999;
+  animation: fadeScaleIn 0.35s ease forwards;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Khu vực tin nhắn */
+.chatbot-messages {
+  flex: 1;
+  padding: 16px 18px;
+  overflow-y: auto;
+  background-color: #f7f9fc;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tin nhắn */
+.chatbot-message {
+  max-width: 78%;
+  padding: 12px 16px;
+  border-radius: 20px;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  user-select: text;
+  transition: background-color 0.3s ease;
+}
+
+/* Tin nhắn user */
+.chatbot-message.user {
+  background-color: #1877f2;
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+/* Tin nhắn bot */
+.chatbot-message.bot {
+  background-color: #e4e9f2;
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  gap: 6px;
+}
+
+/* Icon robot */
+.chatbot-icon {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  margin-bottom: 4px;
+  user-select: none;
+}
+
+.chatbot-icon-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  margin-left: 6px;
+}
+
+/* Typing indicator */
+.chatbot-message.typing {
+  background-color: #e4e9f2;
+  color: #333;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-style: italic;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+}
+
+.typing-indicator span {
+  width: 6px;
+  height: 6px;
+  background-color: #1877f2;
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
+}
+
+/* Suggestions buttons */
+.chatbot-suggestions {
+  padding: 10px 16px;
+  background-color: #f1f5fb;
+  border-top: 1px solid #dce3eb;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.chatbot-suggestions button {
+  background-color: #fff;
+  border: 1.5px solid #1877f2;
+  color: #1877f2;
+  padding: 8px 14px;
+  border-radius: 24px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  white-space: nowrap;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chatbot-suggestions button:hover,
+.chatbot-suggestions button:focus { 
+  background-color: #1877f2;
+  color: #fff;
+  outline: none;
+}
+
+/* Input area */
+.chatbot-input-area {
+  display: flex;
+  padding: 12px 16px;
+  border-top: 1px solid #dce3eb;
+  background-color: #fafafa;
+}
+
+.chatbot-input-area input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 24px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.chatbot-input-area input:focus {
+  border-color: #1877f2;
+}
+
+.chatbot-input-area button {
+  margin-left: 12px;
+  background-color: #1877f2;
+  border: none;
+  border-radius: 24px;
+  color: white;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chatbot-input-area button:hover {
+  background-color: #145ecf;
+}
+
+/* Product card */
+.product-container-chatbot {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 cột */
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.product-card-chatbot {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card-chatbot:hover {
+  box-shadow: 0 8px 20px rgb(24 119 242 / 0.3);
+  transform: translateY(-4px);
+}
+
+.product-card-image-chatbot {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  border-bottom: 1.5px solid #eee;
+  background-color: #f9f9f9;
+}
+
+.product-card-content-chatbot {
+  padding: 10px 12px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card-title-chatbot {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  margin: 0 0 6px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-card-price-chatbot {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1877f2;
+  margin-bottom: 6px;
+}
+
+.product-card-sold-chatbot {
+  font-size: 11.5px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.product-card-rating-chatbot {
+  display: flex;
+  align-items: center;
+  font-size: 12.5px;
+  color: #f9a825; /* Màu vàng cho sao */
+}
+
+.product-card-rating-chatbot svg {
+  font-size: 16px !important;
+  margin-right: 5px;
+  color: #f9a825;
+}
+
+/* Animation fadeScaleIn */
+/* Hiệu ứng scale nhẹ bounce */
+@keyframes bounce-scale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.chatbot-icon.animate-shake {
+  animation: bounce-scale 1.2s ease-in-out infinite;
+}
+
+/* SIZE */
+.size-suggestion {
+  display: flex;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #e6f0ff 0%, #cce0ff 100%);
+  border-left: 6px solid #1877F2;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #0a2d6d;
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.15);
+  max-width: 360px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: default;
+}
+
+.size-suggestion:hover {
+  box-shadow: 0 8px 24px rgba(24, 119, 242, 0.3);
+  transform: translateY(-3px);
+}
+
+.size-icon {
+  font-size: 32px;
+  margin-right: 16px;
+  line-height: 1;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.size-content p {
+  margin: 0 0 10px 0;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+.size-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.size-content li {
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #12306a;
+}
+
+.size-value {
+  color: #1877F2;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+}
+
+.size-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.size-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #12306a;
+}
+
+.size-list li .icon {
+  font-size: 18px;
+  margin-right: 10px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* CONFIRM BOX */
+.confirmation-box {
+  position: fixed;
+  right: 20px;
+  width: 250px;
+  background: #fff;
+  border-left: 6px solid #1877F2;
+  box-shadow: 0 8px 24px rgba(24, 119, 242, 0.2);
+  border-radius: 16px;
+  padding: 20px 24px;
+  z-index: 1100;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeScaleIn 0.3s ease-out;
+}
+
+.confirmation-box p {
+  margin: 0 0 18px 0;
+  font-size: 15px;
+  color: #0a2d6d;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.confirmation-box .btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirmation-box .btn-group button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 24px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.confirmation-box .btn-group button:first-child {
+  background-color: #1877F2;
+  color: #fff;
+}
+
+.confirmation-box .btn-group button:first-child:hover {
+  background-color: #145ecf;
+}
+
+.confirmation-box .btn-group button:last-child {
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.confirmation-box .btn-group button:last-child:hover {
+  background-color: #d9dce0;
+}
+@keyframes fadeScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -37,6 +37,47 @@ export const deleteProductByIdApi = async (productId) => {
     );
   }
 };
+
+// Gọi API xóa sản phẩm theo ID
+export const updateProductByIdApi = async (
+  productId,
+  productData,
+  newImages
+) => {
+  try {
+    const formData = new FormData();
+
+    // Thêm dữ liệu sản phẩm vào formData
+    Object.keys(productData).forEach((key) => {
+      if (Array.isArray(productData[key])) {
+        productData[key].forEach((item) => formData.append(`${key}[]`, item));
+      } else {
+        formData.append(key, productData[key]);
+      }
+    });
+
+    // Thêm ảnh mới vào formData
+    newImages.forEach((file) => {
+      formData.append("newImages", file);
+    });
+
+    // Gọi API update sản phẩm
+    const response = await api.put(
+      `${API_URL}/update-product/${productId}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+    console.log("Response Data trong Api chỉnh sửa:", response);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Sửa sản phẩm không thành công"
+    );
+  }
+};
+
 // Gọi API thêm sản phẩm mới
 export const addProductApi = async (productData, images) => {
   try {

@@ -1,0 +1,71 @@
+:root {
+    /* ==== BRANDING COLOR ==== */
+    --primary: #1877F2;                  /* màu chủ đạo */
+    --primary-hover: #0F66D0;            /* hover đậm hơn */
+    --primary-light: #E8F0FE;            /* background dịu nhẹ */
+    --primary-disabled: #b3d4fc;         /* dùng cho nút bị disable */
+  
+    /* ==== TEXT COLORS ==== */
+    --text-main: #111111;                /* chữ chính (đậm) */
+    --text-sub: #555555;                 /* chữ phụ */
+    --text-light: #888888;               /* chữ mờ hơn */
+    --text-on-primary: #ffffff;          /* chữ nằm trên nền màu chính */
+  
+    /* ==== TYPOGRAPHY - FONT SIZES ==== */
+    --font-h1: 2.5rem;     /* ~40px - tiêu đề lớn */
+    --font-h2: 2rem;       /* ~32px - tiêu đề cấp 2 */
+    --font-h3: 1.75rem;    /* ~28px - tiêu đề cấp 3 */
+    --font-h4: 1.5rem;     /* ~24px - tiêu đề cấp 4 */
+    --font-h5: 1.25rem;    /* ~20px - tiêu đề cấp 5 */
+    --font-p: 1rem;        /* ~16px - văn bản mặc định */
+    --font-line-height: 1.6; /* chiều cao dòng mặc định */
+    --font-small: 0.875rem;/* ~14px - chú thích, văn bản phụ */
+
+    /* ==== BACKGROUND COLORS ==== */
+    --bg-main: #ffffff;                  /* nền chính */
+    --bg-sub: #f9f9f9;                   /* nền phụ hoặc container */
+    --bg-soft: #f2f4f8;                  /* nền rất nhẹ */
+    --bg-dark: #1e1e1e;                  /* nền đen cho dark theme */
+  
+    /* ==== BORDER COLORS ==== */
+    --border: #dddddd;                   /* viền cơ bản */
+    --border-light: #eeeeee;             /* viền nhẹ hơn */
+    --border-dark: #cccccc;              /* viền đậm hơn */
+  
+    /* ==== ICON COLORS ==== */
+    --icon-color: var(--primary);        /* màu icon mặc định */
+    --icon-muted: #999999;               /* màu icon phụ */
+    --icon-hover: var(--primary-hover);  /* icon khi hover */
+  
+    /* ==== STATUS COLORS ==== */
+    --success: #28c76f;
+    --success-light: #d4f7e3;
+    --error: #ea5455;
+    --error-light: #ffe5e5;
+    --warning: #ff9f43;
+    --warning-light: #fff3e0;
+    --info: #00cfe8;
+    --info-light: #d2f4ff;
+  
+    /* ==== SHADOWS ==== */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.15);
+  
+    /* ==== OPACITY ==== */
+    --opacity-disabled: 0.6;
+    --opacity-hover: 0.85;
+  
+    /* ==== RADIUS ==== */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+  
+    /* ==== Z-INDEX ==== */
+    --z-dropdown: 1000;
+    --z-overlay: 1100;
+    --z-tooltip: 1200;
+    --z-modal: 1300;
+  }
+  
