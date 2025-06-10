@@ -21,6 +21,7 @@ import AdminInvoicePage from "../AdminPages/InvoiceAdminPage";
 import UserManagement from "../AdminPages/UserManagement/UserManagement";
 import ProductManagement from "../AdminPages/ProductManagement/ProductManagement";
 import HomeManagement from "../AdminPages/HomeManagement/DashboardPage";
+import DiscountManagement from "../AdminPages/DiscountManagement/DiscountManagement";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -186,7 +187,7 @@ const AdminPage = () => {
             {selectedMenu === "Home" && <HomeManagement />}
             {selectedMenu === "User" && <UserManagement />}
             {selectedMenu === "Product" && <ProductManagement />}
-            {selectedMenu === "Voucher" && <h2>MÃ GIẢM</h2>}
+            {selectedMenu === "Voucher" && <DiscountManagement />}
             {selectedMenu === "Invoice" && <AdminInvoicePage />}
           </section>
         </main>

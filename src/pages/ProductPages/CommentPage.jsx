@@ -58,41 +58,6 @@ const Comment = ({ productId, onRatingUpdate }) => {
     fetchComments();
   }, [productId, onRatingUpdate]);
 
-  //   // Thêm bình luận mới vào danh sách
-  //   const handleNewComment = async (newComment) => {
-  //     try {
-  //       // Gọi API lấy thông tin người dùng cho bình luận mới
-  //       const userResponse = await axios.get(
-  //         `http://localhost:5000/api/user/get-users/${newComment.userId}`
-  //       );
-  //       const user = userResponse.data.data;
-
-  //       newComment.userId = {
-  //         ...newComment.userId,
-  //         profileId: {
-  //           username: user.profileId.username || "Unknown User",
-  //           avatar: user.profileId.avatar || "default-avatar.jpg",
-  //         },
-  //       };
-
-  //       // Cập nhật state với bình luận mới
-  //       setComments((prevComments) => [newComment, ...prevComments]);
-
-  //       // Tính toán lại tổng sao và điểm trung bình sau khi thêm bình luận mới
-  //       const updatedTotalStars =
-  //         comments.reduce((acc, comment) => acc + comment.rating, 0) +
-  //         newComment.rating;
-  //       const updatedAverage = updatedTotalStars / (comments.length + 1);
-  //       setAverageRating(updatedAverage.toFixed(1));
-  //       setTotalReviews((prev) => prev + 1);
-
-  //       // Truyền lại điểm trung bình và tổng số lượt đánh giá sau khi thêm bình luận mới
-  //       onRatingUpdate(updatedAverage.toFixed(1), comments.length + 1);
-  //     } catch (error) {
-  //       console.error("Error adding new comment:", error);
-  //     }
-  //   };
-
   return (
     <>
       <div className="comment-container">

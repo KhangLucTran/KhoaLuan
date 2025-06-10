@@ -15,6 +15,7 @@ import {
   getProductsByCategoryApi,
 } from "../../features/product/productApi";
 import "../../styles/ProductDetail.css";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
@@ -271,6 +272,14 @@ const ProductDetail = () => {
         <div className="product-detail-container">
           <div className="product-images-grid">
             <CustomTooltip title={product.title}>
+              <Button
+                startIcon={<KeyboardArrowLeftIcon />}
+                variant="text"
+                onClick={() => window.history.back()}
+                style={{ marginRight: "8px", color: "#ccc" }}
+              >
+                TRỞ LẠI
+              </Button>
               <div className="product-grid">
                 {product.images.map((img, index) => (
                   <img

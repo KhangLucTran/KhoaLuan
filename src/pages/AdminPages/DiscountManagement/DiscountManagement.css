@@ -1,0 +1,242 @@
+.discount-management {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f9fbfd; /* Màu nền nhẹ nhàng */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+h1,
+h2 {
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.discount-form {
+  background-color: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+  margin: 2rem auto 3rem auto;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.discount-form h2 {
+  font-size: 1.6rem;
+  color: #1877f2;
+  margin-bottom: 1rem;
+  text-align: center;
+  user-select: none;
+}
+
+.discount-form label {
+  font-weight: 600;
+  color: #444;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  font-size: 14.5px;
+}
+
+.discount-form input[type="text"],
+.discount-form input[type="number"],
+.discount-form input[type="date"],
+.discount-form select {
+  padding: 10px 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: border-color 0.25s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.discount-form input[type="text"]:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.discount-form input[type="text"]:focus,
+.discount-form input[type="number"]:focus,
+.discount-form input[type="date"]:focus,
+.discount-form select:focus {
+  border-color: #1877f2;
+  outline: none;
+  box-shadow: 0 0 5px rgba(24, 119, 242, 0.4);
+}
+
+.discount-form fieldset {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  gap:1rem;
+  padding: 1rem 1.5rem;
+  margin-top: 0.5rem;
+  color: #555;
+}
+
+.discount-form fieldset legend {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1877f2;
+  padding: 0 0.5rem;
+}
+
+.discount-form fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  margin-top: 0.4rem;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.discount-form fieldset input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #1877f2;
+}
+
+.discount-form input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #1877f2;
+  margin-right: 8px;
+}
+
+.discount-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.discount-form button[type="submit"],
+.discount-form .cancel-btn {
+  background-color: #1877f2;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.discount-form button[type="submit"]:hover,
+.discount-form .cancel-btn:hover {
+  background-color: #145ccc;
+  transform: scale(1.05);
+}
+
+.discount-form .cancel-btn {
+  background-color: #e74c3c;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+}
+
+.discount-form .cancel-btn:hover {
+  background-color: #c0392b;
+}
+
+.discount-form button[type="submit"]:active,
+.discount-form .cancel-btn:active {
+  transform: scale(0.95);
+}
+
+.success-msg,
+.error-msg {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  max-width: 500px;
+  font-size: 14.5px;
+  user-select: none;
+}
+
+.success-msg {
+  background-color: #e5f5ff;
+  color: #1877f2;
+  border: 1.5px solid #b2ddf7;
+}
+
+.error-msg {
+  background-color: #ffe5e5;
+  color: #c91c1c;
+  border: 1.5px solid #f5b4b4;
+}
+
+.discount-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+.discount-table th,
+.discount-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  font-size: 14px;
+}
+
+.discount-table th {
+  background-color: #1877f2;
+  color: white;
+  font-weight: 600;
+}
+
+.discount-table tr:hover {
+  background-color: #f2f9ff;
+}
+
+.discount-table button {
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: background-color 0.3s ease;
+}
+
+.discount-table button:hover {
+  background-color: #145ccc;
+}
+
+.toggle-form-btn {
+  background-color: #1877f2;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 8px rgba(24, 119, 242, 0.2);
+  margin-bottom: 1.5rem;
+  user-select: none;
+}
+
+.toggle-form-btn:hover {
+  background-color: #145ccc;
+  transform: scale(1.03);
+}
+
+.toggle-form-btn:active {
+  transform: scale(0.97);
+}

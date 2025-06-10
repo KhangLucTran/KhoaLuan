@@ -33,6 +33,13 @@ const SocialButtons = () => {
     }
   };
 
+  const handleFacebookLogin = () => {
+    if (!loading) {
+      setLoading(true);
+      window.location.href = "http://localhost:5000/api/auth/facebook";
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
       <CustomTooltip title="Tiếp tục bằng Google">
@@ -67,7 +74,7 @@ const SocialButtons = () => {
                 style={{ width: 30, height: 30, alignItems: "center" }}
               />
             }
-            onClick={() => console.log("Login with Facebook")}
+            onClick={() => handleFacebookLogin()}
             sx={sx}
             disabled={isLoading}
           />

@@ -182,8 +182,21 @@ const Product = () => {
           setGroupedProducts({
             popular: productList.filter((p) => p.priority === 3),
             searched: productList.filter((p) => p.priority === 2),
-            general: productList.filter((p) => p.priority === 1),
+            general: productList.filter((p) => p.priority <= 1),
           });
+          console.log("Tổng sản phẩm:", productList.length);
+          console.log(
+            "🔹 Popular:",
+            productList.filter((p) => p.priority === 3)
+          );
+          console.log(
+            "🔹 Searched:",
+            productList.filter((p) => p.priority === 2)
+          );
+          console.log(
+            "🔹 General:",
+            productList.filter((p) => p.priority <= 1)
+          );
         } else {
           setProducts(productList);
         }
@@ -204,6 +217,7 @@ const Product = () => {
           ...groupedProducts.general,
         ]
       : products;
+    console.log("Filtered Products:", list.length);
     return list
       .filter(
         (product) =>

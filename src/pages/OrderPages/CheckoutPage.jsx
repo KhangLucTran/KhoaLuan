@@ -1,13 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Button, TextField, Modal, Backdrop, Fade } from "@mui/material";
+import { Button, TextField, Modal, Fade } from "@mui/material";
 
 import { useSelector } from "react-redux";
 import addressApi from "../../features/address/addressApi";
 import DiscountPage from "./DiscountPage";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import qrVNPAY from "../../assets/qrVNPAY.jpg";
 import atmVNPAY from "../../assets/atmVNPAY.webp";
 import visaVNPAY from "../../assets/visaVNPAY.png";
 import paymentApi from "../../features/payment/paymentApi";
@@ -35,6 +34,7 @@ const Checkout = () => {
   const { cartId } = useCart();
   const [bankCode, setBankCode] = useState("VNPAYQR");
   const [language, setLanguage] = useState("vn");
+
   useEffect(() => {
     const fetchDefaultAddress = async () => {
       try {
@@ -47,6 +47,7 @@ const Checkout = () => {
     fetchDefaultAddress();
   }, []);
 
+  // Giá tổng sản phẩm
   const totalPrice = useMemo(() => {
     let total = calculateTotalPrice(selectedCartItems);
     if (
@@ -64,8 +65,10 @@ const Checkout = () => {
     return total;
   }, [selectedCartItems, selectDiscount]);
 
+  // Thuế VAT (10%)
   const additionalFee = useMemo(() => totalPrice * 0.1, [totalPrice]);
 
+  // Phí vận chuyển
   const shippingFee = useMemo(() => {
     if (!checkAmountDiscount) return totalPrice >= 500000 ? 0 : 50000;
     if (selectDiscount?.freeShipping) return 0;
@@ -77,12 +80,14 @@ const Checkout = () => {
     [totalPrice, additionalFee, shippingFee]
   );
 
+  // Tổng tiền giảm giá
   const totalDiscount = useMemo(() => {
-    if (!checkAmountDiscount) return 0;
     const percentDiscount = selectDiscount?.percent
       ? (calculateTotalPrice(selectedCartItems) * selectDiscount.percent) / 100
       : 0;
+    console.log(selectDiscount._id);
     const shippingDiscount = selectDiscount?.freeShipping ? 50000 : 0;
+    console.log("shippingDiscount:", shippingDiscount);
     return percentDiscount + shippingDiscount;
   }, [selectedCartItems, selectDiscount]);
 
@@ -112,6 +117,7 @@ const Checkout = () => {
     const payload = {
       cartId,
       amount: finalAmount,
+      discountId: selectDiscount?._id || "",
       numberphone: user.data.profileId?.numberphone,
       addressDetail: formattedAddress,
       bankCode,
@@ -234,11 +240,6 @@ const Checkout = () => {
           <div className="payment-options">
             {[
               {
-                value: "VNPAYQR",
-                img: qrVNPAY,
-                label: "Quét Mã QR",
-              },
-              {
                 value: "VNBANK",
                 img: atmVNPAY,
                 label: "Thẻ ATM Nội Địa",
@@ -331,20 +332,21 @@ const Checkout = () => {
         open={openDiscountModal}
         onClose={() => setOpenDiscountModal(false)}
         closeAfterTransition
-        BackdropComponent={Backdrop}
         BackdropProps={{ timeout: 500 }}
       >
         <Fade in={openDiscountModal}>
           <div
             style={{
-              width: 500,
-              margin: "10% auto",
-              background: "#fff",
+              width: 800,
+              overflowY: "auto",
+              margin: "3% auto",
+              backgroundColor: "#fff",
               padding: 24,
               borderRadius: 8,
             }}
           >
             <DiscountPage
+              isCheckoutPage={true}
               onSelectDiscount={(discount) => {
                 if (discount) {
                   setSelectDiscount(discount);

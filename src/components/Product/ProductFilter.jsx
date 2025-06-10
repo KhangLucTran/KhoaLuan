@@ -67,8 +67,6 @@ const ProductFilter = ({
   setSortOrder,
   maxPrice,
   setMaxPrice,
-  minRating,
-  setMinRating,
 }) => {
   const [isCategoryCollapsed, setIsCategoryCollapsed] = useState(true);
   const [isSortCollapsed, setIsSortCollapsed] = useState(true);
@@ -80,9 +78,19 @@ const ProductFilter = ({
         label="Danh mục"
         options={[
           { label: "Tất cả", value: "" },
-          { label: "Quần", value: "Pants" },
-          { label: "Áo", value: "Shirt" },
+          { label: "Quần dài", value: "Pants" },
+          { label: "Quần ngắn", value: "Short" },
+          { label: "Áo sơ mi", value: "Shirt" },
+          { label: "Áo thun", value: "T-Shirt" },
           { label: "Nón", value: "Hat" },
+          {
+            label: "Phụ kiện",
+            value: "Accessories",
+          },
+          {
+            label: "Áo khoác",
+            value: "Jacket",
+          },
         ]}
         selectedValue={category}
         onSelect={setCategory}
@@ -115,53 +123,17 @@ const ProductFilter = ({
         <Slider
           value={maxPrice}
           min={0}
-          max={1000000}
+          max={2000000}
           step={10000}
           marks={[
             { value: 0, label: "0" },
             { value: 100000, label: "100K" },
             { value: 500000, label: "500K" },
             { value: 1000000, label: "1M" },
+            { value: 1500000, label: "1M5" },
+            { value: 2000000, label: "2M" },
           ]}
           onChange={(e, newValue) => setMaxPrice(newValue)}
-          sx={{
-            color: "#1877F2",
-            "& .MuiSlider-thumb": {
-              backgroundColor: "#1877F2",
-              border: "2px solid #fff",
-            },
-            "& .MuiSlider-rail": {
-              backgroundColor: "#e0e0e0",
-            },
-            "& .MuiSlider-track": {
-              backgroundColor: "#1877F2",
-            },
-            "&:hover .MuiSlider-thumb": {
-              backgroundColor: "#125ab3", // Màu tối hơn khi hover
-            },
-          }}
-        />
-      </Box>
-
-      {/* Lọc theo Đánh giá */}
-      <Box sx={{ mb: 3, ml: 1, mt: 2 }}>
-        <p style={{ fontSize: "14px", color: "#333", fontWeight: "bold" }}>
-          ĐÁNH GIÁ
-        </p>
-        <Slider
-          value={minRating}
-          min={0}
-          max={5}
-          step={1}
-          marks={[
-            { value: 0, label: "0★" },
-            { value: 1, label: "1★" },
-            { value: 2, label: "2★" },
-            { value: 3, label: "3★" },
-            { value: 4, label: "4★" },
-            { value: 5, label: "5★" },
-          ]}
-          onChange={(e, newValue) => setMinRating(newValue)}
           sx={{
             color: "#1877F2",
             "& .MuiSlider-thumb": {

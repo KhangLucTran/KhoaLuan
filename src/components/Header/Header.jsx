@@ -37,6 +37,7 @@ const Header = ({ hideNav }) => {
   const prevCartItems = useRef([]);
   const { cartItems, lineItems, totalQuantity, fetchCartData } = useCart();
   const [showChat, setShowChat] = useState(false);
+
   // ✅ Gọi API lấy số lượng khi đăng nhập
   useEffect(() => {
     if (token && !isFetched.current) {
@@ -83,7 +84,6 @@ const Header = ({ hideNav }) => {
   const fecthQuantityFavroite = async () => {
     try {
       const response = await getFavoriteUserApi();
-
       if (response && Array.isArray(response.data)) {
         setTotalFavorite(response.data.length);
         console.log("Số lượng sản phẩm yêu thích:", response.data.length);
@@ -111,7 +111,7 @@ const Header = ({ hideNav }) => {
         navigate("/");
       },
     }),
-    [dispatch, navigate, fetchCartData]
+    [dispatch, navigate, fetchCartData, total]
   );
   const session = user
     ? {

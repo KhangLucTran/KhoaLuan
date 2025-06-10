@@ -16,7 +16,6 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
-import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import HomeIcon from "@mui/icons-material/Home";
@@ -50,7 +49,6 @@ const menuItems = [
     link: "/levents/invoice",
   },
   { text: "Kho Voucher", icon: <LocalOfferOutlinedIcon />, link: "vouchers" },
-  { text: "Xu", icon: <MonetizationOnOutlinedIcon />, link: "coins" },
 ];
 
 const Sidebar = ({ toggleDrawer }) => {

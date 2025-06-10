@@ -1,132 +1,178 @@
 .discount-page {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  .discount-container{
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    gap: 12px;
-  }
-  .page-title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 25px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  .discount-card {
-    width: 400px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-  }
-  
-  .discount-card:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    border: 1px solid #1877F2;
-  }
-  
-  /* Header */
-  .discount-header {
-    display: flex;
-    align-items: center;
-  }
-  
-  .discount-brand {
-    flex: 1;
-    padding: 20px;
-    font-size: 22px;
-    width: 100px;
-    color: white;
-    height: 100%;
-    background: #1877F2;
-    font-weight: bold;
-      
-  /* Lưỡi cưa dày đặc hơn */
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.discount-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  gap: 12px;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.discount-card {
+  width: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid transparent;
+}
+
+/* Khi discount được chọn */
+.discount-card.selected {
+  border: 2px solid #1877F2;
+  background-color: #e6f0ff; /* nền xanh nhạt */
+  box-shadow: 0 0 15px rgba(24, 119, 242, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover trên discount được chọn */
+.discount-card.selected:hover {
+  box-shadow: 0 0 20px rgba(24, 119, 242, 0.8);
+}
+
+/* Discount đã dùng */
+.discount-card.used {
+  opacity: 0.6;
+  background-color: #f9f9f9; /* nền xám nhạt */
+  border: 1px solid #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  color: #888;
+  pointer-events: none; /* Không cho tương tác */
+}
+
+/* Discount chưa dùng */
+.discount-card.not-used {
+  opacity: 1;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+/* Hover discount chưa dùng */
+.discount-card.not-used:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #1877F2;
+}
+
+/* Header */
+.discount-header {
+  display: flex;
+  align-items: center;
+}
+
+.discount-brand {
+  flex: 1;
+  padding: 20px;
+  font-size: 22px;
+  width: 100px;
+  color: white;
+  height: 100%;
+  background: #1877F2;
+  font-weight: bold;
+
   clip-path: polygon(
-    0% 0%, 85% 0%, 90% 10%, 85% 20%, 90% 30%, 85% 40%, 
+    0% 0%, 85% 0%, 90% 10%, 85% 20%, 90% 30%, 85% 40%,
     90% 50%, 85% 60%, 90% 70%, 85% 80%, 90% 90%, 85% 100%, 0% 100%
   );
-  }
-  
-.discount-info{
-    padding: 10px;
-    color:#333;
-  }
-  .discount-info .MuiTypography-root {
-    color: #000 !important;
-  }
-  /* Discount code */
-  .discount-code {
-    font-size: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 4px;
+}
 
-  }
-  
-  .discount-percent,
-  .discount-min-order {
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  /* Nội dung mở rộng */
-  .discount-details {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .discount-expiration {
-    font-size: 14px;
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Thanh tiến trình */
-  .discount-progress {
-    height: 8px !important;
-    border-radius: 8px;
-  }
-  
-  .discount-progress .MuiLinearProgress-bar {
-    background-color: #1877F2 !important;
-  }
-  
-  /* Trạng thái */
-  .discount-status {
-    margin-top: 12px;
-    padding: 6px 12px;
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: uppercase;
-    border-radius: 12px;
-  }
-  
-  .discount-status.primary {
-    background: #1877F2;
-    color: white;
-  }
-  
-  .discount-status.default {
-    background: #6c757d;
-    color: white;
-  }
-  
+.discount-info {
+  padding: 10px;
+  color: #333;
+}
+
+.discount-info .MuiTypography-root {
+  color: #000 !important;
+}
+
+/* Discount code */
+.discount-code {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.discount-percent,
+.discount-min-order {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Nội dung mở rộng */
+.discount-details {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.discount-expiration {
+  font-size: 14px;
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+/* Thanh tiến trình */
+.discount-progress {
+  height: 8px !important;
+  border-radius: 8px;
+}
+
+.discount-progress .MuiLinearProgress-bar {
+  background-color: #1877F2 !important;
+}
+
+/* Trạng thái */
+.discount-status {
+  margin-top: 12px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 12px;
+}
+
+.discount-status.primary {
+  background: #1877F2;
+  color: white;
+}
+
+.discount-status.default {
+  background: #6c757d;
+  color: white;
+}
+
+.discount-used-label {
+  color: #f44336;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+/* Checkbox container */
+.discount-checkbox-container {
+  margin-left: auto;
+}
