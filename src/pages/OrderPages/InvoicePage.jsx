@@ -231,12 +231,7 @@ const InvoiceComponent = () => {
                     {statusMap[invoice.status] || "Không xác định"}
                   </div>
                   {/* Chi tiết Line Items */}
-                  <div
-                    className="invoice-line-items-section"
-                    onClick={() =>
-                      navigate(`/levents/invoice/detail/${invoice._id}`)
-                    }
-                  >
+                  <div className="invoice-line-items-section">
                     <div className="line-items-invoice-detail-header">
                       <StorefrontIcon fontSize="small" />
                       <h3> Levents</h3>
@@ -256,18 +251,20 @@ const InvoiceComponent = () => {
                         className="invoice-line-item-container"
                       >
                         <LineItemComponent key={item._id} item={item} />
+                        <Button
+                          onClick={() =>
+                            navigate(`/levents/invoice/detail/${invoice._id}`)
+                          }
+                        >
+                          Xem chi tiết đơn hàng
+                        </Button>
                         {invoice.status === "Completed" &&
                           (item.hasRated ? (
                             <div className="invoice-hasRated">
                               Đã Đánh giá sản phẩm
                             </div>
                           ) : (
-                            <div
-                              className="invoice-rate-product-section"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
+                            <div className="invoice-rate-product-section">
                               <Button
                                 variant="contained"
                                 size="small"
@@ -276,8 +273,7 @@ const InvoiceComponent = () => {
                                   bottom: 0,
                                   right: 0,
                                 }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
+                                onClick={() => {
                                   setIsCommentFormVisible(true);
                                   setActiveComment(
                                     activeComment === item._id ? null : item._id
@@ -288,12 +284,7 @@ const InvoiceComponent = () => {
                               </Button>
                               {activeComment === item._id &&
                                 isCommentFormVisible && (
-                                  <div
-                                    className="comment-delay"
-                                    onClick={() =>
-                                      setIsCommentFormVisible(false)
-                                    }
-                                  >
+                                  <div className="comment-delay">
                                     <CommentForm
                                       productId={item.productId}
                                       onCommentSubmit={handleCommentSubmit}

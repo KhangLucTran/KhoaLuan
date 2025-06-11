@@ -22,10 +22,12 @@ import {
   IconButton,
 } from "@mui/material";
 import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { validateEmail, validatePassword } from "../../utils/validation";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import OTPInput from "react-otp-input";
+
 const steps = [
   {
     label: "Nhập Email",
@@ -58,44 +60,21 @@ const PasswordResetStepper = () => {
     (state) => state.passwordReset
   );
 
-  // Xử lí focus 6 ô OTP
-  const otpInputs = useRef([]);
+  const [localOtp, setLocalOtp] = useState("");
+
+  useEffect(() => {
+    if (localOtp.length === 6) {
+      const handler = setTimeout(() => {
+        dispatch(updateFormData({ field: "otp", value: localOtp }));
+      }, 300);
+
+      return () => clearTimeout(handler);
+    }
+  }, [localOtp, dispatch]);
 
   // Xử lí khi có dữ liệu thay đổi
   const handleChange = (field, value) => {
     dispatch(updateFormData({ field, value }));
-  };
-
-  // Xử lí dữ liệu 6 ô OTP
-  const handleOtpChange = (index, value) => {
-    // Chỉ cho phép nhập số và giới hạn 1 ký tự
-    if (!/^\d?$/.test(value)) return;
-
-    // Đảm bảo otp luôn có đủ 6 ký tự
-    const otpArray = otp.padEnd(6, " ").split("");
-    otpArray[index] = value;
-
-    dispatch(updateFormData({ field: "otp", value: otpArray.join("").trim() }));
-
-    // Nếu xóa (Backspace) và không phải ô đầu tiên -> lui lại ô trước
-    if (!value && index > 0) {
-      otpInputs.current[index - 1]?.focus();
-    }
-  };
-
-  // Xử lí khi dán mã OTP
-  const handleOtpPaste = (e) => {
-    const paste = e.clipboardData.getData("text").trim();
-    if (/^\d{6}$/.test(paste)) {
-      const pasteArray = paste.split("");
-      dispatch(updateFormData({ field: "otp", value: paste }));
-      pasteArray.forEach((char, i) => {
-        if (otpInputs.current[i]) {
-          otpInputs.current[i].value = char;
-        }
-      });
-      otpInputs.current[5]?.focus(); // Focus ô cuối cùng
-    }
   };
 
   // Xử lí khi bấm vào icon hiện/ẩn mật khẩu
@@ -134,7 +113,7 @@ const PasswordResetStepper = () => {
     }
     // Bước 2 - Nhập mã OTP: kiểm tra độ dài otp, gọi verifyOtp từ Redux
     else if (step === 1) {
-      if (otp.length !== 6) {
+      if (!otp || localOtp.length !== 6) {
         showErrorToast("Vui lòng nhập đủ 6 số OTP 🔥");
         return;
       }
@@ -183,25 +162,26 @@ const PasswordResetStepper = () => {
               </Typography>
 
               {stepData.field === "otp" ? (
-                // OTP Form
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  {[...Array(6)].map((_, i) => (
-                    <TextField
-                      key={i}
-                      type="text"
-                      inputRef={(el) => (otpInputs.current[i] = el)}
-                      inputProps={{
-                        maxLength: 1,
-                        inputMode: "numeric",
-                        style: { textAlign: "center", fontSize: "1.2rem" },
+                <OTPInput
+                  value={localOtp}
+                  onChange={setLocalOtp}
+                  numInputs={6}
+                  sInputNum={true}
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      style={{
+                        width: "2.5rem",
+                        height: "3rem",
+                        margin: "0 4px",
+                        fontSize: "1.5rem",
+                        borderRadius: 4,
+                        border: "1px solid #ced4da",
+                        textAlign: "center",
                       }}
-                      value={otp[i] || ""}
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      onPaste={i === 0 ? handleOtpPaste : undefined}
-                      sx={{ width: "40px" }}
                     />
-                  ))}
-                </Box>
+                  )}
+                />
               ) : stepData.field ? (
                 // Email Form
                 <TextField
@@ -209,7 +189,7 @@ const PasswordResetStepper = () => {
                   margin="normal"
                   label={stepData.label}
                   placeholder={stepData.placeholder}
-                  value={stepData.field === "email" ? email : otp}
+                  value={stepData.field === "email" ? email : ""}
                   onChange={(e) => handleChange(stepData.field, e.target.value)}
                 />
               ) : (
