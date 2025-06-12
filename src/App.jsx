@@ -88,6 +88,7 @@ const router = createBrowserRouter([
         children: [
           { path: "view", element: <ProfileView /> },
           { path: "address", element: <AddressPage /> },
+          { path: "notifications", element: <NotificationPage /> },
           { path: "change-password", element: <PasswordResetStepper /> },
           { path: "vouchers", element: <DiscountPage /> },
         ],

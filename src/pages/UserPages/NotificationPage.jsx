@@ -1,197 +1,158 @@
-import axios from "axios";
 import PropTypes from "prop-types";
 import { Bell, FileText, Package } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import "../../styles/NotificationPage.css";
-import {
-  Card,
-  CardContent,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Avatar, Typography, Pagination } from "@mui/material";
 import { getSocket } from "../../utils/socket";
-import { getAuthTokens } from "../../utils/token";
+import { useNotification } from "../../components/Toast/notificationContext";
+import { useSelector } from "react-redux";
+import { getProductByIdApi } from "../../features/product/productApi";
+import { getInvoiceByIdApi } from "../../features/invoice/invoiceApi";
+import defaultProduct from "../../assets/default-product.png";
 
 const getTimeAgo = (createdAt) => {
   const now = new Date();
-  const createdDate = new Date(createdAt);
-  const diffInSeconds = Math.floor((now - createdDate) / 1000);
-
-  if (diffInSeconds < 60) return `${diffInSeconds} giây trước`;
-  if (diffInSeconds < 3600)
-    return `${Math.floor(diffInSeconds / 60)} phút trước`;
-  if (diffInSeconds < 86400)
-    return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
-  return `${Math.floor(diffInSeconds / 86400)} ngày trước`;
+  const diff = Math.floor((now - new Date(createdAt)) / 1000);
+  if (diff < 60) return `${diff} giây trước`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+  return `${Math.floor(diff / 86400)} ngày trước`;
 };
 
-const NotificationCard = ({ notif, onClick }) => {
+const NotificationCard = ({ notif, avatarUrl, onClick }) => {
   const [timeAgo, setTimeAgo] = useState(getTimeAgo(notif.createdAt));
+
   useEffect(() => {
-    const getTimeAgo = (createdAt) => {
-      const now = new Date();
-      const createdDate = new Date(createdAt);
-      const diffInSeconds = Math.floor((now - createdDate) / 1000);
-
-      if (diffInSeconds < 60) return `${diffInSeconds} giây trước`;
-      if (diffInSeconds < 3600)
-        return `${Math.floor(diffInSeconds / 60)} phút trước`;
-      if (diffInSeconds < 86400)
-        return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
-      return `${Math.floor(diffInSeconds / 86400)} ngày trước`;
-    };
-
-    const updateInterval = getTimeAgo(notif.createdAt).includes("giây")
-      ? 1000
-      : 60000;
-
-    const interval = setInterval(() => {
-      setTimeAgo(getTimeAgo(notif.createdAt));
-    }, updateInterval);
-
+    const interval = setInterval(
+      () => setTimeAgo(getTimeAgo(notif.createdAt)),
+      timeAgo.includes("giây") ? 1000 : 60000
+    );
     return () => clearInterval(interval);
-  }, [notif.createdAt]);
+  }, [notif.createdAt, timeAgo]);
 
   return (
-    <Card
-      key={notif._id}
-      className={`notification-card ${notif.isRead ? "notification-read" : "notification-unread"}`}
+    <div
+      className={`nc-card ${notif.isRead ? "nc-card--read" : "nc-card--unread"}`}
       onClick={() => onClick(notif._id)}
     >
-      <CardContent className="notification-content">
-        <Typography className="notification-icon">
-          {notif.type === "invoice" ? (
-            <FileText size={18} color="#1877F2" />
-          ) : (
-            <Package size={18} color="#1877F2" />
-          )}
-          {notif.message}
-        </Typography>
-
-        {notif.invoiceId && (
-          <>
-            <Typography className="notification-meta">
-              Tổng tiền: {notif.invoiceId.totalAmount} VNĐ <br />
-              Phương thức thanh toán: {notif.invoiceId.paymentMethod}
-            </Typography>
-            <List className="notification-list">
-              {notif.invoiceId.lineItems.map((item) => (
-                <ListItem key={item._id} className="notification-list-item">
-                  <ListItemText
-                    primary={`${item.productName} - ${item.quantity} x ${item.price} VNĐ`}
-                    secondary={`Size: ${item.size}, Màu: ${item.color}, Giới tính: ${item.gender}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </>
-        )}
-
-        <Typography className="notification-time">{timeAgo}</Typography>
-      </CardContent>
-    </Card>
+      <div className="nc-content">
+        <Avatar
+          variant="square"
+          src={avatarUrl}
+          className="nc-avatar"
+          sx={{ width: 120, height: 120, borderRadius: 2 }}
+        />
+        <div className="nc-body">
+          <Typography className="nc-title" fontWeight={600}>
+            {notif.type === "order" ? (
+              <FileText size={18} color="#1877F2" />
+            ) : (
+              <Package size={18} color="#1877F2" />
+            )}{" "}
+            {notif.title}
+          </Typography>
+          <Typography className="nc-message">{notif.message}</Typography>
+          <Typography className="nc-time">{timeAgo}</Typography>
+        </div>
+      </div>
+    </div>
   );
 };
 
 NotificationCard.propTypes = {
-  notif: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
-    isRead: PropTypes.bool.isRequired,
-    message: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    invoiceId: PropTypes.shape({
-      totalAmount: PropTypes.number,
-      paymentMethod: PropTypes.string,
-      lineItems: PropTypes.arrayOf(
-        PropTypes.shape({
-          _id: PropTypes.string.isRequired,
-          productName: PropTypes.string.isRequired,
-          quantity: PropTypes.number.isRequired,
-          price: PropTypes.number.isRequired,
-          size: PropTypes.string,
-          color: PropTypes.string,
-          gender: PropTypes.string,
-        })
-      ),
-    }),
-  }).isRequired,
+  notif: PropTypes.object.isRequired,
+  avatarUrl: PropTypes.string,
   onClick: PropTypes.func.isRequired,
 };
 
 const NotificationPage = () => {
-  const [notifications, setNotifications] = useState([]);
-  const accessToken = getAuthTokens().accessToken;
+  const { notifications, setNotifications } = useNotification();
+  const user = useSelector((state) => state.user.user);
+  const [avatarUrls, setAvatarUrls] = useState({});
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/notification", {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      setNotifications(res.data);
-    } catch (error) {
-      console.error("Lỗi khi lấy thông báo:", error);
-    }
-  }, [accessToken]);
+  const handlePageChange = (_e, value) => {
+    setPage(value);
+  };
+  // Lấy danh sách notifications trang hiện tại
+  const pagedNotifications = notifications.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+
+  const loadAvatars = useCallback(async () => {
+    const arr = await Promise.all(
+      notifications.map(async (notif) => {
+        let avatar = defaultProduct;
+        try {
+          if (notif.type === "user" && notif.user) {
+            avatar = user?.data?.profileId?.avatar || avatar;
+          } else if (notif.type === "product" && notif.refId) {
+            const data = await getProductByIdApi(notif.refId);
+            avatar = data?.images?.[0] || defaultProduct;
+          } else if (notif.type === "order" && notif.invoiceId) {
+            const res = await getInvoiceByIdApi(notif.invoiceId);
+            const item = res?.invoice?.lineItems?.[0];
+            if (item) {
+              const data = await getProductByIdApi(item.productId);
+              avatar = data?.images?.[0] || defaultProduct;
+            }
+          }
+        } catch {
+          avatar = defaultProduct;
+        }
+        return [notif._id, avatar];
+      })
+    );
+    setAvatarUrls(Object.fromEntries(arr));
+  }, [notifications, user]);
 
   useEffect(() => {
-    fetchNotifications();
+    if (notifications.length) loadAvatars();
+  }, [notifications, loadAvatars]);
 
+  useEffect(() => {
     const socket = getSocket();
-    if (socket) {
-      socket.on("new_notification", (notification) => {
-        setNotifications((prev) => [notification, ...prev]);
-      });
-    }
+    socket?.on("new_notification", (n) =>
+      setNotifications((prev) => [n, ...prev])
+    );
+    return () => socket?.off("new_notification");
+  }, [setNotifications]);
 
-    return () => {
-      if (socket) {
-        socket.off("new_notification");
-      }
-    };
-  }, [fetchNotifications]);
-
-  const handleNotificationClick = async (id) => {
-    try {
-      await axios.patch(
-        `http://localhost:5000/api/notifications/${id}/read`,
-        {},
-        { withCredentials: true }
-      );
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif._id === id ? { ...notif, isRead: true } : notif
-        )
-      );
-    } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái:", error);
-    }
-  };
+  const handleClick = (id) =>
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+    );
 
   return (
-    <div className="notification-container">
-      <Typography variant="h5" className="notification-header">
-        <Bell color="#1877F2" />
-        Thông báo của bạn
-      </Typography>
-
+    <div className="np-container">
+      <h2 className="np-header">
+        <Bell /> THÔNG BÁO
+      </h2>
       {notifications.length === 0 ? (
-        <Typography color="textSecondary" sx={{ textAlign: "center" }}>
-          Không có thông báo nào.
-        </Typography>
+        <Typography className="np-empty">Không có thông báo nào.</Typography>
       ) : (
-        notifications.map((notif) => (
-          <NotificationCard
-            key={notif._id}
-            notif={notif}
-            onClick={handleNotificationClick}
+        <>
+          {pagedNotifications.map((notif) => (
+            <NotificationCard
+              key={notif._id}
+              notif={notif}
+              avatarUrl={avatarUrls[notif._id] || defaultProduct}
+              onClick={handleClick}
+            />
+          ))}
+          {/* Phân trang */}
+          <Pagination
+            count={Math.ceil(notifications.length / itemsPerPage)}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+            size="large"
+            shape="rounded"
+            sx={{ mt: 2, display: "flex", justifyContent: "center" }}
           />
-        ))
+        </>
       )}
     </div>
   );

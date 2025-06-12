@@ -1,98 +1,51 @@
 /* styles/NotificationPage.css */
-
-.notification-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 16px;
-}
-
-.notification-header {
+.nc-content{
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
+  flex-direction: row;
+  gap: 2rem;;
 }
-
-.notification-card {
-  margin-bottom: 12px;
+.np-container{
+  max-width: 100%;
+  margin: 1rem auto;
   padding: 16px;
-  border-radius: 8px;
-  transition: all 0.3s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.notification-unread {
   background-color: #ffffff;
-  border-left: 4px solid #1877F2;
-  opacity: 1;
-  font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-.notification-read {
-  background-color: #e0e0e0;
-  border-left: 4px solid #aaa;
-  opacity: 0.6;
-  font-weight: normal;
-  box-shadow: none;
+.nc-content{
+  width: 100%;
+  height: auto;
+  margin: 2rem 1rem auto;
+  background-color: #ffffff;
 }
-
-.notification-button {
-  background-color: #1877F2 !important;
-  color: white !important;
-  font-size: 14px !important;
-  padding: 8px 14px;
-  border-radius: 6px;
-  transition: background-color 0.3s;
-  font-weight: bold;
-}
-
-.notification-button:hover {
-  background-color: #0056b3 !important;
-}
-
-.notification-content {
+.np-header{
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  gap:1rem; 
+  align-items: center;  
+  margin-bottom: 16px !important;
+  font-size: 20px !important;
+  font-weight: bold !important;
+  color: #111 !important;
 }
 
-.notification-meta {
-  font-size: 14px;
-  color: #555;
-}
+.nc-card {
+  position: relative;
 
-.notification-icon {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  padding: 1.5rem;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+    background-color: #FFFFFF; /* trắng tinh khiết */
+  /* box-shadow: horizontal-offset vertical-offset blur-radius spread-radius color */
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.08);
 }
-
-.notification-list {
-  margin-top: 8px;
-  padding-left: 16px;
-  list-style-type: disc;
-}
-
-.notification-list-item {
-  font-size: 14px;
-  color: #444;
-}
-
-.notification-list-item span {
-  font-weight: bold;
-}
-
-.notification-time {
+.nc-time{
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
   font-size: 12px;
   color: #888;
-  text-align: right;
-  margin-top: 4px;
 }

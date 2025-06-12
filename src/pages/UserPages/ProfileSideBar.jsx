@@ -28,7 +28,7 @@ const menuItems = [
   {
     text: "Thông báo",
     icon: <NotificationsNoneOutlinedIcon />,
-    link: "/levents/notification",
+    link: "notifications",
   },
   {
     text: "Tài khoản",

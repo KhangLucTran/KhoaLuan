@@ -8,6 +8,7 @@ import { getProductByIdApi } from "../../features/product/productApi";
 import { markNotificationAsReadApi } from "../../features/notification/notificationApi";
 import { useNotification } from "./notificationContext";
 import { getInvoiceByIdApi } from "../../features/invoice/invoiceApi";
+import defaultProduct from "../../assets/default-product.png";
 
 const getTimeAgo = (createdAt) => {
   const now = new Date();
@@ -41,27 +42,22 @@ const NotificationDropdown = () => {
 
           if (notif.type === "user" && notif.user) {
             avatarUrl = user?.data?.profileId?.avatar || avatarUrl;
-            console.log("avatar User:", avatarUrl);
           } else if (notif.type === "product" && notif.refId) {
             try {
-              const result = await getProductByIdApi(notif.refId);
-              avatarUrl = result?.images?.[0] || avatarUrl;
-              console.log("avatar Product:", avatarUrl);
+              const data = await getProductByIdApi(notif.refId);
+              avatarUrl = data?.images?.[0] || defaultProduct;
             } catch (error) {
               console.error("Lỗi khi lấy ảnh sản phẩm:", error);
             }
           } else if (notif.type === "order" && notif.invoiceId) {
             const result = await getInvoiceByIdApi(notif.invoiceId);
-            console.log("🔎 Invoice result:", result);
             if (
               Array.isArray(result?.invoice?.lineItems) &&
               result?.invoice?.lineItems.length > 0
             ) {
               const productId = result?.invoice?.lineItems[0].productId;
-              console.log("Product ID:", productId);
               const data = await getProductByIdApi(productId);
               avatarUrl = data?.images?.[0] || avatarUrl;
-              console.log("avatar Invoice:", avatarUrl);
             } else {
               console.warn(
                 "⚠️ lineItems không hợp lệ hoặc không tồn tại trong invoice",
@@ -145,7 +141,7 @@ const NotificationDropdown = () => {
                 <Avatar
                   variant="square"
                   sx={{ width: 60, height: 60, borderRadius: 2 }}
-                  src={avatarUrls[notif._id] || "/default-avatar.png"}
+                  src={avatarUrls[notif._id]}
                   className="notification-avatar"
                   loading="lazy"
                 />
@@ -165,7 +161,7 @@ const NotificationDropdown = () => {
 
         <div
           className="view-all"
-          onClick={() => navigate("/levents/notification")}
+          onClick={() => navigate("/levents/profile/notifications")}
         >
           Xem tất cả
         </div>
