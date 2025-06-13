@@ -1,11 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllProductsApi } from "../../features/product/productApi";
-import {
-  addFavoriteUserApi,
-  checkStatusFavoriteUserApi,
-  deleteFavoriteUserApi,
-} from "../../features/favorite/favoriteApi";
 import {
   Card,
   CardMedia,
@@ -32,7 +27,15 @@ import Header from "../../components/Header/Header";
 import "../../styles/ProductPage.css";
 import { addKeyWordsApi } from "../../features/search/searchHistoryApi";
 import { getAuthTokens } from "../../utils/token";
-import { getRecommendationsApi } from "../../features/recommendations/recommendationsApi";
+import {
+  fetchAllProducts,
+  fetchRecommendations,
+} from "../../features/product/productSlice";
+import {
+  addFavoriteUserApi,
+  checkStatusFavoriteUserApi,
+  deleteFavoriteUserApi,
+} from "../../features/favorite/favoriteApi";
 import axios from "axios";
 
 // 🎯 Component Card Product
@@ -102,11 +105,13 @@ const ProductCard = ({ item }) => {
           boxShadow: "none",
           background: "#fff",
           position: "relative",
+          cursor: "pointer",
         }}
       >
         <IconButton
           sx={{ position: "absolute", top: 8, right: 8 }}
           onClick={handleFavoriteClick}
+          size="large"
         >
           {isFavorite ? (
             <Favorite sx={{ color: "black" }} />
@@ -147,12 +152,12 @@ const ProductCard = ({ item }) => {
 
 // 🎯 Component chính
 const Product = () => {
-  const [products, setProducts] = useState([]);
-  const [groupedProducts, setGroupedProducts] = useState({
-    popular: [],
-    searched: [],
-    general: [],
-  });
+  const dispatch = useDispatch();
+  const accessToken = getAuthTokens().accessToken;
+
+  // Lấy dữ liệu từ redux store
+  const products = useSelector((state) => state.product.products);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [minRating, setMinRating] = useState(0);
@@ -160,55 +165,27 @@ const Product = () => {
   const [category, setCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
-  const accessToken = getAuthTokens().accessToken;
 
-  // Lấy danh sách sản phẩm từ API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let response;
-        if (accessToken) {
-          response = await getRecommendationsApi();
-        } else {
-          response = await getAllProductsApi();
-        }
-
-        const productList = Array.isArray(response)
-          ? response
-          : response.data || [];
-
-        if (accessToken) {
-          // Chỉ chia danh mục khi có token
-          setGroupedProducts({
-            popular: productList.filter((p) => p.priority === 3),
-            searched: productList.filter((p) => p.priority === 2),
-            general: productList.filter((p) => p.priority <= 1),
-          });
-          console.log("Tổng sản phẩm:", productList.length);
-          console.log(
-            "🔹 Popular:",
-            productList.filter((p) => p.priority === 3)
-          );
-          console.log(
-            "🔹 Searched:",
-            productList.filter((p) => p.priority === 2)
-          );
-          console.log(
-            "🔹 General:",
-            productList.filter((p) => p.priority <= 1)
-          );
-        } else {
-          setProducts(productList);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error.message);
-      }
+  // Tự phân nhóm khi có token
+  const groupedProducts = useMemo(() => {
+    if (!accessToken) return null;
+    return {
+      popular: products.filter((p) => p.priority === 3),
+      searched: products.filter((p) => p.priority === 2),
+      general: products.filter((p) => p.priority <= 1),
     };
+  }, [products, accessToken]);
 
-    fetchProducts();
-  }, [accessToken]);
+  // Fetch data khi component mount hoặc token thay đổi
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(fetchRecommendations());
+    } else {
+      dispatch(fetchAllProducts());
+    }
+  }, [dispatch, accessToken]);
 
-  // Lọc và sắp xếp sản phẩm theo tìm kiếm
+  // Filter và sort sản phẩm
   const filteredProducts = useMemo(() => {
     const list = accessToken
       ? [
@@ -217,7 +194,7 @@ const Product = () => {
           ...groupedProducts.general,
         ]
       : products;
-    console.log("Filtered Products:", list.length);
+
     return list
       .filter(
         (product) =>
@@ -244,7 +221,13 @@ const Product = () => {
     accessToken,
   ]);
 
-  // Xử lý tìm kiếm
+  // Lấy trang hiện tại
+  const currentItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProducts, currentPage]);
+
+  // Xử lý tìm kiếm lưu từ khóa
   const handleSearch = async () => {
     if (accessToken && searchQuery.trim() !== "") {
       try {
@@ -255,11 +238,6 @@ const Product = () => {
       }
     }
   };
-
-  const currentItems = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredProducts, currentPage]);
 
   return (
     <>
@@ -273,6 +251,9 @@ const Product = () => {
             placeholder="Tìm kiếm sản phẩm..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" onClick={handleSearch}>
@@ -299,6 +280,7 @@ const Product = () => {
 
           <div style={{ flex: 2 }}>
             <h4>KẾT QUẢ: {filteredProducts.length} Sản phẩm</h4>
+
             <Grid container rowSpacing={3} columnSpacing={2}>
               {currentItems.map((item) => (
                 <Grid item xs={12} sm={6} md={4} key={item._id}>
@@ -307,7 +289,7 @@ const Product = () => {
               ))}
             </Grid>
 
-            {accessToken ? (
+            {accessToken && groupedProducts && (
               <>
                 {groupedProducts.popular.length > 0 && (
                   <>
@@ -335,7 +317,7 @@ const Product = () => {
                   </>
                 )}
               </>
-            ) : null}
+            )}
 
             {filteredProducts.length > itemsPerPage && (
               <Box display="flex" justifyContent="center" mt={4}>
@@ -362,11 +344,13 @@ export default Product;
 // 🎯 Định nghĩa kiểu dữ liệu cho item
 ProductCard.propTypes = {
   item: PropTypes.shape({
-    _id: PropTypes.string.isRequired, // ID của sản phẩm (bắt buộc)
-    title: PropTypes.string.isRequired, // Tiêu đề sản phẩm (bắt buộc)
-    price: PropTypes.number.isRequired, // Giá sản phẩm (bắt buộc)
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
     sold: PropTypes.number.isRequired,
-    rating: PropTypes.number, // Đánh giá (không bắt buộc)
-    images: PropTypes.arrayOf(PropTypes.string), // Mảng ảnh sản phẩm
+    rating: PropTypes.number,
+    images: PropTypes.arrayOf(PropTypes.string),
+    priority: PropTypes.number,
+    category: PropTypes.string,
   }).isRequired,
 };

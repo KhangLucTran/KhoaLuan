@@ -10,10 +10,6 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import {
-  getProductByIdApi,
-  getProductsByCategoryApi,
-} from "../../features/product/productApi";
 import "../../styles/ProductDetail.css";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
@@ -29,17 +25,23 @@ import useProtectedDialog from "../../hooks/protectedDialogHook";
 import DetailedDialog from "../../components/Toast/Dialog";
 import ShareNotification from "../../components/Toast/ShareToast";
 import { createLineitemApi } from "../../features/lineitem/lineItemApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addFavoriteUserApi,
   checkStatusFavoriteUserApi,
   deleteFavoriteUserApi,
 } from "../../features/favorite/favoriteApi";
 import { StarBorder } from "@mui/icons-material";
+import {
+  fetchProductById,
+  fetchRelatedProducts,
+} from "../../features/product/productSlice";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
+  const dispatch = useDispatch();
+  const product = useSelector((state) => state.product.selectedProduct);
+  const relatedProducts = useSelector((state) => state.product.relatedProducts);
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -50,47 +52,19 @@ const ProductDetail = () => {
   const user = useSelector((state) => state.user.user);
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [relatedProducts, setRelatedProducts] = useState([]);
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
 
-  // Lấy danh sách sản phẩm khác cùng loại
   useEffect(() => {
-    const fetchRelatedProducts = async () => {
-      if (!product || !product.category) return;
-      try {
-        console.log("Fetching category:", product.category);
-        const response = await getProductsByCategoryApi(product.category);
-        console.log("All products response:", response);
-
-        // Đảm bảo response.product là mảng
-        let allProducts = response?.product || [];
-        if (!Array.isArray(allProducts)) {
-          console.error(
-            "API không trả về danh sách sản phẩm hợp lệ:",
-            allProducts
-          );
-          return;
-        }
-
-        // Lọc bỏ sản phẩm hiện tại
-        const filteredProducts = allProducts.filter(
-          (p) => p._id !== product._id
-        );
-
-        // Xáo trộn danh sách và chỉ lấy 3 sản phẩm
-        const shuffledProducts = filteredProducts.sort(
-          () => 0.5 - Math.random()
-        );
-        setRelatedProducts(shuffledProducts.slice(0, 3));
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm liên quan:", error.message);
-      }
-    };
-
-    fetchRelatedProducts();
-  }, [product]);
-
+    if (product?.category && product?._id) {
+      dispatch(
+        fetchRelatedProducts({
+          category: product.category,
+          currentProductId: product._id,
+        })
+      );
+    }
+  }, [product, dispatch]);
   // Kiểm tra sản phẩm có trong danh sách yêu thích không.
   useEffect(() => {
     let isMounted = true;
@@ -109,18 +83,11 @@ const ProductDetail = () => {
     };
   }, [id]);
 
-  // Lấy sản phẩm qua API.
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const data = await getProductByIdApi(id);
-        setProduct(data);
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error.message);
-      }
-    };
-    fetchProduct();
-  }, [id]);
+    if (id) {
+      dispatch(fetchProductById(id));
+    }
+  }, [dispatch, id]);
 
   // Hàm tạo LineItem và điều hướng sang trang Cart
   const handleAddToCart = async () => {
