@@ -37,6 +37,9 @@ import {
   fetchRelatedProducts,
 } from "../../features/product/productSlice";
 
+import CircularProgress from "@mui/material/CircularProgress";
+import { showInfoToast } from "../../components/Toast/Toast";
+
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -45,7 +48,7 @@ const ProductDetail = () => {
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [showShareNotification, setShowShareNotification] = useState(false); // State để điều khiển việc hiển thị ShareNotification
+  const [showShareNotification, setShowShareNotification] = useState(false);
   const navigate = useNavigate();
   const { open, setOpen, handleProtectedAction, redirectPath } =
     useProtectedDialog();
@@ -144,7 +147,26 @@ const ProductDetail = () => {
 
   // Nếu không có sản phẩm, hiện "Đang tải sản phầm"
   if (!product) {
-    return <Typography>Đang tải sản phẩm...</Typography>;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)", // căn giữa cả trục X và Y
+          width: "300px",
+          height: "300px",
+          borderRadius: "16px",
+          backgroundColor: "rgba(255, 255, 255, 0.6)", // nền trắng trong suốt
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 9999,
+        }}
+      >
+        <CircularProgress size="5rem" color="inherit" />
+      </div>
+    );
   }
   if (!product || !product.title) {
     return <Typography>Sản phẩm không tồn tại hoặc đã bị xóa.</Typography>;
@@ -231,7 +253,12 @@ const ProductDetail = () => {
       </div>
     );
   };
-
+  const handleCardItemClick = (productId, productTitle) => {
+    setTimeout(() => {
+      showInfoToast(`Bạn đang xem chi tiết sản phẩm ${productTitle}`);
+      navigate(`/levents/product-detail/${productId}`);
+    }, 700);
+  };
   return (
     <>
       <Header hideNav={true} />
@@ -441,9 +468,7 @@ const ProductDetail = () => {
                   <Card
                     key={item._id}
                     className="product-card"
-                    onClick={() =>
-                      navigate(`/levents/product-detail/${item._id}`)
-                    }
+                    onClick={() => handleCardItemClick(item._id, item.title)}
                     sx={{
                       width: 335,
                       boxShadow: "none",

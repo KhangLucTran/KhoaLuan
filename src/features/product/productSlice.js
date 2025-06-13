@@ -120,7 +120,17 @@ const initialState = {
   recommendations: [],
   categoryProducts: [],
   relatedProducts: [],
-  isLoading: false,
+
+  // Loading riêng biệt cho từng asyncThunk
+  isLoadingAllProducts: false,
+  isLoadingRecommendations: false,
+  isLoadingProductById: false,
+  isLoadingRelatedProducts: false,
+  isLoadingProductsByCategory: false,
+  isLoadingAddProduct: false,
+  isLoadingUpdateProduct: false,
+  isLoadingDeleteProduct: false,
+
   error: null,
 };
 
@@ -138,66 +148,98 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ✅ Fetch all products
+      // Fetch all products
       .addCase(fetchAllProducts.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingAllProducts = true;
         state.error = null;
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingAllProducts = false;
         state.products = action.payload;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingAllProducts = false;
         state.error = action.payload;
       })
 
-      .addCase(fetchRelatedProducts.fulfilled, (state, action) => {
-        state.relatedProducts = action.payload;
-      })
-
-      // ✅ Fetch recommendations
+      // Fetch recommendations
       .addCase(fetchRecommendations.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingRecommendations = true;
         state.error = null;
       })
       .addCase(fetchRecommendations.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingRecommendations = false;
         state.recommendations = action.payload;
         state.products = action.payload;
       })
       .addCase(fetchRecommendations.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingRecommendations = false;
         state.error = action.payload;
       })
 
-      // ✅ Fetch product by ID
+      // Fetch product by ID
       .addCase(fetchProductById.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingProductById = true;
         state.error = null;
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingProductById = false;
         state.selectedProduct = action.payload;
 
-        // 🧠 Thêm vào products nếu chưa có
+        // Thêm vào products nếu chưa có
         const exists = state.products.find((p) => p._id === action.payload._id);
         if (!exists) {
           state.products.push(action.payload);
         }
       })
       .addCase(fetchProductById.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingProductById = false;
         state.error = action.payload;
       })
 
-      // ✅ Add new product
-      .addCase(addNewProduct.fulfilled, (state, action) => {
-        state.products.push(action.payload);
+      // Fetch related products
+      .addCase(fetchRelatedProducts.pending, (state) => {
+        state.isLoadingRelatedProducts = true;
+      })
+      .addCase(fetchRelatedProducts.fulfilled, (state, action) => {
+        state.isLoadingRelatedProducts = false;
+        state.relatedProducts = action.payload;
+      })
+      .addCase(fetchRelatedProducts.rejected, (state, action) => {
+        state.isLoadingRelatedProducts = false;
+        state.relatedProducts = action.payload;
       })
 
-      // ✅ Update product
+      // Fetch products by category
+      .addCase(fetchProductsByCategory.pending, (state) => {
+        state.isLoadingProductsByCategory = true;
+      })
+      .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+        state.isLoadingProductsByCategory = false;
+        state.categoryProducts = action.payload;
+      })
+      .addCase(fetchProductsByCategory.rejected, (state) => {
+        state.isLoadingProductsByCategory = false;
+      })
+
+      // Add new product
+      .addCase(addNewProduct.pending, (state) => {
+        state.isLoadingAddProduct = true;
+      })
+      .addCase(addNewProduct.fulfilled, (state, action) => {
+        state.isLoadingAddProduct = false;
+        state.products.push(action.payload);
+      })
+      .addCase(addNewProduct.rejected, (state) => {
+        state.isLoadingAddProduct = false;
+      })
+
+      // Update product
+      .addCase(updateProductById.pending, (state) => {
+        state.isLoadingUpdateProduct = true;
+      })
       .addCase(updateProductById.fulfilled, (state, action) => {
+        state.isLoadingUpdateProduct = false;
         const index = state.products.findIndex(
           (p) => p._id === action.payload._id
         );
@@ -211,17 +253,22 @@ const productSlice = createSlice({
           state.selectedProduct = action.payload;
         }
       })
+      .addCase(updateProductById.rejected, (state) => {
+        state.isLoadingUpdateProduct = false;
+      })
 
-      // ✅ Delete product
+      // Delete product
+      .addCase(deleteProductById.pending, (state) => {
+        state.isLoadingDeleteProduct = true;
+      })
       .addCase(deleteProductById.fulfilled, (state, action) => {
+        state.isLoadingDeleteProduct = false;
         state.products = state.products.filter(
           (p) => p._id !== action.payload._id
         );
       })
-
-      // ✅ Fetch products by category
-      .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
-        state.categoryProducts = action.payload;
+      .addCase(deleteProductById.rejected, (state) => {
+        state.isLoadingDeleteProduct = false;
       });
   },
 });

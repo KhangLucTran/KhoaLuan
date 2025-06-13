@@ -3,6 +3,7 @@ import authReducer from "./features/auth/authSlice";
 import passwordResetReducer from "./features/auth/passwordResetSlice";
 import userReducer from "./features/user/userSlice";
 import productReducer from "./features/product/productSlice";
+import favoriteReducer from "./features/favorite/favoriteSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     passwordReset: passwordResetReducer,
     user: userReducer,
     product: productReducer,
+    favorite: favoriteReducer,
   },
 });
 

@@ -26,38 +26,33 @@ import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
 import Header from "../../components/Header/Header";
 import "../../styles/ProductPage.css";
 import { addKeyWordsApi } from "../../features/search/searchHistoryApi";
+
 import { getAuthTokens } from "../../utils/token";
 import {
   fetchAllProducts,
   fetchRecommendations,
 } from "../../features/product/productSlice";
-import {
-  addFavoriteUserApi,
-  checkStatusFavoriteUserApi,
-  deleteFavoriteUserApi,
-} from "../../features/favorite/favoriteApi";
 import axios from "axios";
+import {
+  addFavorite,
+  checkFavoriteStatus,
+  removeFavorite,
+} from "../../features/favorite/favoriteSlice";
 
 // 🎯 Component Card Product
 const ProductCard = ({ item }) => {
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const [commentCount, setCommentCount] = useState(0);
 
-  // Kiểm tra sản phẩm có trong danh sách yêu thích không
+  const isFavorite = useSelector(
+    (state) => state.favorite.favoriteStatus[item._id]
+  );
   useEffect(() => {
-    if (!item?._id) return;
-    const controller = new AbortController();
-    checkStatusFavoriteUserApi(item._id, { signal: controller.signal })
-      .then((response) => setIsFavorite(response?.isFavorite || false))
-      .catch((error) => {
-        if (error.name !== "AbortError")
-          console.error("Lỗi kiểm tra yêu thích:", error.message);
-      });
-
-    return () => controller.abort();
-  }, [item?._id]);
+    if (item?._id) {
+      dispatch(checkFavoriteStatus(item._id));
+    }
+  }, [dispatch, item._id]);
 
   // Lấy số lượng đánh giá sản phẩm
   useEffect(() => {
@@ -75,23 +70,12 @@ const ProductCard = ({ item }) => {
     fetchRating();
   }, [item._id]);
 
-  const handleFavoriteClick = async (event) => {
+  const handleFavoriteClick = (event) => {
     event.stopPropagation();
-    if (isLoading) return;
-    setIsLoading(true);
-    setIsFavorite((prev) => !prev);
-
-    try {
-      if (!isFavorite) {
-        await addFavoriteUserApi(item._id);
-      } else {
-        await deleteFavoriteUserApi(item._id);
-      }
-    } catch (error) {
-      console.error("Lỗi xử lý yêu thích:", error.message);
-      setIsFavorite((prev) => !prev);
-    } finally {
-      setIsLoading(false);
+    if (isFavorite) {
+      dispatch(removeFavorite(item._id));
+    } else {
+      dispatch(addFavorite(item._id));
     }
   };
 
@@ -154,7 +138,6 @@ const ProductCard = ({ item }) => {
 const Product = () => {
   const dispatch = useDispatch();
   const accessToken = getAuthTokens().accessToken;
-
   // Lấy dữ liệu từ redux store
   const products = useSelector((state) => state.product.products);
 
@@ -263,7 +246,6 @@ const Product = () => {
             }}
           />
         </div>
-
         <div className="product-items">
           <div className="product-items-sidebar">
             <ProductFilter
@@ -279,8 +261,7 @@ const Product = () => {
           </div>
 
           <div style={{ flex: 2 }}>
-            <h4>KẾT QUẢ: {filteredProducts.length} Sản phẩm</h4>
-
+            <h4>KẾT QUẢ: {filteredProducts.length} Sản phẩm</h4>{" "}
             <Grid container rowSpacing={3} columnSpacing={2}>
               {currentItems.map((item) => (
                 <Grid item xs={12} sm={6} md={4} key={item._id}>
@@ -288,7 +269,6 @@ const Product = () => {
                 </Grid>
               ))}
             </Grid>
-
             {accessToken && groupedProducts && (
               <>
                 {groupedProducts.popular.length > 0 && (
@@ -318,7 +298,6 @@ const Product = () => {
                 )}
               </>
             )}
-
             {filteredProducts.length > itemsPerPage && (
               <Box display="flex" justifyContent="center" mt={4}>
                 <Pagination
