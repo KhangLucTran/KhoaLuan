@@ -1,0 +1,141 @@
+/* CSS cũ */
+.checkout-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    max-width: 1200px;
+    margin-top: 6rem;
+  }
+  
+  .checkout-items {
+    flex: 2;
+    gap: 2rem;
+  }
+  
+  .checkout-items-title {
+    margin-bottom: 15px;
+  }
+  
+  .checkout-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .checkout-item img {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .checkout-item-info {
+    margin-left: 15px;
+  }
+  
+  .checkout-summary {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+  }
+  
+  .checkout-summary-title {
+    font-size: 24px;
+    text-align: center;
+  }
+  
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+  
+  .checkout-payment-methods {
+    margin-top: 15px;
+  }
+  
+  .payment-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .coupon-section {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+  }
+  
+  .coupon-input {
+    flex: 1;
+  }
+  
+  .coupon-button {
+    margin-left: 10px;
+    background-color: #1877F2;
+    color: #fff;
+  }
+  
+  .checkout-btn {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #1877F2;
+    color: white;
+  }
+  
+  /* CSS mới bổ sung */
+  /* Responsive: khi màn hình nhỏ, hiển thị dạng cột */
+  @media (max-width: 768px) {
+    .checkout-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .checkout-items,
+    .checkout-summary {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+  
+  /* Styling cho phần thông tin cá nhân */
+  .user-info h4 { 
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;  
+    font-size: 18px;
+    color: #333;
+  }
+
+  /* Tùy chỉnh cho divider */
+  .checkout-divider {
+    margin: 20px 0;
+    border-top: 1px solid #ddd;
+  }
+  
+  /* Hover effect cho nút thanh toán */
+  .checkout-btn:hover {
+    background-color: #165eab;
+  }
+  
+  /* Hover effect cho nút áp dụng mã giảm giá */
+  .coupon-button:hover {
+    background-color: #145293;
+  }
+  .discount-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  

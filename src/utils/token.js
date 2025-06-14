@@ -1,14 +1,14 @@
 export const saveAuthTokens = (accessToken, refreshToken) => {
-  localStorage.setItem("accessToken", accessToken);
-  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem("access_token", accessToken);
+  localStorage.setItem("refresh_token", refreshToken);
 };
 
 export const getAuthTokens = () => ({
-  accessToken: localStorage.getItem("accessToken"),
-  refreshToken: localStorage.getItem("refreshToken"),
+  accessToken: localStorage.getItem("access_token") || null,
+  refreshToken: localStorage.getItem("refresh_token") || null,
 });
 
 export const clearAuthTokens = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
 };

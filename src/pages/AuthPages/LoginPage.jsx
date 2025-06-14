@@ -2,7 +2,6 @@ import "../../styles/LoginPage.css";
 
 import LoginForm from "../../components/Form/LoginForm";
 import SocialButton from "../../components/Button/SocialButton";
-import ModeSelect from "../../components/ModeSelect/ModeSelect";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightTwoToneIcon from "@mui/icons-material/ChevronRightTwoTone";
 import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
@@ -15,6 +14,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { saveAuthTokens } from "../../utils/token";
 import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
 import { fetchUserInfo } from "../../features/user/userSlice";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
   // Dispatch
@@ -63,12 +63,18 @@ const LoginPage = () => {
       // Dùng dispatch gọi đến API login trong Redux
       const response = await dispatch(loginUser(values)).unwrap();
       console.log("🔥 Response từ API Login:", response); // Kiểm tra response
-
       if (response.access_token) {
+        // Giải mã token
+        const decoded = jwtDecode(response.access_token);
+        console.log("decoded:", decoded);
+
+        // Xác định đường dẫn chuyển hướng
+        let redirectUrl = location.state?.from || "/";
+        if (decoded.role_code === "R1") {
+          redirectUrl = "/levents/admin";
+        }
         // Thông báo đăng nhập thành công
         showSuccessToast("Đăng nhập thành công!");
-
-        const redirectUrl = location.state?.from || "/";
         // Đợi 3 giây rồi chuyển trang
         setTimeout(() => {
           navigate(redirectUrl);
@@ -90,21 +96,27 @@ const LoginPage = () => {
     if (accessToken && refreshToken) {
       // Lưu AccessToken và RefreshToken
       saveAuthTokens(accessToken, refreshToken);
-      // Dùng AccessToken để call API: me (Lấy thông tin user đang đăng nhập)
-      dispatch(fetchUserInfo());
-      // Chuyển hướng về trang chủ
-      navigate("/", { replace: true });
+      try {
+        // Giải mã token xem có role là gì
+        const decoded = jwtDecode(accessToken);
+        console.log("decoded:", decoded);
+        if (decoded?.role_code === "R1") {
+          navigate("/levents/admin", { replace: true });
+        } else {
+          const redirectUrl = location.state?.from || "/";
+          navigate(redirectUrl, { replace: true });
+        }
+        // Dùng AccessToken để call API: me (Lấy thông tin user đang đăng nhập)
+        dispatch(fetchUserInfo());
+      } catch (error) {
+        console.error("Lỗi khi giải mã AccessToken:", error);
+      }
     }
-  }, [location.search, dispatch, navigate]);
+  }, [location.search, dispatch, navigate, location.state]);
 
   // Giao diện Trang Login
   return (
     <>
-      {/* Chế độ Dark/Light */}
-      <div className="login-page-modee">
-        <ModeSelect className="login-page-mode-select" />
-      </div>
-
       {/* Login Container */}
       <div className="login-container">
         {/* Hình nền đăng nhập */}

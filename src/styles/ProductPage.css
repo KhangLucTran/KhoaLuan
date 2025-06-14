@@ -1,0 +1,123 @@
+/* Product container */
+.product-container {
+    width: 100%;
+    height: 100%;
+    margin-top: 10rem;
+}
+
+/* Search Box */
+.product-header{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 10rem;
+    border-bottom: 1px solid #d3d3d3; /* Thêm border xám nhẹ */
+}
+.product-header h2{
+    font-size: 35px;
+}
+.product-header-search {
+    display: flex;
+    width:60%;
+    border-radius: 30px;
+    margin-bottom: 2rem;
+}
+
+.product-header-search .MuiOutlinedInput-root {
+    height: 40px;
+    font-size: 14px;
+    padding: 5px 10px;
+}
+
+.product-header-search .MuiInputAdornment-root {
+    color: #1C2B33;
+}
+
+/* Product Items */
+.product-items {
+    margin-top: 2rem;
+    display: flex;
+    padding: 20px 5%;
+    gap: 20px;
+}
+
+/* Sidebar */
+.product-items-sidebar {
+    width: 25%;
+    position: sticky;
+    top: 80px; /* Điều chỉnh để sidebar không bị cuốn lên quá khi người dùng cuộn */
+    height: calc(100vh - 100px); /* Chiều cao của sidebar sẽ là toàn bộ chiều cao của màn hình trừ đi khoảng cách trên cùng */
+    padding: 20px; /* Điều chỉnh padding nếu cần */
+  }
+  
+/* Category & Filters */
+.product-items-sidebar .filter-title {
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Product Card */
+.product-card {
+    position: relative;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Product Image */
+.product-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+/* Product Info */
+.product-card-content {
+    padding: 10px;
+}
+
+.product-card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    background-color: #fff;
+}
+
+.product-card-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #1877F2;
+}
+
+/* Rating */
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: #555;
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .product-items {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-items-sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .product-items-list {
+        justify-content: center;
+    }
+}

@@ -17,11 +17,14 @@
     height: 5rem;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   }
-  
+  .hide-nav .header-nav {
+    display: none;
+  }
   /* Khi cuộn xuống (thêm lớp "scrolled" vào header-container) */
   .header-container.scrolled {
     background-color: #fff;
-    color: #1877F2;
+    /* color: #1877F2; */
+    color: #000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   

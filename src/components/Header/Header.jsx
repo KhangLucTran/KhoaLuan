@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AuthenticationContext,
@@ -7,41 +7,119 @@ import {
 import CustomTooltip from "../CustomTooltip/CustomTooltip";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-
-import { Badge } from "@mui/material";
+// import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import { Badge, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { logoutUser } from "../../features/user/userSlice";
+import { fetchUserInfo, logoutUser } from "../../features/user/userSlice";
 import DetailedDialog from "../../components/Toast/Dialog";
 import useProtectedDialog from "../../hooks/protectedDialogHook";
 import { Account } from "@toolpad/core/Account";
 import { Login, Logout } from "@mui/icons-material";
-
 import "../../styles/Header.css";
+import PropTypes from "prop-types";
+import { logout } from "../../features/auth/authSlice";
+import { getAuthTokens, saveAuthTokens } from "../../utils/token";
+import { getTotalQuantityApi } from "../../features/cart/cartApi";
+import { useCart } from "../../pages/OrderPages/cartContext";
+import { getFavoriteUserApi } from "../../features/favorite/favoriteApi";
+import NotificationDropdown from "../Toast/NotificationDropdown";
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import ChatBox from "../Chat/ChatBox";
 
-const Header = () => {
+const Header = ({ hideNav }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
-
-  // Sử dụng hook bảo vệ các hành động cần đăng nhập
+  const token = getAuthTokens().accessToken;
+  const [total, setTotal] = useState(0);
+  const [totalFavorite, setTotalFavorite] = useState(0);
   const { open, setOpen, handleProtectedAction } = useProtectedDialog();
+  const isFetched = useRef(false);
+  const prevCartItems = useRef([]);
+  const { cartItems, lineItems, totalQuantity, fetchCartData } = useCart();
+  const [showChat, setShowChat] = useState(false);
 
-  // Xây dựng AuthenticationContext để signIn/signOut
+  // ✅ Gọi API lấy số lượng khi đăng nhập
+  useEffect(() => {
+    if (token && !isFetched.current) {
+      dispatch(fetchUserInfo());
+      fetchCartQuantity();
+      fecthQuantityFavroite();
+      isFetched.current = true; // Đánh dấu đã gọi API
+    }
+  }, [token, dispatch]);
+
+  // ✅ Theo dõi sự thay đổi của giỏ hàng
+  useEffect(() => {
+    if (JSON.stringify(prevCartItems.current) !== JSON.stringify(cartItems)) {
+      fetchCartQuantity();
+      prevCartItems.current = cartItems;
+    }
+  }, [cartItems, lineItems]);
+
+  // ✅ Ưu tiên lấy total từ CartContext
+  useEffect(() => {
+    setTotal(totalQuantity || 0);
+  }, [totalQuantity]);
+
+  // ✅ Gọi API nếu cần thiết
+  const fetchCartQuantity = async () => {
+    try {
+      if (totalQuantity > 0) return; // Tránh gọi API khi đã có dữ liệu
+      const data = await getTotalQuantityApi();
+      console.log("Dữ liệu API trả về:", data);
+
+      const quantity =
+        typeof data === "number" ? { totalQuantity: data } : data;
+
+      if (quantity && typeof quantity.totalQuantity === "number") {
+        setTotal(quantity.totalQuantity);
+      } else {
+        console.warn("Dữ liệu không đúng định dạng:", quantity);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng sản phẩm:", error.message);
+    }
+  };
+
+  const fecthQuantityFavroite = async () => {
+    try {
+      const response = await getFavoriteUserApi();
+
+      if (response && Array.isArray(response.data)) {
+        setTotalFavorite(response.data.length);
+        console.log("Số lượng sản phẩm yêu thích:", response.data.length);
+      } else {
+        console.warn("Dữ liệu không hợp lệ từ API yêu thích:", response);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng yêu thích:", error.message);
+    }
+  };
+
+  // const handleNotificationClick = () => {
+  //   navigate("/levents/notification");
+  // };
+
   const authContext = useMemo(
     () => ({
-      signIn: () => {
-        // Bạn có thể chọn chuyển hướng trực tiếp hoặc mở dialog
+      signIn: async (tokens) => {
+        saveAuthTokens(tokens);
         navigate("/levents/login");
+        fetchCartData();
+        fetchCartQuantity();
       },
       signOut: () => {
+        dispatch(logout());
         dispatch(logoutUser());
+        setTotal(0);
+        setTotalFavorite(0);
         navigate("/");
       },
     }),
-    [dispatch, navigate]
+    [dispatch, navigate, fetchCartData]
   );
 
-  // Xây dựng session dựa trên dữ liệu user từ Redux
   const session = user
     ? {
         user: {
@@ -53,18 +131,13 @@ const Header = () => {
       }
     : null;
 
-  // Xử lí Header khi scroll xuống 100px
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) {
-        document.querySelector(".header-container").classList.add("scrolled");
-      } else {
-        document
-          .querySelector(".header-container")
-          .classList.remove("scrolled");
+      const header = document.querySelector(".header-container");
+      if (header) {
+        header.classList.toggle("scrolled", window.scrollY > 100);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -73,83 +146,123 @@ const Header = () => {
     <AuthenticationContext.Provider value={authContext}>
       <SessionContext.Provider value={session}>
         <header className="header-container">
-          {/* Header Logo */}
           <div className="header-logo">
             <CustomTooltip title="Trang chủ">
               <a href="/">Levents</a>
             </CustomTooltip>
           </div>
 
-          {/* Header Nav */}
-          <nav className="header-nav">
-            <ul>
-              <li className="header-li">
-                <a href="/">Trang chủ</a>
-              </li>
-              <li className="header-li">
-                <a href="/levents/about">Thông tin</a>
-              </li>
-              <li className="header-li">
-                <a href="#services">Dịch vụ</a>
-              </li>
-              <li className="header-li">
-                <a href="#contact">Liên hệ</a>
-              </li>
-            </ul>
-          </nav>
+          {!hideNav && (
+            <nav className="header-nav">
+              <ul>
+                <li>
+                  <a href="/">Trang chủ</a>
+                </li>
+                <li>
+                  <a href="/levents/about">Thông tin</a>
+                </li>
+                <li>
+                  <a href="#services">Dịch vụ</a>
+                </li>
+                <li>
+                  <a href="#contact">Liên hệ</a>
+                </li>
+              </ul>
+            </nav>
+          )}
 
-          {/* Header Icon */}
           <div className="header-nav-icon">
-            <CustomTooltip title="Giỏ hàng">
-              <Badge color="info" badgeContent={0}>
-                <ShoppingCartOutlinedIcon
-                  fontSize="medium"
-                  onClick={() => handleProtectedAction("/levents/cart")}
-                  style={{ cursor: "pointer" }}
-                />
+            <CustomTooltip title="Thông báo">
+              <Badge
+                badgeContent={0}
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: "#000", // Màu nền badge
+                    color: "#fff", // Màu chữ trong badge
+                  },
+                }}
+              >
+                <NotificationDropdown />
               </Badge>
+            </CustomTooltip>
+
+            <CustomTooltip title="Tin nhắn">
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={1}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#000",
+                      color: "#fff",
+                    },
+                  }}
+                  onClick={() => setShowChat(true)}
+                >
+                  <ChatOutlinedIcon />
+                </Badge>
+              </IconButton>
+            </CustomTooltip>
+
+            <CustomTooltip title="Giỏ hàng">
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={total}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#000", // Màu nền badge
+                      color: "#fff", // Màu chữ trong badge
+                    },
+                  }}
+                >
+                  <ShoppingCartOutlinedIcon
+                    fontSize="medium"
+                    onClick={() => handleProtectedAction("/levents/cart")}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Badge>
+              </IconButton>
             </CustomTooltip>
 
             <CustomTooltip title="Sản phẩm yêu thích">
-              <Badge color="info" badgeContent={0}>
-                <FavoriteBorderOutlinedIcon
-                  fontSize="medium"
-                  onClick={() => handleProtectedAction("/levents/wishlist")}
-                  style={{ cursor: "pointer" }}
-                />
-              </Badge>
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={totalFavorite}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "#000", // Màu nền badge
+                      color: "#fff", // Màu chữ trong badge
+                    },
+                  }}
+                >
+                  <FavoriteBorderOutlinedIcon
+                    fontSize="medium"
+                    onClick={() => handleProtectedAction("/levents/favorite")}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Badge>
+              </IconButton>
             </CustomTooltip>
-            {/* Account */}
+
             <Account
               slotProps={{
-                signInButton: {
-                  color: "black",
-                  startIcon: <Login />,
-                },
-                signOutButton: {
-                  color: "black",
-                  startIcon: <Logout />,
-                },
+                signInButton: { color: "black", startIcon: <Login /> },
+                signOutButton: { color: "black", startIcon: <Logout /> },
                 preview: {
                   variant: "expanded",
                   slotProps: {
                     avatarIconButton: {
-                      sx: {
-                        width: "fit-content",
-                        margin: "auto",
-                      },
+                      sx: { width: "fit-content", margin: "auto" },
                     },
-                    avatar: {
-                      variant: "rounded",
-                    },
+                    avatar: { variant: "rounded" },
                   },
                 },
               }}
             />
           </div>
         </header>
+        {/* Khung chat */}
+        {showChat && <ChatBox onClose={() => setShowChat(false)} />}
 
-        {/* DetailedDialog */}
         <DetailedDialog
           open={open}
           onClose={() => setOpen(false)}
@@ -161,3 +274,7 @@ const Header = () => {
 };
 
 export default Header;
+
+Header.propTypes = {
+  hideNav: PropTypes.bool,
+};

@@ -2,11 +2,13 @@ import axios from "axios";
 import * as jwtDecodeImport from "jwt-decode";
 const jwtDecode = jwtDecodeImport.default || jwtDecodeImport;
 
+// Biến lưu trữ promise của refresh token để tránh gọi nhiều lần
+let refreshTokenPromise = null;
+
 // Hàm kiểm tra token hết hạn
 const isTokenExpired = (token) => {
   try {
     const { exp } = jwtDecode(token);
-    // exp tính theo giây, chuyển sang milisecond để so sánh với Date.now()
     return exp * 1000 < Date.now();
   } catch (error) {
     return true; // Nếu decode lỗi, coi như token hết hạn
@@ -20,39 +22,46 @@ const api = axios.create({
   },
 });
 
+// Hàm refresh token
+const refreshAccessToken = async () => {
+  if (!refreshTokenPromise) {
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (!refreshToken) {
+      return Promise.reject(new Error("No refresh token available"));
+    }
+
+    // Tạo một promise duy nhất để tránh gọi nhiều lần
+    refreshTokenPromise = axios
+      .post("http://localhost:5000/api/auth/refresh-token", { refreshToken })
+      .then((response) => {
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          response.data;
+        localStorage.setItem("access_token", newAccessToken);
+        localStorage.setItem("refresh_token", newRefreshToken.token);
+        return newAccessToken;
+      })
+      .catch((error) => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        return Promise.reject(error);
+      })
+      .finally(() => {
+        refreshTokenPromise = null; // Xóa biến sau khi hoàn tất
+      });
+  }
+  return refreshTokenPromise;
+};
+
 // Interceptor xử lý token
 api.interceptors.request.use(
   async (config) => {
     let accessToken = localStorage.getItem("access_token");
 
     if (accessToken && isTokenExpired(accessToken)) {
-      // Nếu access token đã hết hạn, lấy refresh token từ localStorage
-      const refreshToken = localStorage.getItem("refresh_token");
-      if (refreshToken) {
-        try {
-          // Gọi API refresh token
-          const response = await axios.post(
-            "http://localhost:5000/api/auth/refresh-token",
-            { refreshToken }
-          );
-          // Giả sử API trả về dữ liệu theo định dạng:
-          // {
-          //   accessToken: "newAccessToken",
-          //   refreshToken: { token: "newRefreshToken", expiry: "..." }
-          // }
-          const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-            response.data;
-          // Lưu token mới vào localStorage
-          localStorage.setItem("access_token", newAccessToken);
-          localStorage.setItem("refresh_token", newRefreshToken.token);
-          accessToken = newAccessToken;
-        } catch (error) {
-          // Nếu không refresh được, xóa token và có thể chuyển hướng người dùng đăng nhập lại
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
-          // Bạn có thể thực hiện hành động logout hoặc thông báo cho người dùng ở đây
-          return Promise.reject(error);
-        }
+      try {
+        accessToken = await refreshAccessToken(); // Đợi token mới
+      } catch (error) {
+        return Promise.reject(error);
       }
     }
 

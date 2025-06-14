@@ -1,0 +1,176 @@
+:root {
+  --primary-color: #1877F2;      /* Màu chủ đạo */
+  --accent-color: #ff5722;       /* Màu nổi bật cho nút mua lại */
+  --cancel-color: #dc3545;       /* Màu cho nút hủy */
+  --secondary-color: #f7f7f7;     /* Nền cho thẻ hóa đơn */
+  --border-color: #dee2e6;        /* Màu viền */
+  --text-color: #343a40;         /* Màu chữ chính */
+  --font-family: 'Roboto', sans-serif;
+  --transition-speed: 0.3s;
+}
+
+/* Container chính cho trang Invoice */
+.invoice-tabs-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 5rem auto;
+  padding: 1rem;
+  font-family: var(--font-family);
+  background: #fff;
+  color: var(--text-color);
+}
+
+/* Danh sách hóa đơn theo dạng lưới */
+.invoice-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Container cho mỗi hóa đơn (bao gồm card và nút hành động) */
+.invoice-card-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Card hóa đơn */
+.invoice-card {
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+.invoice-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.invoice-card h3 {
+  font-size: 20px;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+}
+
+.invoice-card p {
+  font-size: 14px;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+/* Tổng tiền */
+.cart-total {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 1rem;
+  color: var(--text-color);
+}
+
+/* Phần chi tiết sản phẩm (Line Items) */
+.line-items-section {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 1rem;
+}
+
+.line-items-section h4 {
+  font-size: 16px;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+}
+
+/* Mỗi dòng sản phẩm */
+.line-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.line-item:last-child {
+  border-bottom: none;
+}
+
+/* Ảnh sản phẩm */
+.line-item-image {
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Chi tiết sản phẩm */
+.line-item-details {
+  flex: 1;
+}
+
+.line-item-details p {
+  font-size: 13px;
+  margin: 0.25rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.line-item-details p strong {
+  flex: 0 0 100px;
+}
+
+/* Nút hành động cho hóa đơn */
+.invoice-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.action-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.action-button.repurchase {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+.action-button.repurchase:hover {
+  background-color: #e64a19;
+}
+
+.action-button.rate-product {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.action-button.rate-product:hover {
+  background-color: #0056b3;
+}
+
+.action-button.cancel {
+  background-color: var(--cancel-color);
+  color: #fff;
+}
+
+.action-button.cancel:hover {
+  background-color: #c82333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .invoice-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}

@@ -10,17 +10,20 @@ const useProtectedDialog = () => {
   // State điều khiển Dialog
   const [open, setOpen] = useState(false);
 
+  // State điều hướng sau khi login thành công.
+  const [redirectPath, setRedirectPath] = useState("");
+
   // Hàm xử lý hành động cần bảo vệ:
-  // Nếu chưa đăng nhập thì mở Dialog, nếu đã đăng nhập thì điều hướng đến đường dẫn truyền vào.
   const handleProtectedAction = (path) => {
     if (!user) {
+      setRedirectPath(path);
       setOpen(true);
     } else {
       navigate(path);
     }
   };
 
-  return { open, setOpen, handleProtectedAction, navigate };
+  return { open, setOpen, handleProtectedAction, navigate, redirectPath };
 };
 
 export default useProtectedDialog;
