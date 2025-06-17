@@ -59,7 +59,8 @@ const PasswordResetStepper = () => {
   const { email, otp, password, confirmPassword, step, loading } = useSelector(
     (state) => state.passwordReset
   );
-
+  const [timeLeft, setTimeLeft] = useState(600); // 10 phút
+  const [isExpired, setIsExpired] = useState(false);
   const [localOtp, setLocalOtp] = useState("");
 
   useEffect(() => {
@@ -72,6 +73,27 @@ const PasswordResetStepper = () => {
     }
   }, [localOtp, dispatch]);
 
+  // Bộ đếm thời gian
+  useEffect(() => {
+    if (step !== 1) return;
+
+    setTimeLeft(600); // Reset thời gian nếu quay lại step 1
+    setIsExpired(false);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsExpired(true); // Hết thời gian
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [step]);
+
   // Xử lí khi có dữ liệu thay đổi
   const handleChange = (field, value) => {
     dispatch(updateFormData({ field, value }));
@@ -80,6 +102,34 @@ const PasswordResetStepper = () => {
   // Xử lí khi bấm vào icon hiện/ẩn mật khẩu
   const handleToggleVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+  useEffect(() => {
+    if (step !== 1) return;
+
+    setTimeLeft(600); // Reset thời gian nếu quay lại step 1
+    setIsExpired(false);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsExpired(true); // Hết thời gian
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [step]);
+
+  // Hàm định dạng thời gian
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const secs = (seconds % 60).toString().padStart(2, "0");
+    return `${mins}:${secs}`;
   };
 
   // Xử lí khi bấm "Tiếp tục"
@@ -162,26 +212,41 @@ const PasswordResetStepper = () => {
               </Typography>
 
               {stepData.field === "otp" ? (
-                <OTPInput
-                  value={localOtp}
-                  onChange={setLocalOtp}
-                  numInputs={6}
-                  sInputNum={true}
-                  renderInput={(props) => (
-                    <input
-                      {...props}
-                      style={{
-                        width: "2.5rem",
-                        height: "3rem",
-                        margin: "0 4px",
-                        fontSize: "1.5rem",
-                        borderRadius: 4,
-                        border: "1px solid #ced4da",
-                        textAlign: "center",
-                      }}
-                    />
-                  )}
-                />
+                <>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: isExpired ? "red" : "#666",
+                      mt: 1,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {isExpired
+                      ? "Mã OTP đã hết hiệu lực. Vui lòng quay lại để nhận mã mới."
+                      : `Mã sẽ hết hạn sau: ${formatTime(timeLeft)}`}
+                  </Typography>
+
+                  <OTPInput
+                    value={localOtp}
+                    onChange={setLocalOtp}
+                    numInputs={6}
+                    sInputNum={true}
+                    renderInput={(props) => (
+                      <input
+                        {...props}
+                        style={{
+                          width: "2.5rem",
+                          height: "3rem",
+                          margin: "0 4px",
+                          fontSize: "1.5rem",
+                          borderRadius: 4,
+                          border: "1px solid #ced4da",
+                          textAlign: "center",
+                        }}
+                      />
+                    )}
+                  />
+                </>
               ) : stepData.field ? (
                 // Email Form
                 <TextField

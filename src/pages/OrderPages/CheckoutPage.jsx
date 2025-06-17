@@ -15,6 +15,7 @@ import england from "../../assets/united-kingdom.png";
 import { useCart } from "./cartContext";
 import "../../styles/CheckoutPage.css";
 import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
+import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
 
 const calculateTotalPrice = (items) => {
   return items.reduce((total, item) => total + item.total, 0);
@@ -34,6 +35,7 @@ const Checkout = () => {
   const { cartId } = useCart();
   const [bankCode, setBankCode] = useState("VNPAYQR");
   const [language, setLanguage] = useState("vn");
+  const [isDiscountValid, setIsDiscountValid] = useState(false);
 
   useEffect(() => {
     const fetchDefaultAddress = async () => {
@@ -70,10 +72,10 @@ const Checkout = () => {
 
   // Phí vận chuyển
   const shippingFee = useMemo(() => {
-    if (!checkAmountDiscount) return totalPrice >= 500000 ? 0 : 50000;
     if (selectDiscount?.freeShipping) return 0;
+    if (!checkAmountDiscount) return totalPrice >= 500000 ? 0 : 50000;
     return totalPrice >= 500000 ? 0 : 50000;
-  }, [totalPrice, selectDiscount]);
+  }, [totalPrice, selectDiscount, checkAmountDiscount]);
 
   const finalAmount = useMemo(
     () => totalPrice + additionalFee + shippingFee,
@@ -85,7 +87,6 @@ const Checkout = () => {
     const percentDiscount = selectDiscount?.percent
       ? (calculateTotalPrice(selectedCartItems) * selectDiscount.percent) / 100
       : 0;
-    console.log(selectDiscount._id);
     const shippingDiscount = selectDiscount?.freeShipping ? 50000 : 0;
     console.log("shippingDiscount:", shippingDiscount);
     return percentDiscount + shippingDiscount;
@@ -135,6 +136,86 @@ const Checkout = () => {
       }
     } catch (error) {
       console.error("Lỗi kết nối API:", error);
+    }
+  };
+  const checkDiscountEligibility = (discount, cartItems) => {
+    if (!discount || !cartItems || cartItems.length === 0) {
+      return {
+        valid: false,
+        message: "Không có mã giảm giá hoặc giỏ hàng trống",
+      };
+    }
+
+    // 1. Kiểm tra ngày hết hạn (nếu có)
+    if (discount.expiredAt) {
+      const now = new Date();
+      const expiredDate = new Date(discount.expiredAt);
+      if (now > expiredDate) {
+        return { valid: false, message: "Mã giảm giá đã hết hạn" };
+      }
+    }
+
+    // 2. Kiểm tra tổng tiền tối thiểu (minOrderAmount)
+    const cartTotal = cartItems.reduce((sum, item) => sum + item.total, 0);
+    if (discount.minOrderAmount && cartTotal < discount.minOrderAmount) {
+      return {
+        valid: false,
+        message: `Tổng tiền giỏ hàng phải lớn hơn hoặc bằng ${discount.minOrderAmount.toLocaleString()} VND để áp dụng mã giảm giá`,
+      };
+    }
+
+    // 3. Kiểm tra mã giảm giá áp dụng cho danh mục sản phẩm (nếu có)
+    if (
+      discount.applicableCategories &&
+      discount.applicableCategories.length > 0
+    ) {
+      const productCategories = selectedCartItems.map((item) => {
+        // nếu category là object thì lấy id, nếu là id thẳng thì lấy luôn
+        return typeof item.product.category === "object"
+          ? item.product.category._id
+          : item.product.category;
+      });
+      alert("Product Categories:", productCategories);
+      const isApplicable = productCategories.some((catId) =>
+        discount.applicableCategories.includes(catId)
+      );
+      if (!isApplicable) {
+        return {
+          valid: false,
+          message: "Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng",
+        };
+      }
+    }
+
+    // 4. Kiểm tra giới hạn số lượng sản phẩm được áp dụng (nếu có)
+    if (discount.maxQuantity && cartItems.length > discount.maxQuantity) {
+      return {
+        valid: false,
+        message: `Chỉ được áp dụng mã giảm giá cho tối đa ${discount.maxQuantity} sản phẩm`,
+      };
+    }
+
+    return { valid: true };
+  };
+
+  const handleSelectDiscount = (discount) => {
+    const { valid, message } = checkDiscountEligibility(
+      discount,
+      selectedCartItems
+    );
+    setIsDiscountValid(valid);
+
+    if (!valid) {
+      showErrorToast(
+        message ||
+          "Mã giảm giá không hợp lệ với các sản phẩm đã chọn hoặc đã hết hạn"
+      );
+      setSelectDiscount(""); // reset discount nếu không hợp lệ
+      setCouponCode(""); // reset luôn mã coupon
+    } else {
+      setSelectDiscount(discount);
+      setCouponCode(discount.code);
+      showSuccessToast("Áp dụng mã giảm giá thành công!");
     }
   };
 
@@ -297,13 +378,17 @@ const Checkout = () => {
           </div>
 
           <h4 className="checkout-summary-h5">Mã giảm</h4>
+          {/* Mã giảm giá */}
           <div style={{ margin: "1rem 0" }}>
             <TextField
               label="Nhập mã giảm giá"
               variant="outlined"
               size="small"
               value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value)}
+              onChange={(e) => {
+                setCouponCode(e.target.value);
+                setIsDiscountValid(true); // reset trạng thái khi thay đổi code nhập tay
+              }}
               fullWidth
               sx={{ mb: 1 }}
             />
@@ -314,7 +399,15 @@ const Checkout = () => {
             >
               Chọn mã giảm giá
             </Button>
+
+            {/* Hiển thị lỗi khi mã không hợp lệ */}
+            {!isDiscountValid && (
+              <p style={{ color: "red", marginTop: 8 }}>
+                Mã giảm giá không hợp lệ với sản phẩm hoặc đã hết hạn.
+              </p>
+            )}
           </div>
+
           <Button
             variant="contained"
             color="primary"
@@ -347,13 +440,7 @@ const Checkout = () => {
           >
             <DiscountPage
               isCheckoutPage={true}
-              onSelectDiscount={(discount) => {
-                if (discount) {
-                  setSelectDiscount(discount);
-                  setCouponCode(discount.code);
-                }
-                setOpenDiscountModal(false);
-              }}
+              onSelectDiscount={handleSelectDiscount}
             />
           </div>
         </Fade>

@@ -8,7 +8,9 @@ import { useNotification } from "../../components/Toast/notificationContext";
 import { useSelector } from "react-redux";
 import { getProductByIdApi } from "../../features/product/productApi";
 import { getInvoiceByIdApi } from "../../features/invoice/invoiceApi";
+import { useNavigate } from "react-router-dom";
 import defaultProduct from "../../assets/default-product.png";
+import { markNotificationAsReadApi } from "../../features/notification/notificationApi";
 
 const getTimeAgo = (createdAt) => {
   const now = new Date();
@@ -33,7 +35,7 @@ const NotificationCard = ({ notif, avatarUrl, onClick }) => {
   return (
     <div
       className={`nc-card ${notif.isRead ? "nc-card--read" : "nc-card--unread"}`}
-      onClick={() => onClick(notif._id)}
+      onClick={() => onClick(notif)}
     >
       <div className="nc-content">
         <Avatar
@@ -53,6 +55,9 @@ const NotificationCard = ({ notif, avatarUrl, onClick }) => {
           </Typography>
           <Typography className="nc-message">{notif.message}</Typography>
           <Typography className="nc-time">{timeAgo}</Typography>
+          {notif.isRead && (
+            <Typography className="nc-read-flag">Đã đọc</Typography>
+          )}
         </div>
       </div>
     </div>
@@ -70,6 +75,7 @@ const NotificationPage = () => {
   const user = useSelector((state) => state.user.user);
   const [avatarUrls, setAvatarUrls] = useState({});
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
   const itemsPerPage = 10;
 
   const handlePageChange = (_e, value) => {
@@ -120,10 +126,29 @@ const NotificationPage = () => {
     return () => socket?.off("new_notification");
   }, [setNotifications]);
 
-  const handleClick = (id) =>
-    setNotifications((prev) =>
-      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
-    );
+  const handleNotificationClick = async (notif) => {
+    try {
+      console.log(notif._id);
+      await markNotificationAsReadApi(notif._id);
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === notif._id ? { ...n, isRead: true } : n))
+      );
+      // Chờ 1 giây
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (notif.type === "order" && notif.invoiceId) {
+        navigate(`/levents/invoice/detail/${notif.invoiceId}`);
+      } else if (notif.type === "user" && notif.relatedUserId === null) {
+        navigate(`/levents/profile/view`);
+      } else if (notif.type === "product" && notif.productId) {
+        console.log("Navigating to product detail:", notif.productId);
+        navigate(`/levents/product-detail/${notif.productId}`);
+      } else if (notif.link) {
+        navigate(notif.link);
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái:", error);
+    }
+  };
 
   return (
     <div className="np-container">
@@ -139,7 +164,7 @@ const NotificationPage = () => {
               key={notif._id}
               notif={notif}
               avatarUrl={avatarUrls[notif._id] || defaultProduct}
-              onClick={handleClick}
+              onClick={() => handleNotificationClick(notif)}
             />
           ))}
           {/* Phân trang */}

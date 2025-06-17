@@ -17,7 +17,6 @@ import {
 import "../../styles/DiscountPage.css";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
 
 // Hàm mới gọi API lấy discount đã dùng và chưa dùng của user theo userId
 import { getDiscountsByUserApi } from "../../features/discount/discountApi";
@@ -58,14 +57,6 @@ const DiscountPage = ({ onSelectDiscount, isCheckoutPage }) => {
 
     setSelectedDiscount(newDiscount);
     onSelectDiscount(newDiscount);
-
-    if (!isSelected && discount?.code) {
-      try {
-        showSuccessToast("Áp dụng mã giảm giá thành công!");
-      } catch (err) {
-        showErrorToast(err.message);
-      }
-    }
   };
 
   const renderDiscountCard = (discount, isDisabled = false) => {
