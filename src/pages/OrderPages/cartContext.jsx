@@ -6,7 +6,7 @@ import {
   useCallback,
 } from "react";
 import { getUserCartApi } from "../../features/cart/cartApi";
-import { getLineitemApi } from "../../features/lineitem/lineItemApi";
+import { getLineitemApi } from "../../features/lineitem/lineitemApi";
 import PropTypes from "prop-types";
 import { getAuthTokens } from "../../utils/token";
 
