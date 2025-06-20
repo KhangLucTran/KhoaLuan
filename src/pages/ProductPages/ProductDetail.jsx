@@ -24,7 +24,7 @@ import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
 import useProtectedDialog from "../../hooks/protectedDialogHook";
 import DetailedDialog from "../../components/Toast/Dialog";
 import ShareNotification from "../../components/Toast/ShareToast";
-import { createLineitemApi } from "../../features/lineitem/lineItemApi";
+import { createLineitemApi } from "../../features/lineitem/lineitemApi";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addFavoriteUserApi,
