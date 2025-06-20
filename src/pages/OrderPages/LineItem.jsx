@@ -1,7 +1,7 @@
 // src/components/LineItem.jsx
 import PropTypes from "prop-types";
 import "../../styles/LineItem.css";
-import { updateLineitemApi } from "../../features/lineitem/lineItemApi";
+import { updateLineitemApi } from "../../features/lineitem/lineitemApi";
 
 const LineItem = ({
   item,
