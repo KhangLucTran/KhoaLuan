@@ -62,7 +62,6 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -71,7 +70,6 @@ const authSlice = createSlice({
       state.token = null;
       clearAuthTokens();
       delete api.defaults.headers.common["Authorization"];
-
       disconnectSocket(); // Ngắt kết nối socket khi đăng xuất
     },
   },

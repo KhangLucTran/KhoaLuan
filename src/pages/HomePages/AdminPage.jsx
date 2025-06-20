@@ -18,8 +18,8 @@ import { logoutUser } from "../../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { connectSocket } from "../../utils/socket";
 import AdminInvoicePage from "../AdminPages/InvoiceAdminPage";
+import AdminProductManagement from "../AdminPages/ProductManagement/ProductManagement";
 import UserManagement from "../AdminPages/UserManagement/UserManagement";
-import ProductManagement from "../AdminPages/ProductManagement/ProductManagement";
 import HomeManagement from "../AdminPages/HomeManagement/DashboardPage";
 import DiscountManagement from "../AdminPages/DiscountManagement/DiscountManagement";
 
@@ -186,7 +186,7 @@ const AdminPage = () => {
           <section className="content-box">
             {selectedMenu === "Home" && <HomeManagement />}
             {selectedMenu === "User" && <UserManagement />}
-            {selectedMenu === "Product" && <ProductManagement />}
+            {selectedMenu === "Product" && <AdminProductManagement />}
             {selectedMenu === "Voucher" && <DiscountManagement />}
             {selectedMenu === "Invoice" && <AdminInvoicePage />}
           </section>

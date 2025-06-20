@@ -96,13 +96,13 @@ const NotificationPage = () => {
             avatar = user?.data?.profileId?.avatar || avatar;
           } else if (notif.type === "product" && notif.refId) {
             const data = await getProductByIdApi(notif.refId);
-            avatar = data?.images?.[0] || defaultProduct;
+            avatar = data?.product.images?.[0] || defaultProduct;
           } else if (notif.type === "order" && notif.invoiceId) {
             const res = await getInvoiceByIdApi(notif.invoiceId);
             const item = res?.invoice?.lineItems?.[0];
             if (item) {
               const data = await getProductByIdApi(item.productId);
-              avatar = data?.images?.[0] || defaultProduct;
+              avatar = data?.product.images?.[0] || defaultProduct;
             }
           }
         } catch {

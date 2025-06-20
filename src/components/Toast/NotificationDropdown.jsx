@@ -45,7 +45,7 @@ const NotificationDropdown = () => {
           } else if (notif.type === "product" && notif.refId) {
             try {
               const data = await getProductByIdApi(notif.refId);
-              avatarUrl = data?.images?.[0] || defaultProduct;
+              avatarUrl = data?.product.images?.[0] || defaultProduct;
             } catch (error) {
               console.error("Lỗi khi lấy ảnh sản phẩm:", error);
             }
@@ -57,7 +57,7 @@ const NotificationDropdown = () => {
             ) {
               const productId = result?.invoice?.lineItems[0].productId;
               const data = await getProductByIdApi(productId);
-              avatarUrl = data?.images?.[0] || avatarUrl;
+              avatarUrl = data?.product.images?.[0] || avatarUrl;
             } else {
               console.warn(
                 "⚠️ lineItems không hợp lệ hoặc không tồn tại trong invoice",

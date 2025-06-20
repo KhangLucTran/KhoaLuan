@@ -16,7 +16,7 @@ const isTokenExpired = (token) => {
 };
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://khoaluan-backend.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,7 +32,9 @@ const refreshAccessToken = async () => {
 
     // Tạo một promise duy nhất để tránh gọi nhiều lần
     refreshTokenPromise = axios
-      .post("http://localhost:5000/api/auth/refresh-token", { refreshToken })
+      .post("https://khoaluan-backend.onrender.com/api/auth/refresh-token", {
+        refreshToken,
+      })
       .then((response) => {
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           response.data;

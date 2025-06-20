@@ -10,6 +10,10 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import { Badge, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { fetchUserInfo, logoutUser } from "../../features/user/userSlice";
+import {
+  fetchFavorites,
+  resetFavorites,
+} from "../../features/favorite/favoriteSlice";
 import DetailedDialog from "../../components/Toast/Dialog";
 import useProtectedDialog from "../../hooks/protectedDialogHook";
 import { Account } from "@toolpad/core/Account";
@@ -20,9 +24,9 @@ import { logout } from "../../features/auth/authSlice";
 import { getAuthTokens, saveAuthTokens } from "../../utils/token";
 import { getTotalQuantityApi } from "../../features/cart/cartApi";
 import { useCart } from "../../pages/OrderPages/cartContext";
-import { getFavoriteUserApi } from "../../features/favorite/favoriteApi";
 import NotificationDropdown from "../Toast/NotificationDropdown";
 import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
+import { persistor } from "../../store";
 import ChatBox from "../Chat/ChatBox";
 
 const Header = ({ hideNav }) => {
@@ -34,27 +38,30 @@ const Header = ({ hideNav }) => {
   const [totalFavorite, setTotalFavorite] = useState(0);
   const { open, setOpen, handleProtectedAction } = useProtectedDialog();
   const isFetched = useRef(false);
-  const prevCartItems = useRef([]);
-  const { cartItems, lineItems, totalQuantity, fetchCartData } = useCart();
+  const { totalQuantity, fetchCartData } = useCart();
   const [showChat, setShowChat] = useState(false);
+
+  // ✅ Lấy số lượng sản phẩm yêu thích từ Redux
+  const favoriteItems = useSelector((state) => state.favorite.items);
 
   // ✅ Gọi API lấy số lượng khi đăng nhập
   useEffect(() => {
     if (token && !isFetched.current) {
       dispatch(fetchUserInfo());
+      dispatch(fetchFavorites());
       fetchCartQuantity();
-      fecthQuantityFavroite();
       isFetched.current = true; // Đánh dấu đã gọi API
     }
   }, [token, dispatch]);
 
-  // ✅ Theo dõi sự thay đổi của giỏ hàng
   useEffect(() => {
-    if (JSON.stringify(prevCartItems.current) !== JSON.stringify(cartItems)) {
+    if (totalQuantity === 0) {
+      // Chỉ gọi API khi chưa có dữ liệu
       fetchCartQuantity();
-      prevCartItems.current = cartItems;
+    } else {
+      setTotal(totalQuantity);
     }
-  }, [cartItems, lineItems]);
+  }, [totalQuantity]);
 
   // ✅ Ưu tiên lấy total từ CartContext
   useEffect(() => {
@@ -81,19 +88,10 @@ const Header = ({ hideNav }) => {
     }
   };
 
-  const fecthQuantityFavroite = async () => {
-    try {
-      const response = await getFavoriteUserApi();
-      if (response && Array.isArray(response.data)) {
-        setTotalFavorite(response.data.length);
-        console.log("Số lượng sản phẩm yêu thích:", response.data.length);
-      } else {
-        console.warn("Dữ liệu không hợp lệ từ API yêu thích:", response);
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy số lượng yêu thích:", error.message);
-    }
-  };
+  // Đồng bộ số lượng yêu thích từ Redux store
+  useEffect(() => {
+    setTotalFavorite(favoriteItems.length);
+  }, [favoriteItems]);
 
   const authContext = useMemo(
     () => ({
@@ -106,8 +104,9 @@ const Header = ({ hideNav }) => {
       signOut: () => {
         dispatch(logout());
         dispatch(logoutUser());
+        persistor.purge(); // xóa toàn bộ dữ liệu đã lưu
         setTotal(0);
-        setTotalFavorite(0);
+        dispatch(resetFavorites());
         navigate("/");
       },
     }),
@@ -144,21 +143,35 @@ const Header = ({ hideNav }) => {
               <a href="/">Levents</a>
             </CustomTooltip>
           </div>
-
           {!hideNav && (
             <nav className="header-nav">
               <ul>
-                <li>
-                  <a href="/">Trang chủ</a>
+                <li onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+                  Trang chủ
                 </li>
-                <li>
-                  <a href="/levents/about">Thông tin</a>
+                <li
+                  onClick={() => navigate("/levents/about")}
+                  style={{ cursor: "pointer" }}
+                >
+                  Thông tin
                 </li>
-                <li>
-                  <a href="#services">Dịch vụ</a>
+                <li
+                  onClick={() => {
+                    const section = document.querySelector("#services");
+                    section?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  Dịch vụ
                 </li>
-                <li>
-                  <a href="#contact">Liên hệ</a>
+                <li
+                  onClick={() => {
+                    const section = document.querySelector("#contact");
+                    section?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  Liên hệ
                 </li>
               </ul>
             </nav>

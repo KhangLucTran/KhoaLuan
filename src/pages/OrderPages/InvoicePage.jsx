@@ -25,8 +25,8 @@ const LineItemComponent = ({ item }) => {
     async function fetchProductImage() {
       try {
         const data = await getProductByIdApi(item.productId);
-        if (data && data.images && data.images.length > 0) {
-          setProductImage(data.images[0]);
+        if (data && data.product.images && data.product.images.length > 0) {
+          setProductImage(data.product.images[0]);
         }
       } catch (error) {
         console.error("Error fetching product image:", error);

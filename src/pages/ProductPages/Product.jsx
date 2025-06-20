@@ -153,8 +153,8 @@ const Product = () => {
   const groupedProducts = useMemo(() => {
     if (!accessToken) return null;
     return {
-      popular: products.filter((p) => p.priority === 3),
-      searched: products.filter((p) => p.priority === 2),
+      searched: products.filter((p) => p.priority === 3),
+      popular: products.filter((p) => p.priority === 2),
       general: products.filter((p) => p.priority <= 1),
     };
   }, [products, accessToken]);
@@ -262,6 +262,7 @@ const Product = () => {
 
           <div style={{ flex: 2 }}>
             <h4>KẾT QUẢ: {filteredProducts.length} Sản phẩm</h4>{" "}
+            <h2>SẢN PHẨM LEVENTS</h2>
             <Grid container rowSpacing={3} columnSpacing={2}>
               {currentItems.map((item) => (
                 <Grid item xs={12} sm={6} md={4} key={item._id}>
@@ -271,11 +272,11 @@ const Product = () => {
             </Grid>
             {accessToken && groupedProducts && (
               <>
-                {groupedProducts.popular.length > 0 && (
+                {groupedProducts.searched.length > 0 && (
                   <>
-                    <h2>Sản phẩm được nhiều người yêu thích</h2>
+                    <h2>SẢN PHẨM BẠN TÌM KIẾM NHIỀU</h2>
                     <Grid container rowSpacing={3} columnSpacing={2}>
-                      {groupedProducts.popular.map((item) => (
+                      {groupedProducts.searched.map((item) => (
                         <Grid item xs={12} sm={6} md={4} key={item._id}>
                           <ProductCard item={item} />
                         </Grid>
@@ -284,11 +285,11 @@ const Product = () => {
                   </>
                 )}
 
-                {groupedProducts.searched.length > 0 && (
+                {groupedProducts.popular.length > 0 && (
                   <>
-                    <h2>Sản phẩm được bạn tìm kiếm nhiều</h2>
+                    <h2>SẢN PHẨM ĐƯỢC NHIỀU NGƯỜI YÊU THÍCH</h2>
                     <Grid container rowSpacing={3} columnSpacing={2}>
-                      {groupedProducts.searched.map((item) => (
+                      {groupedProducts.popular.map((item) => (
                         <Grid item xs={12} sm={6} md={4} key={item._id}>
                           <ProductCard item={item} />
                         </Grid>

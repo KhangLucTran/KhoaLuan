@@ -13,7 +13,6 @@ import {
 import { Delete, CloudUpload } from "@mui/icons-material";
 import {
   addProductApi,
-  getProductByIdApi,
   updateProductByIdApi,
 } from "../../../features/product/productApi";
 import {
@@ -36,30 +35,19 @@ const ProductDetailManagement = ({ onCancel, selectedProduct }) => {
   // Fetch dữ liệu sản phẩm khi selectedProduct thay đổi
   useEffect(() => {
     if (selectedProduct) {
-      const fetchProduct = async () => {
-        try {
-          const response = await getProductByIdApi(selectedProduct._id);
-          if (response) {
-            setProductName(response.title || "");
-            setCategory(response.category || "");
-            setGender(response.gender || "");
-            setStock(response.stock || "");
-            setPrice(response.price || "");
-            setDescription(response.description || "");
-            setUploadedFiles(
-              response.imageDetails?.map((img) => ({
-                url: img.url,
-                name: img.fileName,
-                size: img.size, // Không có kích thước do là ảnh từ URL
-              })) || []
-            );
-          }
-        } catch (error) {
-          console.error("Lỗi khi tải sản phẩm:", error);
-        }
-      };
-
-      fetchProduct();
+      setProductName(selectedProduct.product.title || "");
+      setCategory(selectedProduct.product.category || "");
+      setGender(selectedProduct.product.gender || "");
+      setStock(selectedProduct.product.stock || "");
+      setPrice(selectedProduct.product.price || "");
+      setDescription(selectedProduct.product.description || "");
+      setUploadedFiles(
+        selectedProduct.product.images?.map((imgUrl, index) => ({
+          url: imgUrl,
+          name: `image-${index + 1}.jpg`,
+          size: "Không xác định",
+        })) || []
+      );
     }
   }, [selectedProduct]);
 
@@ -137,14 +125,14 @@ const ProductDetailManagement = ({ onCancel, selectedProduct }) => {
     // Kiểm tra sự thay đổi giữa productData và selectedProduct
     const hasChanges =
       selectedProduct &&
-      (productData.title !== selectedProduct.title ||
-        productData.category !== selectedProduct.category ||
-        productData.gender !== selectedProduct.gender ||
-        productData.stock !== selectedProduct.stock ||
-        productData.price !== selectedProduct.price ||
-        productData.description !== selectedProduct.description ||
+      (productData.title !== selectedProduct.product.title ||
+        productData.category !== selectedProduct.product.category ||
+        productData.gender !== selectedProduct.product.gender ||
+        productData.stock !== selectedProduct.product.stock ||
+        productData.price !== selectedProduct.product.price ||
+        productData.description !== selectedProduct.product.description ||
         JSON.stringify(productData.images) !==
-          JSON.stringify(selectedProduct.imageDetails?.map((img) => img.url)) ||
+          JSON.stringify(selectedProduct.product.images) || // ✅ dòng đã fix
         newImages.length > 0 || // Nếu có ảnh mới
         deletedImages.length > 0); // Nếu có ảnh bị xóa
     try {
@@ -152,7 +140,7 @@ const ProductDetailManagement = ({ onCancel, selectedProduct }) => {
       if (selectedProduct && hasChanges) {
         // Gọi API update nếu có sự thay đổi và sản phẩm đã tồn tại
         response = await updateProductByIdApi(
-          selectedProduct._id,
+          selectedProduct.product._id,
           productData,
           newImages
         );

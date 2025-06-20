@@ -134,6 +134,9 @@ const initialState = {
   error: null,
 };
 
+export const selectProductById = (state, productId) =>
+  state.product.products.find((p) => p._id === productId);
+
 // ✅ productSlice
 const productSlice = createSlice({
   name: "product",
@@ -186,10 +189,15 @@ const productSlice = createSlice({
         state.isLoadingProductById = false;
         state.selectedProduct = action.payload;
 
-        // Thêm vào products nếu chưa có
-        const exists = state.products.find((p) => p._id === action.payload._id);
-        if (!exists) {
-          state.products.push(action.payload);
+        if (action.payload && action.payload._id) {
+          state.selectedProduct = action.payload;
+
+          const exists = state.products.find(
+            (p) => p._id === action.payload._id
+          );
+          if (!exists) {
+            state.products.push(action.payload);
+          }
         }
       })
       .addCase(fetchProductById.rejected, (state, action) => {

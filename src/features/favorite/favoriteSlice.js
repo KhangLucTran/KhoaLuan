@@ -12,14 +12,15 @@ export const fetchFavorites = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const data = await getFavoriteUserApi();
-      return data;
+      console.log("Fetched favorites:", data);
+      return data.data || [];
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-// Thunk: Thêm sản phẩm yêu thích
+// Thunk: Thêm sản phẩm yêu thịche
 export const addFavorite = createAsyncThunk(
   "favorite/addFavorite",
   async (productId, thunkAPI) => {
@@ -66,7 +67,14 @@ const favoriteSlice = createSlice({
     error: null,
     favoriteStatus: {}, // Lưu trạng thái yêu thích theo productId
   },
-  reducers: {},
+  reducers: {
+    resetFavorites(state) {
+      state.items = [];
+      state.favoriteStatus = {};
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Lấy danh sách yêu thích
@@ -112,5 +120,5 @@ const favoriteSlice = createSlice({
       });
   },
 });
-
+export const { resetFavorites } = favoriteSlice.actions;
 export default favoriteSlice.reducer;

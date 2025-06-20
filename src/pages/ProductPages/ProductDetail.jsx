@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Typography,
@@ -32,18 +32,16 @@ import {
   deleteFavoriteUserApi,
 } from "../../features/favorite/favoriteApi";
 import { StarBorder } from "@mui/icons-material";
-import {
-  fetchProductById,
-  fetchRelatedProducts,
-} from "../../features/product/productSlice";
+import { fetchRelatedProducts } from "../../features/product/productSlice";
 
 import CircularProgress from "@mui/material/CircularProgress";
 import { showInfoToast } from "../../components/Toast/Toast";
+import { getProductByIdApi } from "../../features/product/productApi";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const product = useSelector((state) => state.product.selectedProduct);
+  const [product, setProduct] = useState("");
   const relatedProducts = useSelector((state) => state.product.relatedProducts);
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
@@ -58,16 +56,41 @@ const ProductDetail = () => {
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
 
+  const prevRelatedCategoryRef = useRef();
+  const prevRelatedProductIdRef = useRef();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductByIdApi(id);
+        setProduct(data.product); // vì backend trả về { product }
+      } catch (err) {
+        console.error("Lỗi khi lấy sản phẩm:", err.message);
+        setProduct(null); // Nếu có lỗi, đặt product là null để hiển thị thông báo lỗi
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
   useEffect(() => {
     if (product?.category && product?._id) {
-      dispatch(
-        fetchRelatedProducts({
-          category: product.category,
-          currentProductId: product._id,
-        })
-      );
+      const categoryChanged =
+        prevRelatedCategoryRef.current !== product.category;
+      const idChanged = prevRelatedProductIdRef.current !== product._id;
+      if (categoryChanged || idChanged) {
+        prevRelatedCategoryRef.current = product.category;
+        prevRelatedProductIdRef.current = product._id;
+        dispatch(
+          fetchRelatedProducts({
+            category: product.category,
+            currentProductId: product._id,
+          })
+        );
+      }
     }
-  }, [product, dispatch]);
+  }, [product?.category, product?._id]);
+
   // Kiểm tra sản phẩm có trong danh sách yêu thích không.
   useEffect(() => {
     let isMounted = true;
@@ -85,12 +108,6 @@ const ProductDetail = () => {
       isMounted = false;
     };
   }, [id]);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProductById(id));
-    }
-  }, [dispatch, id]);
 
   // Hàm tạo LineItem và điều hướng sang trang Cart
   const handleAddToCart = async () => {

@@ -61,10 +61,10 @@ export const CartProvider = ({ children }) => {
 
   // ✅ Chỉ gọi API khi `cartId` thay đổi
   useEffect(() => {
-    if (!cartId) {
+    if (!isFetched) {
       fetchCartData();
     }
-  }, [cartId, fetchCartData]);
+  }, [isFetched, fetchCartData]);
 
   // ✅ Cập nhật giỏ hàng mà không cần gọi API
   const updateCartItem = (updatedItems) => {

@@ -68,6 +68,7 @@ const AdminProductManagement = () => {
         );
         setProducts(sortedProducts);
         setFilteredProducts(sortedProducts);
+        console.log("Fetched products:", sortedProducts);
         setTop3Ids(sortedProducts.slice(0, 3).map((p) => p._id)); // Lưu top 3 ID
       } catch (error) {
         console.error("Lỗi khi lấy sản phẩm:", error.message);

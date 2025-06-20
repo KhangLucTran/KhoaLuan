@@ -15,7 +15,7 @@ const Comment = ({ productId, onRatingUpdate }) => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/comment/${productId}`
+          `https://khoaluan-backend.onrender.com/api/comment/${productId}`
         );
         const commentsData = response.data.data;
 
@@ -23,7 +23,7 @@ const Comment = ({ productId, onRatingUpdate }) => {
         const commentsWithUserInfo = await Promise.all(
           commentsData.map(async (comment) => {
             const userResponse = await axios.get(
-              `http://localhost:5000/api/user/get-users/${comment.userId._id}`
+              `https://khoaluan-backend.onrender.com/api/user/get-users/${comment.userId._id}`
             );
             const user = userResponse.data.data;
             console.log("User trong comment:");

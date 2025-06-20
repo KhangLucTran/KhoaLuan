@@ -43,15 +43,15 @@ const InvoiceDetailPage = () => {
       lineItems.map(async (item) => {
         try {
           const data = await getProductByIdApi(item.productId);
-          if (data?.images?.[0]) {
-            imagesMap[item.productId] = data.images[0];
+          console.log(`Fetched product ${item.productId}:`, data.product);
+          if (data?.product.images?.[0]) {
+            imagesMap[item.productId] = data.product.images[0];
           }
         } catch (error) {
           console.error(`Error fetching product ${item.productId}:`, error);
         }
       })
     );
-
     setProductImages(imagesMap);
   };
 

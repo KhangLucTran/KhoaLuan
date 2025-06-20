@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@svgr/webpack": "^8.1.0",
     "@toolpad/core": "^0.12.0",
+    "@vovkasm/redux-persist": "^4.10.1",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.3.1",
