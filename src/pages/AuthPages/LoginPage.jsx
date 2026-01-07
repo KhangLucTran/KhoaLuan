@@ -2,19 +2,19 @@ import "../../styles/LoginPage.css";
 
 import LoginForm from "../../components/Form/LoginForm";
 import SocialButton from "../../components/Button/SocialButton";
-import ModeSelect from "../../components/ModeSelect/ModeSelect";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightTwoToneIcon from "@mui/icons-material/ChevronRightTwoTone";
 import CustomTooltip from "../../components/CustomTooltip/CustomTooltip";
 
 import { itemLoginData } from "../../constants/LoginData";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/auth/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { saveAuthTokens } from "../../utils/token";
 import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
 import { fetchUserInfo } from "../../features/user/userSlice";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
   // Dispatch
@@ -26,23 +26,11 @@ const LoginPage = () => {
   // Location
   const location = useLocation();
 
-  // useRef
-  const intervalRef = useRef(null);
-
   // Xử lí khi bấm "Đăng nhập"
   // Nếu đang trong quá trình xử lí, disable các button
   const { isLoading } = useSelector((state) => state.auth);
 
-  // Xử lý Background tự động thay đổi sao 5s
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % itemLoginData.length
-      );
-    }, 5000);
-    return () => clearInterval(intervalRef.current);
-  }, []);
 
   // Button "Ảnh tiếp theo"
   const handleNextImage = () => {
@@ -63,20 +51,27 @@ const LoginPage = () => {
       // Dùng dispatch gọi đến API login trong Redux
       const response = await dispatch(loginUser(values)).unwrap();
       console.log("🔥 Response từ API Login:", response); // Kiểm tra response
-
       if (response.access_token) {
-        // Thông báo đăng nhập thành công
-        showSuccessToast("Đăng nhập thành công!");
+        // Giải mã token
+        const decoded = jwtDecode(response.access_token);
+        console.log("decoded:", decoded);
 
-        const redirectUrl = location.state?.from || "/";
+        // Xác định đường dẫn chuyển hướng
+        let redirectUrl = location.state?.from || "/";
+        if (decoded.role_code === "R1") {
+          redirectUrl = "/levents/admin";
+        }
+        // Thông báo đăng nhập thành công
+        showSuccessToast("Chào mừng bạn! Đăng nhập thành công.");
         // Đợi 3 giây rồi chuyển trang
         setTimeout(() => {
           navigate(redirectUrl);
         }, 3000);
+      } else {
+        showErrorToast(response.message);
       }
     } catch (error) {
       // Xử lý lỗi khi dispatch hoặc lỗi từ API
-      showErrorToast(` ${error} 🚨`);
       console.error("🚨 Lỗi:", error);
     }
   };
@@ -84,27 +79,33 @@ const LoginPage = () => {
   // Dùng useEffect để lấy token và refreshToken đăng nhập bằng Google và Facebook
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const accessToken = params.get("accessToken");
-    const refreshToken = params.get("refreshToken");
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
 
     if (accessToken && refreshToken) {
       // Lưu AccessToken và RefreshToken
       saveAuthTokens(accessToken, refreshToken);
-      // Dùng AccessToken để call API: me (Lấy thông tin user đang đăng nhập)
-      dispatch(fetchUserInfo());
-      // Chuyển hướng về trang chủ
-      navigate("/", { replace: true });
+      try {
+        // Giải mã token xem có role là gì
+        const decoded = jwtDecode(accessToken);
+        console.log("decoded:", decoded);
+        if (decoded?.role_code === "R1") {
+          navigate("/levents/admin", { replace: true });
+        } else {
+          const redirectUrl = location.state?.from || "/";
+          navigate(redirectUrl, { replace: true });
+        }
+        // Dùng AccessToken để call API: me (Lấy thông tin user đang đăng nhập)
+        dispatch(fetchUserInfo());
+      } catch (error) {
+        console.error("Lỗi khi giải mã AccessToken:", error);
+      }
     }
-  }, [location.search, dispatch, navigate]);
+  }, [location.search, dispatch, navigate, location.state]);
 
   // Giao diện Trang Login
   return (
     <>
-      {/* Chế độ Dark/Light */}
-      <div className="login-page-modee">
-        <ModeSelect className="login-page-mode-select" />
-      </div>
-
       {/* Login Container */}
       <div className="login-container">
         {/* Hình nền đăng nhập */}

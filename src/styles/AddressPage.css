@@ -1,0 +1,187 @@
+/* Cấu trúc bố cục mới */
+.address-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Tiêu đề và nút thêm địa chỉ */
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd ;
+  padding-bottom: 10px;
+}
+
+.header-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+}
+
+.add-address-btn {
+  background-color: #1877F2;
+  color: white;
+  font-weight: bold;
+  text-transform: none; 
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-address-btn:hover {
+  background-color: #125ab3;
+  transform: scale(1.05);
+}
+
+/* Danh sách địa chỉ */
+.address-list {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Mục địa chỉ */
+.address-item {
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  border-radius: 8px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.address-item.default {
+  position: relative;
+  border-left: 4px solid #1877F2;
+}
+.address-item.default::before {
+  content: "Mặc định";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: 1px solid #1877F2;
+  color: #1877F2;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+/* Nội dung địa chỉ */
+.address-item p {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+.address-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.address-form {
+  background: #fff;
+  box-sizing: border-box;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+}
+
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Làm tối nền */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.map-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
+.open-maps-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background-color: #1877F2; /* Màu xanh Facebook */
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.open-maps-btn:hover {
+  background-color: #0e5bbf; /* Màu xanh đậm hơn khi hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.open-maps-btn:active {
+  background-color: #0c4a92;
+  transform: translateY(1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive - Mobile */
+@media (max-width: 600px) {
+  .open-maps-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

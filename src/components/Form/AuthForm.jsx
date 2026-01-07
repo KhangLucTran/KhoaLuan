@@ -27,7 +27,7 @@ const AuthForm = ({
     handleInputChange,
     validateForm,
     setFormValues,
-  } = useForm(fields, initialValues); // Truyền `initialValues` vào useForm
+  } = useForm(fields, initialValues);
 
   // Cập nhật formValues khi `initialValues` thay đổi
   useEffect(() => {
@@ -41,11 +41,15 @@ const AuthForm = ({
     (e) => {
       e.preventDefault();
       const errors = validateForm(formValues);
+      console.log("Validation Errors:", errors);
       if (Object.keys(errors).length > 0) return;
       onSubmit(formValues);
     },
     [formValues, validateForm, onSubmit]
   );
+
+  console.log("Current Form Values:", formValues);
+  console.log("Current Form Errors:", formErrors);
 
   return (
     <>
@@ -62,7 +66,6 @@ const AuthForm = ({
         }}
       >
         {fields.map((field) => {
-          // Radio Button (Giới tính, trạng thái,...)
           if (field.type === "radio") {
             return (
               <FormControl key={field.name} component="fieldset">
@@ -88,7 +91,6 @@ const AuthForm = ({
             );
           }
 
-          // Date Picker (Ngày sinh, ngày tạo,...)
           if (field.type === "date") {
             return (
               <DatePicker
@@ -106,14 +108,13 @@ const AuthForm = ({
                 sx={{
                   width: field.width,
                   "& .MuiInputBase-root": {
-                    height: field.height, // ✅ Chỉnh chiều cao input bên trong
+                    height: field.height,
                   },
                 }}
               />
             );
           }
 
-          // Các Input thông thường (text, email, password,...)
           return (
             <InputField
               key={field.name}
@@ -137,8 +138,8 @@ const AuthForm = ({
       <SubmitButton
         variant="contained"
         text={buttonText}
-        onClick={handleSubmit}
-        disabled={Object.keys(formErrors).some((key) => !!formErrors[key])}
+        onClick={(e) => handleSubmit(e)}
+        // disabled={Object.keys(formErrors).some((key) => !!formErrors[key])}
         sx={{
           width: 280,
           color: "#fff",

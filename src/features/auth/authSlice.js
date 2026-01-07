@@ -1,26 +1,41 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi, registerApi } from "./authApi";
-import { fetchUserInfo } from "../user/userSlice"; // Import user thunk
+import { fetchUserInfo } from "../user/userSlice";
 import api from "../../utils/api";
+import {
+  saveAuthTokens,
+  getAuthTokens,
+  clearAuthTokens,
+} from "../../utils/token";
+import { connectSocket, disconnectSocket } from "../../utils/socket"; // Import socket
 
-// ✅ Hàm lưu token vào localStorage
-const saveToken = (access_token, refresh_token) => {
-  localStorage.setItem("access_token", access_token);
-  localStorage.setItem("refresh_token", refresh_token);
-  api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+const tokens = getAuthTokens();
+const accessToken = tokens?.accessToken || null;
+
+const initialState = {
+  token: accessToken,
+  isLoading: false,
+  error: null,
 };
 
-// ✅ Async thunk cho login & register
+if (accessToken) {
+  api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+  connectSocket(); // Kết nối socket nếu đã có token
+}
+
+// ✅ Xử lý đăng nhập
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { dispatch, rejectWithValue }) => {
     try {
       const response = await loginApi(credentials);
-      saveToken(response.access_token, response.refresh_token);
+      saveAuthTokens(response.access_token, response.refresh_token);
 
-      // 👉 Gọi fetchUserInfo ngay sau khi đăng nhập thành công
+      api.defaults.headers.common["Authorization"] =
+        `Bearer ${response.access_token}`;
+      connectSocket(); // Kết nối socket khi đăng nhập thành công
+
       dispatch(fetchUserInfo());
-
       return response;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -28,40 +43,34 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// ✅ Xử lý đăng ký
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (credentials, { dispatch, rejectWithValue }) => {
     try {
       const response = await registerApi(credentials);
-      saveToken(response.access_token, response.refresh_token);
+      saveAuthTokens(response.access_token, response.refresh_token);
 
-      // 👉 Gọi fetchUserInfo ngay sau khi đăng ký thành công
+      api.defaults.headers.common["Authorization"] =
+        `Bearer ${response.access_token}`;
+      connectSocket(); // Kết nối socket khi đăng ký thành công
+
       dispatch(fetchUserInfo());
-
       return response;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
-
-// ✅ State ban đầu
-const initialState = {
-  token: localStorage.getItem("access_token") || null,
-  isLoading: false,
-  error: null,
-};
-
-// ✅ Tạo authSlice
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     logout: (state) => {
       state.token = null;
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      clearAuthTokens();
       delete api.defaults.headers.common["Authorization"];
+      disconnectSocket(); // Ngắt kết nối socket khi đăng xuất
     },
   },
   extraReducers: (builder) => {
@@ -99,6 +108,5 @@ const authSlice = createSlice({
   },
 });
 
-// ✅ Xuất action & reducer
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;

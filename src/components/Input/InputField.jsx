@@ -45,7 +45,7 @@ const InputField = ({
           fontSize: "1rem",
           fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
           lineHeight: 1.5,
-          borderRadius: 3,
+          borderRadius: 2,
           width: width,
           height: height,
           color: theme.palette.text.primary,

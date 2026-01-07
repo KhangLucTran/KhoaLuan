@@ -15,12 +15,18 @@ import {
   StepLabel,
   StepContent,
   Button,
-  Paper,
   Typography,
   TextField,
+  // Input,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { showErrorToast, showSuccessToast } from "../../components/Toast/Toast";
-import { useRef } from "react";
+import { useEffect, useState } from "react";
+import { validateEmail, validatePassword } from "../../utils/validation";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import OTPInput from "react-otp-input";
 
 const steps = [
   {
@@ -33,7 +39,9 @@ const steps = [
   {
     label: "Nhập mã OTP",
     description:
-      "Một mã OTP gồm 6 chữ số đã được gửi đến email của bạn. Hãy nhập mã này để xác minh.",
+      "Một mã OTP gồm 6 chữ số đã được gửi đến email của bạn. Hãy nhập mã này để xác minh." +
+      "\n" +
+      "Nếu bạn không nhận được mã, vui lòng bấm Quay lại để thử lại hoặc kiểm tra địa chỉ email.",
     field: "otp",
   },
   {
@@ -47,50 +55,115 @@ const steps = [
 const PasswordResetStepper = () => {
   // useDispatch
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
   const { email, otp, password, confirmPassword, step, loading } = useSelector(
     (state) => state.passwordReset
   );
+  const [timeLeft, setTimeLeft] = useState(600); // 10 phút
+  const [isExpired, setIsExpired] = useState(false);
+  const [localOtp, setLocalOtp] = useState("");
 
-  // Xử lí focus 6 ô OTP
-  const otpInputs = useRef([]);
+  useEffect(() => {
+    if (localOtp.length === 6) {
+      const handler = setTimeout(() => {
+        dispatch(updateFormData({ field: "otp", value: localOtp }));
+      }, 300);
+
+      return () => clearTimeout(handler);
+    }
+  }, [localOtp, dispatch]);
+
+  // Bộ đếm thời gian
+  useEffect(() => {
+    if (step !== 1) return;
+
+    setTimeLeft(600); // Reset thời gian nếu quay lại step 1
+    setIsExpired(false);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsExpired(true); // Hết thời gian
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [step]);
 
   // Xử lí khi có dữ liệu thay đổi
   const handleChange = (field, value) => {
     dispatch(updateFormData({ field, value }));
   };
 
-  // Xử lí dữ liệu 6 ô OTP
-  const handleOtpChange = (index, value) => {
-    const newOtp = otp.split("");
-    newOtp[index] = value;
-    dispatch(updateFormData({ field: "otp", value: newOtp.join("") }));
+  // Xử lí khi bấm vào icon hiện/ẩn mật khẩu
+  const handleToggleVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+  useEffect(() => {
+    if (step !== 1) return;
 
-    if (value && index < 5) {
-      otpInputs.current[index]?.focus();
-    }
+    setTimeLeft(600); // Reset thời gian nếu quay lại step 1
+    setIsExpired(false);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsExpired(true); // Hết thời gian
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [step]);
+
+  // Hàm định dạng thời gian
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const secs = (seconds % 60).toString().padStart(2, "0");
+    return `${mins}:${secs}`;
   };
 
   // Xử lí khi bấm "Tiếp tục"
   const handleNext = async () => {
     // Bước 1 - Nhập email: kiểm tra email, gọi sendReset từ Redux
     if (step === 0) {
-      if (!email) {
-        showErrorToast("Vui lòng nhập email 🔥");
+      const emailError = validateEmail(email);
+      if (emailError) {
+        showErrorToast(emailError);
         return;
       }
-      dispatch(sendResetEmail(email))
-        .unwrap()
-        .then(() => {
-          showSuccessToast(
-            "Mã xác nhận đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư để nhận mã OTP."
-          );
-          dispatch(goToNextStep());
-        })
-        .catch((error) => showErrorToast(error));
+      try {
+        // Await dispatch để lấy kết quả
+        const response = await dispatch(sendResetEmail(email)).unwrap();
+
+        // Nếu response có lỗi (theo backend trả về)
+        if (response.error === 1) {
+          showErrorToast(response.message);
+          return;
+        }
+
+        // Nếu không lỗi thì tiếp tục bước tiếp theo
+        showSuccessToast(
+          "Mã xác nhận đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư để nhận mã OTP."
+        );
+        dispatch(goToNextStep());
+      } catch (error) {
+        // Bắt lỗi khác nếu có
+        showErrorToast(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      }
     }
     // Bước 2 - Nhập mã OTP: kiểm tra độ dài otp, gọi verifyOtp từ Redux
     else if (step === 1) {
-      if (otp.length !== 6) {
+      if (!otp || localOtp.length !== 6) {
         showErrorToast("Vui lòng nhập đủ 6 số OTP 🔥");
         return;
       }
@@ -108,8 +181,13 @@ const PasswordResetStepper = () => {
         showErrorToast("Vui lòng nhập giá trị 🔥");
         return;
       }
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        showErrorToast(passwordError);
+        return;
+      }
       if (password !== confirmPassword) {
-        showErrorToast("Mật khẩu không khớp 🔥");
+        showErrorToast("Mật khẩu bạn nhập không trùng khớp 🔥");
         return;
       }
       dispatch(resetPassword({ email, password }))
@@ -134,23 +212,41 @@ const PasswordResetStepper = () => {
               </Typography>
 
               {stepData.field === "otp" ? (
-                // OTP Form
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  {[...Array(6)].map((_, i) => (
-                    <TextField
-                      key={i}
-                      type="text"
-                      inputRef={(el) => (otpInputs.current[i] = el)}
-                      inputProps={{
-                        maxLength: 1,
-                        style: { textAlign: "center" },
-                      }}
-                      value={otp[i] || ""}
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      sx={{ width: "40px" }}
-                    />
-                  ))}
-                </Box>
+                <>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: isExpired ? "red" : "#666",
+                      mt: 1,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {isExpired
+                      ? "Mã OTP đã hết hiệu lực. Vui lòng quay lại để nhận mã mới."
+                      : `Mã sẽ hết hạn sau: ${formatTime(timeLeft)}`}
+                  </Typography>
+
+                  <OTPInput
+                    value={localOtp}
+                    onChange={setLocalOtp}
+                    numInputs={6}
+                    sInputNum={true}
+                    renderInput={(props) => (
+                      <input
+                        {...props}
+                        style={{
+                          width: "2.5rem",
+                          height: "3rem",
+                          margin: "0 4px",
+                          fontSize: "1.5rem",
+                          borderRadius: 4,
+                          border: "1px solid #ced4da",
+                          textAlign: "center",
+                        }}
+                      />
+                    )}
+                  />
+                </>
               ) : stepData.field ? (
                 // Email Form
                 <TextField
@@ -158,7 +254,7 @@ const PasswordResetStepper = () => {
                   margin="normal"
                   label={stepData.label}
                   placeholder={stepData.placeholder}
-                  value={stepData.field === "email" ? email : otp}
+                  value={stepData.field === "email" ? email : ""}
                   onChange={(e) => handleChange(stepData.field, e.target.value)}
                 />
               ) : (
@@ -168,11 +264,23 @@ const PasswordResetStepper = () => {
                     key={field}
                     fullWidth
                     margin="normal"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     label={stepData.placeholders[i]}
                     placeholder={stepData.placeholders[i]}
                     value={field === "password" ? password : confirmPassword}
                     onChange={(e) => handleChange(field, e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleToggleVisibility}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 ))
               )}
@@ -202,32 +310,75 @@ const PasswordResetStepper = () => {
 
       {/* Nếu hoàn thành step: Hiện thông báo thành công */}
       {step >= steps.length && (
-        <Paper
-          square
-          elevation={3}
-          sx={{
-            p: 3,
-            borderRadius: "12px",
-            bgcolor: "#f0f0f0",
-            textAlign: "center",
-            maxWidth: 350,
-            mt: "6rem",
-            mx: "auto",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Làm tối nền
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000, // Đảm bảo hiển thị trên cùng
           }}
         >
-          <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
-            🎉 Khôi phục mật khẩu thành công!
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => dispatch(resetProcess())}
-            sx={{ borderRadius: "8px", px: 3, py: 1 }}
+          <div
+            style={{
+              maxWidth: 400,
+              width: "90%",
+              padding: "2rem",
+              textAlign: "center",
+              border: "1px solid #ddd",
+              borderRadius: "12px",
+              boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+              backgroundColor: "#fafafa",
+              transform: "scale(1)",
+              animation: "fadeInScale 0.4s ease-in-out",
+            }}
           >
-            Thực hiện lại
-          </Button>
-        </Paper>
+            <CheckCircleIcon
+              fontSize="large"
+              sx={{ width: "100px", color: "#2ecc71" }}
+            />
+            <h2 style={{ margin: "0 0 1rem", color: "#1877F2" }}>
+              Mật khẩu đã được đặt lại!
+            </h2>
+            <p style={{ color: "#555", marginBottom: "2rem" }}>
+              Bạn có thể sử dụng mật khẩu mới để đăng nhập lại tài khoản.
+            </p>
+            <button
+              onClick={() => dispatch(resetProcess())}
+              style={{
+                padding: "0.6rem 1.2rem",
+                fontSize: "1rem",
+                backgroundColor: "#1877F2",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "opacity 0.3s",
+              }}
+              onMouseOver={(e) => (e.target.style.opacity = "0.9")}
+              onMouseOut={(e) => (e.target.style.opacity = "1")}
+            >
+              Thực hiện lại
+            </button>
+            <div style={{ marginTop: "1.5rem" }}>
+              <a
+                href="/levents/login"
+                style={{
+                  textDecoration: "none",
+                  color: "#1877F2",
+                  fontWeight: "500",
+                }}
+              >
+                Quay lại trang đăng nhập
+              </a>
+            </div>
+          </div>
+        </div>
       )}
     </Box>
   );

@@ -28,7 +28,6 @@ const InlineEditField = ({
   const handleBlur = () => {
     const errorMessage = validateField(name, currentValue);
     setError(errorMessage); // Lưu lỗi vào state
-
     if (!errorMessage) {
       setEditing(false);
       if (currentValue !== value) {
@@ -76,11 +75,33 @@ const InlineEditField = ({
         ) : type === "date" ? (
           <DatePicker
             value={currentValue ? dayjs(currentValue) : null}
-            onChange={(newValue) =>
-              setCurrentValue(newValue ? newValue.format("YYYY-MM-DD") : "")
-            }
+            onChange={(newValue) => {
+              const formattedValue = newValue
+                ? newValue.format("YYYY-MM-DD")
+                : "";
+              // Cập nhật state và kiểm tra lỗi khi ngày thay đổi
+              setCurrentValue(formattedValue);
+              const errorMessage = validateField(name, formattedValue);
+              setError(errorMessage);
+            }}
+            // Không gọi onAccept nữa, ta dùng onKeyDown để bắt Enter
             format="DD/MM/YYYY"
-            slotProps={{ textField: { helperText: error || helperText } }}
+            slotProps={{
+              textField: {
+                helperText: error || helperText,
+                onKeyDown: (e) => {
+                  if (e.key === "Enter") {
+                    // Chuyển đổi giá trị hiện tại (hiển thị theo DD/MM/YYYY) sang định dạng lưu trữ YYYY-MM-DD
+                    const inputValue = e.target.value;
+                    const formattedValue = dayjs(
+                      inputValue,
+                      "DD/MM/YYYY"
+                    ).format("YYYY-MM-DD");
+                    handleBlur(formattedValue);
+                  }
+                },
+              },
+            }}
           />
         ) : (
           <TextField

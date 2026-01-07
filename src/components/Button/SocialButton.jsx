@@ -3,7 +3,7 @@ import GoogleIcon from "../../assets/logo_google_icon.svg";
 import FacebookIcon from "../../assets/logo_facebook_icon1.svg";
 
 import CustomTooltip from "../CustomTooltip/CustomTooltip";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const sx = {
@@ -11,7 +11,7 @@ const sx = {
   width: 20,
   color: "text",
   border: "1px solid",
-  borderColor: "text.secondary",
+  borderColor: "#000",
   textTransform: "none",
   position: "relative",
 };
@@ -19,15 +19,29 @@ const sx = {
 const SocialButtons = () => {
   const [loading, setLoading] = useState(false);
   const { isLoading } = useSelector((state) => state.auth);
-  // Xử lí đăng nhập bằng Google
+
+  useEffect(() => {
+    if (!isLoading) {
+      setLoading(false);
+    }
+  }, [isLoading]);
+
   const handleGoogleLogin = () => {
-    setLoading(true);
-    window.location.href = "http://localhost:5000/api/auth/google";
+    if (!loading) {
+      setLoading(true);
+      window.location.href = "http://localhost:5000/api/auth/google";
+    }
+  };
+
+  const handleFacebookLogin = () => {
+    if (!loading) {
+      setLoading(true);
+      window.location.href = "http://localhost:5000/api/auth/facebook";
+    }
   };
 
   return (
     <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
-      {/* Google Button */}
       <CustomTooltip title="Tiếp tục bằng Google">
         <span>
           <SubmitButton
@@ -45,11 +59,10 @@ const SocialButtons = () => {
             }
             onClick={handleGoogleLogin}
             sx={sx}
-            disabled={isLoading}
+            disabled={isLoading || loading}
           />
         </span>
       </CustomTooltip>
-      {/* Facebook Button */}
       <CustomTooltip title="Tiếp tục bằng Facebook">
         <span>
           <SubmitButton
@@ -61,7 +74,7 @@ const SocialButtons = () => {
                 style={{ width: 30, height: 30, alignItems: "center" }}
               />
             }
-            onClick={() => console.log("Login with Facebook")}
+            onClick={() => handleFacebookLogin()}
             sx={sx}
             disabled={isLoading}
           />

@@ -5,17 +5,17 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
     background-size: contain;
+    gap: 5rem;
     z-index: -1;
 }
 /* Login Image */
 .login-page-image {
-    width: 50%;
-    height: 90vh;
+    width: 65%;
+    height: 100vh;
     background-size: cover;
-    border: 1px solid #ccc;
-    border-radius:20px ;
+      /* border-top-right-radius:40px ;
+      border-bottom-right-radius:40px ; */
     position: relative;
   }   
   .image-nav-button {
@@ -72,9 +72,9 @@
 }
 /* Login Form */
 .login-page-form{
-    padding: 10;
-    height: 100vh;
-    height: auto;
+  padding: 10;
+  height: 100vh;
+  height: auto;
 }
 .login-page-form h1{
     font-weight: bold;
@@ -82,8 +82,8 @@
     text-align: center;    
 }
 .login-page-form h3{
-    font-size: 24px;
-    color: #1877F2;
+  color: #1877F2;
+  font-size: 24px;
     margin-bottom: 3rem;
 }
 .login-page-form-social{
