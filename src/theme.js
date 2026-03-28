@@ -19,7 +19,7 @@ const theme = extendTheme({
           paper: "#F7F7F7",
         },
         text: {
-          primary: "#1C1E21",
+          primary: "#1C2B33",
           secondary: "#65676B",
         },
       },
